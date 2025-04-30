@@ -54,7 +54,6 @@ def assess_context_relevance(query, context=None):
              Returns 2 as a fallback if the LLM assessment fails.
              Returns 1 if the initial context is empty/None.
     """
-    print("[Assessment] Assessing relevance of retrieved context...")
 
     # Handle cases where no context was retrieved initially
     if not context: # Check if there's no context
@@ -79,7 +78,6 @@ Based on your evaluation, choose ONE of the following options:
 Answer ONLY with the number: 1, 2, or 3."""
 
     decision_str = call_llm_assessment(assessment_prompt)
-    logger.info(f"LLM Assessment raw output: '{decision_str}'")
 
     # Parse the LLM decision
     if decision_str:
@@ -111,7 +109,6 @@ def rewrite_query_for_websearch(query):
     Returns:
         str: Rewritten query optimized for web search, or the original query on failure.
     """
-    print(f"[Web Search] Rewriting query using LLM (Original: '{query}')...")
 
     rewrite_prompt = f"""Rewrite the following user query to be optimized for a web search engine like Google or Bing. Focus on extracting key terms, removing conversational filler, and making it concise and fact-seeking. If the query implies needing recent information, ensure the rewritten query reflects that.
 
@@ -143,9 +140,7 @@ def perform_web_search(query):
         str: A string containing concatenated relevant snippets from search results,
              or an empty string if the search fails or yields no useful results.
     """
-    print(f"[Web Search] Performing Tavily search for: '{query}'")
     context = search_tavily(query)
-    logger.info(f"Web search results: {context}")
     return context # Return the concatenated context from the search results
 
 def generate_response_corrective_rag(query):
@@ -188,11 +183,6 @@ def generate_response_corrective_rag(query):
         "status": "In Progress"
     }
 
-    # Log the start of the RAG process for this query
-    logger.info(f"--- Starting Corrective RAG process for query: '{query}' ---")
-    print(f"\n--- Starting Corrective RAG process for query: '{query}' ---")
-
-
     # Step 1: Retrieve initial context from the vector database
     print("\n[Step 1/5] Retrieving initial context from Vector DB...")
     logger.info("Attempting to retrieve initial context from Vector DB.")
@@ -201,10 +191,8 @@ def generate_response_corrective_rag(query):
     execution_data["local_context_length"] = len(local_context) if local_context else 0
 
     if local_context:
-        print(f"  > Retrieved initial context (length: {len(local_context)} chars).")
         logger.info(f"Successfully retrieved local context (length: {len(local_context)} chars).")
     else:
-        print("  > No initial context found in Vector DB.")
         logger.info("No initial context found in Vector DB.")
 
     # Step 2: Assess if web search is needed based on the query and initial context
@@ -230,7 +218,6 @@ def generate_response_corrective_rag(query):
         execution_data["websearch_context_length"] = len(websearch_context) if websearch_context else 0
     else:
         logger.info("Assessment decision does not require web search (Decision 3). Skipping web search.")
-        print("  > Assessment did not require web search.")
 
 
     # Step 4: Prepare the final context based on the assessment decision and search results
@@ -240,21 +227,17 @@ def generate_response_corrective_rag(query):
 
     if context_relevance_decision == 1:
         # Use Web Search Only
-        print("  > Decision: Use Web Search Only.")
-        logger.info("Compiling final context: Web Search Only.")
         if websearch_context:
             final_context = f"CONTEXT FROM WEB SEARCH:\n{websearch_context}"
             context_source_description = "Web Search Only"
         else:
             # If web search was supposed to be used but yielded nothing
-            print("  > Warning: Web search selected, but yielded no results.")
             logger.warning("Web search selected (Decision 1) but returned no context.")
             final_context = "Web search was attempted but returned no information."
             context_source_description = "Web Search attempted, no results"
 
     elif context_relevance_decision == 2:
         # Use Both Local Context and Web Search
-        print("  > Decision: Use Both Local Context and Web Search.")
         logger.info("Compiling final context: Use Both Local and Web Search.")
         if local_context and websearch_context:
             final_context = f"CONTEXT FROM LOCAL DATABASE:\n{local_context}\n\n---\n\nCONTEXT FROM WEB SEARCH:\n{websearch_context}"
@@ -262,32 +245,27 @@ def generate_response_corrective_rag(query):
         elif local_context:
             # Web search was intended but failed or returned nothing
             final_context = f"CONTEXT FROM LOCAL DATABASE:\n{local_context}\n\n---\n\nCONTEXT FROM WEB SEARCH:\n(Web search yielded no results or failed)"
-            print("  > Warning: Web search yielded no results; using local context only.")
             logger.warning("Web search failed or returned nothing when using both was decided.")
             context_source_description = "Local Only (Web Search failed)"
         elif websearch_context:
             # Local context was empty, but web search succeeded
             final_context = f"CONTEXT FROM LOCAL DATABASE:\n(No relevant local context found)\n\n---\n\nCONTEXT FROM WEB SEARCH:\n{websearch_context}"
-            print("  > Warning: No local context found; using web search results only.")
             logger.warning("No local context found when using both was decided.")
             context_source_description = "Web Search Only (Local context empty)"
         else:
              # Neither local nor web search provided context
-            print("  > Warning: Both local retrieval and web search yielded no results.")
             logger.warning("Neither local nor web search provided context when using both was decided.")
             final_context = "Neither local context nor web search provided information for this query."
             context_source_description = "Neither source provided context"
 
     elif context_relevance_decision == 3:
         # Use Local Context Only
-        print("  > Decision: Use Local Context Only.")
         logger.info("Compiling final context: Use Local Context Only.")
         if local_context:
             final_context = local_context
             context_source_description = "Local Context Only"
         else:
             # Local context was selected but was empty (should have been caught by initial check, but double check)
-            print("  > Warning: Local context selected, but it was empty. No context available.")
             logger.warning("Local context selected (Decision 3) but was empty.")
             final_context = "No specific context was found for this query."
             context_source_description = "Local Only (context empty)"
@@ -300,12 +278,10 @@ def generate_response_corrective_rag(query):
         "Neither local context nor web search provided information for this query.",
         "No specific context was found for this query."
         ]:
-        print(f"  > Final context prepared (length: {len(final_context)} chars). Source: {context_source_description}")
         logger.info(f"Final context prepared (length: {len(final_context)} chars). Source: {context_source_description}")
         execution_data["final_context_used"] = final_context
         execution_data["final_context_length"] = len(final_context)
     else:
-        print("  > Warning: No usable final context available for generation.")
         logger.warning("No usable final context available for generation.")
         # Ensure final_context is not empty if we intend to pass it to the LLM
         # Passing a specific message ensures the LLM knows no info was found.
@@ -333,7 +309,7 @@ def generate_response_corrective_rag(query):
     # Use json.dumps to serialize the dictionary to a JSON string
     # Use ensure_ascii=False to correctly handle non-ASCII characters in contexts/response
     try:
-        logger.info(json.dumps(execution_data, ensure_ascii=False))
+        logger.info(json.dumps(execution_data, indent=4, ensure_ascii=False, sort_keys=True))
     except Exception as e:
         logger.error(f"Failed to log structured execution data: {e}")
         # Log essential data even if full JSON fails
@@ -341,7 +317,6 @@ def generate_response_corrective_rag(query):
 
 
     # Print completion message
-    print(f"\n--- Corrective RAG Process Completed in {execution_data['duration_seconds']:.2f} seconds ---")
     logger.info(f"--- Corrective RAG process completed for query: '{query}' ---")
     logger.info(f"Generated response (first 200 chars): {response[:200]}...") # Log snippet of response
 
