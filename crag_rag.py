@@ -8,6 +8,9 @@ import re
 import time
 import logging
 import json
+from prompts import get_crag_assessment_prompt, get_crag_rewrite_prompt
+
+prompts_lang = "en" # Set the default language for prompts
 
 # --- Logging Setup ---
 # Create logger
@@ -37,6 +40,8 @@ if not logger.handlers:
 
 logger.info("--- Logger Initialized ---")
 
+#assessment_prompt = get_crag_prompts_en()
+
 def assess_context_relevance(query, context=None):
     """
     Assess if the retrieved context is relevant and sufficient, deciding
@@ -63,19 +68,7 @@ def assess_context_relevance(query, context=None):
     # Limit context length for the assessment prompt
     context_snippet = context[:2000] # Use first 2000 chars for assessment
 
-    assessment_prompt = f"""Evaluate the relevance and sufficiency of the provided 'Retrieved Context' for answering the 'Query'. Consider if the context directly addresses the query and if the query might require more up-to-date information than the context likely provides (suggesting web search).
-
-Query: "{query}"
-
-Retrieved Context:
-"{context_snippet}"
-
-Based on your evaluation, choose ONE of the following options:
-1: The context is largely irrelevant, clearly insufficient, or the query demands very recent information unlikely to be in the context. Web search is required, and the retrieved context should likely be ignored.
-2: The context is relevant but might be incomplete, not fully detailed, or potentially outdated for the query. Supplementing with web search is advisable. Use both the retrieved context and web search results.
-3: The context is highly relevant, comprehensive, and directly addresses the query well. It seems sufficient on its own. Web search is likely unnecessary. Use only the retrieved context.
-
-Answer ONLY with the number: 1, 2, or 3."""
+    assessment_prompt = get_crag_assessment_prompt(query, context_snippet, prompts_lang)
 
     decision_str = call_llm_assessment(assessment_prompt)
 
@@ -110,11 +103,7 @@ def rewrite_query_for_websearch(query):
         str: Rewritten query optimized for web search, or the original query on failure.
     """
 
-    rewrite_prompt = f"""Rewrite the following user query to be optimized for a web search engine like Google or Bing. Focus on extracting key terms, removing conversational filler, and making it concise and fact-seeking. If the query implies needing recent information, ensure the rewritten query reflects that.
-
-Original Query: "{query}"
-
-Output ONLY the rewritten web search query."""
+    rewrite_prompt = get_crag_rewrite_prompt(query, prompts_lang)
 
     # Use the generic LLM helper
     rewritten_query = call_llm_assessment(rewrite_prompt, max_tokens=60, temperature=0.0)

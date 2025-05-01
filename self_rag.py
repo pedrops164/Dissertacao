@@ -2,6 +2,9 @@ import re
 import time
 from llm_client import call_llm_assessment # Your LLM client setup
 from vector_database import retrieve_context # Hybrid search + RRF context retrieval
+from prompts import get_self_rag_retrieval_prompt, get_self_rag_critique_prompt, get_self_rag_generation_prompt_message, get_self_rag_critique_answer_prompt # Your prompt setup
+
+prompts_lang = "en" # Set the default language for prompts
 
 # --- Configuration ---
 # How many initial documents to retrieve before critique/filtering
@@ -28,9 +31,7 @@ def generate_response_self_rag(query):
 
     # --- Step 1: Decide if Retrieval is Necessary ---
     print("\n[Step 1/5] Deciding if retrieval is needed...")
-    retrieval_prompt = f"""Does the following query likely require searching external documents for a factual and comprehensive answer, or can it be answered reliably from general knowledge?
-Query: "{query}"
-Answer ONLY with YES or NO."""
+    retrieval_prompt = get_self_rag_retrieval_prompt(query, prompts_lang)
     decision = call_llm_assessment(retrieval_prompt, max_tokens=10)
     print(f"  > LLM Decision on Retrieval: {decision}")
 
@@ -69,10 +70,7 @@ Answer ONLY with YES or NO."""
         relevant_docs = []
         for i, doc_text in enumerate(retrieved_docs):
             if not doc_text: continue
-            critique_prompt = f"""Evaluate if the following document passage is relevant and helpful for answering the query. Consider if it directly addresses the query or provides useful background.
-Query: "{query}"
-Passage: "{doc_text[:1000]}" # Limit length for critique prompt
-Answer ONLY with RELEVANT or IRRELEVANT."""
+            critique_prompt = get_self_rag_critique_prompt(query, doc_text, prompts_lang)
             critique = call_llm_assessment(critique_prompt, max_tokens=10)
             print(f"  > Critiquing Doc {i+1}: Result = {critique}")
             if critique and "IRRELEVANT" not in critique.upper():
@@ -92,38 +90,10 @@ Answer ONLY with RELEVANT or IRRELEVANT."""
 
     # --- Step 4: Generate Answer ---
     print("\n[Step 4/5] Generating answer...")
-    generation_prompt_message = ""
-    if filtered_context:
-        print(f"  > Generating with {len(relevant_docs)} relevant document(s) as context.")
-        system_prompt = "You are a helpful AI assistant. Answer the user's question based *only* on the provided relevant context. Be factual and concise."
-        user_prompt = f"""Relevant Context:
-{filtered_context}
-
-Question: {query}
-
-Based *only* on the relevant context provided, answer the question."""
-        generation_prompt_message = [
-             {"role": "system", "content": system_prompt},
-             {"role": "user", "content": user_prompt}
-        ]
-    else:
-        print("  > Generating without external context (or no relevant context found).")
-        system_prompt = "You are a helpful AI assistant. Answer the user's question directly using your general knowledge."
-        user_prompt = f"Question: {query}"
-        generation_prompt_message = [
-             {"role": "system", "content": system_prompt},
-             {"role": "user", "content": user_prompt}
-        ]
+    generation_prompt_message = get_self_rag_generation_prompt_message(query, filtered_context, prompts_lang)
 
     try:
         generated_answer = call_llm_assessment(generation_prompt=generation_prompt_message, max_tokens=500, temperature=0.1)
-        #response = openai_client.chat.completions.create(
-        #    model="meta-llama/Llama-3.2-3B-Instruct", # Or your chosen model
-        #    messages=generation_prompt_message,
-        #    temperature=0.1, # Keep generation somewhat deterministic after critique
-        #    max_tokens=500
-        #)
-        #generated_answer = response.choices[0].message.content.strip()
         print(f"  > Generated Answer (Initial): {generated_answer[:200]}...")
     except Exception as e:
          print(f"Error during LLM generation call: {e}")
@@ -132,16 +102,7 @@ Based *only* on the relevant context provided, answer the question."""
 
     # --- Step 5: Critique Generated Answer (Self-Reflection) ---
     print("\n[Step 5/5] Critiquing generated answer...")
-    critique_answer_prompt = f"""Evaluate the following generated answer based SOLELY on the provided query and context (if any).
-Is the answer factually consistent with the context?
-Is the answer relevant to the original query?
-
-Query: "{query}"
-Context Provided: "{filtered_context[:1000]}" # Limit context length
-Generated Answer: "{generated_answer}"
-
-Answer ONLY with one word: SUPPORTED, CONTRADICTORY, or NOT_SUPPORTED (if answer is irrelevant or not verifiable from context). If no context was provided, answer NOT_APPLICABLE."""
-
+    critique_answer_prompt = get_self_rag_critique_answer_prompt(query, filtered_context, generated_answer, prompts_lang)
     final_critique = call_llm_assessment(critique_answer_prompt, max_tokens=10)
     print(f"  > Final Answer Critique Result: {final_critique}")
 
@@ -170,7 +131,6 @@ Answer ONLY with one word: SUPPORTED, CONTRADICTORY, or NOT_SUPPORTED (if answer
         "generated_answer": generated_answer,
         "answer_critique": critique_status
     }
-
 
 # --- Example Usage ---
 if __name__ == "__main__":
