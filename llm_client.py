@@ -10,7 +10,7 @@ openai_client = OpenAI(
 )
 
 # --- Helper for LLM Assessment Call ---
-def call_llm_assessment(prompt=None, max_tokens=5, temperature=0.0, generation_prompt=None):
+def call_llm_assessment(prompt=None, max_tokens=5, temperature=0.0, generation_prompt=None) -> str:
     """Makes a focused LLM call for assessment tasks."""
     try:
         response = openai_client.chat.completions.create(

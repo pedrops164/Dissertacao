@@ -15,6 +15,7 @@ import numpy as np
 from typing import List, Dict, Any, Tuple, Optional
 from dataclasses import dataclass
 from llm_system import LLMSystem
+from llm_client import call_llm_assessment
 
 # Import needed libraries for the specific implementat
 # import torch
@@ -27,6 +28,7 @@ from llm_system import LLMSystem
 class EvaluationEntry:
     """A single evaluation entry for a specific question"""
     question: str
+    ground_truth: Optional[str]
     response: str
     retrieved_docs: List[str]
     metrics: Dict[str, float]
@@ -34,6 +36,7 @@ class EvaluationEntry:
     def to_dict(self):
         return {
             "question": self.question,
+            "ground_truth": self.ground_truth,
             "response": self.response,
             "retrieved_docs": self.retrieved_docs,
             "metrics": self.metrics
@@ -82,21 +85,17 @@ class EvaluationResult:
 class RAGEvaluator:
     """Framework for evaluating and comparing RAG systems"""
     
-    def __init__(self, judge_model=None, ground_truth=None):
+    def __init__(self, use_llm_judge=False):
         """
         Initialize the evaluator
         
         Args:
             judge_model: Model to use for LLM-as-judge evaluations
-            ground_truth: Dictionary mapping questions to gold standard answers
         """
-        self.judge_model = judge_model
-        self.ground_truth = ground_truth
+        self.use_llm_judge = use_llm_judge
         self.results = {}
         
-    def evaluate_system(self, system: LLMSystem, queries: List[str], 
-                       retrieval_metrics: bool = True, content_metrics: bool = True,
-                       efficiency_metrics: bool = True) -> List[EvaluationResult]:
+    def evaluate_system(self, system: LLMSystem, queries: List[Any], content_metrics: bool = True) -> List[EvaluationResult]:
         """
         Evaluate a RAG system on a set of queries
         
@@ -104,55 +103,47 @@ class RAGEvaluator:
             system_name: Name of the system being evaluated
             system: The actual system object with query method
             queries: List of query strings
-            retrieval_metrics: Whether to calculate retrieval-specific metrics
             content_metrics: Whether to calculate content quality metrics
-            efficiency_metrics: Whether to measure efficiency metrics
             
         Returns:
             List of EvaluationResult objects
         """
         system_name = system.system_name
         entries = []
+
+        if queries is None or len(queries) == 0:
+            print(f"No queries provided for evaluation of {system_name}.")
+            return entries
         
-        for query in queries:
+        if isinstance(queries[0], str):
+            # If queries are strings, convert to list of tuples with ground truth
+            queries = [(q, None) for q in queries]
+        
+        for query, ground_truth in queries:
             # Measure efficiency metrics
             start_time = time.time()
-            memory_before = self._get_memory_usage()
             
             # Get response from system
             response, retrieved_docs = self._get_system_response(system, query)
             
             # Calculate efficiency metrics
             latency = time.time() - start_time
-            memory_usage = self._get_memory_usage() - memory_before
             token_count = self._count_tokens(query, response)
             
             # Initialize metrics dictionary
             metrics = {
                 "latency": latency,
-                "memory_usage": memory_usage,
                 "token_count": token_count
             }
-            
-            # Calculate retrieval quality metrics if applicable
-            if retrieval_metrics:
-                retrieval_scores = self._calculate_retrieval_metrics(query, retrieved_docs)
-                metrics.update(retrieval_scores)
                 
             # Calculate content quality metrics if applicable
-            if content_metrics:
-                content_scores = self._calculate_content_metrics(query, response, retrieved_docs)
+            if content_metrics and self.use_llm_judge:
+                content_scores = self._calculate_content_metrics(query, ground_truth, response)
                 metrics.update(content_scores)
             
-            # Create entry
-            #entry = {
-            #    "question": query,
-            #    "response": response,
-            #    "retrieved_docs": retrieved_docs,
-            #    "metrics": metrics
-            #}
             entry = EvaluationEntry(
                 question=query,
+                ground_truth=ground_truth,
                 response=response,
                 retrieved_docs=retrieved_docs,
                 metrics=metrics
@@ -189,37 +180,13 @@ class RAGEvaluator:
             except Exception as e:
                 print(f"Error getting response from system: {e}")
                 return "", []
-
-    def _calculate_retrieval_metrics(self, query: str, retrieved_docs: List[str]) -> Dict[str, float]:
-        """Calculate retrieval quality metrics"""
-        # This implementation would depend on having relevance judgments for documents
-        # For now, returning placeholder values
-        return {
-            "precision_at_k": 0.0,
-            "recall_at_k": 0.0,
-            "mrr": 0.0,
-            "ndcg": 0.0
-        }
         
-    def _calculate_content_metrics(self, query: str, response: str, 
-                                  retrieved_docs: List[str]) -> Dict[str, float]:
+    def _calculate_content_metrics(self, query: str, ground_truth: str, response: str) -> Dict[str, float]:
         """Calculate content quality metrics using LLM-as-judge"""
-        if self.judge_model is None:
-            # Return placeholder scores if no judge model available
-            return {
-                "factual_correctness": 0.0,
-                "answer_relevance": 0.0,
-                "hallucination_score": 0.0,
-                "completeness": 0.0,
-                "coherence": 0.0
-            }
-            
-        # Example LLM-as-judge implementation
-        scores = self._llm_judge_evaluation(query, response, retrieved_docs)
+        scores = self._llm_judge_evaluation(query, ground_truth, response)
         return scores
         
-    def _llm_judge_evaluation(self, query: str, response: str, 
-                             retrieved_docs: List[str]) -> Dict[str, float]:
+    def _llm_judge_evaluation(self, query: str, ground_truth: str, response: str) -> Dict[str, float]:
         """
         Use an LLM to evaluate the quality of the response
         
@@ -227,7 +194,7 @@ class RAGEvaluator:
             Dictionary of scores for different quality dimensions
         """
         # Create prompt for LLM judge
-        prompt = self._create_judge_prompt(query, response, retrieved_docs)
+        prompt = self._create_judge_prompt(query, ground_truth, response)
         
         # Get evaluation from judge model
         # This implementation depends on your specific judge model
@@ -247,18 +214,15 @@ class RAGEvaluator:
                 "coherence": 0.0
             }
     
-    def _create_judge_prompt(self, query: str, response: str, 
-                            retrieved_docs: List[str]) -> str:
+    def _create_judge_prompt(self, query: str, ground_truth: str, response: str) -> str:
         """Create evaluation prompt for judge model"""
         # Construct context from retrieved documents
-        context = "\n\n".join([f"Document {i+1}: {doc}" for i, doc in enumerate(retrieved_docs)])
         
         prompt = f"""Evaluate the following response to a query. Rate each aspect on a scale of 1-10.
 
 Query: {query}
 
-Retrieved Context:
-{context}
+Ground Truth: {ground_truth}
 
 Response to Evaluate:
 {response}
@@ -272,40 +236,21 @@ Please evaluate the response on the following criteria:
 
 Provide your ratings in the following JSON format:
 ```json
-{
+{{
   "factual_correctness": 0,
   "answer_relevance": 0,
   "hallucination_score": 0,
   "completeness": 0,
   "coherence": 0
-}
+}}
 ```
 """
         return prompt
     
     def _get_judge_response(self, prompt: str) -> str:
         """Get evaluation from judge model"""
-        # This implementation depends on your specific judge model
-        # Example for OpenAI API:
-        """
-        client = OpenAI()
-        completion = client.chat.completions.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return completion.choices[0].message.content
-        """
-        
-        # Placeholder implementation
-        return """```json
-{
-  "factual_correctness": 7,
-  "answer_relevance": 8,
-  "hallucination_score": 6,
-  "completeness": 7,
-  "coherence": 8
-}
-```"""
+        return call_llm_assessment(prompt=prompt, max_tokens=100, temperature=0.0)
+
     
     def _parse_judge_scores(self, judge_response: str) -> Dict[str, float]:
         """Parse scores from judge response"""
@@ -313,12 +258,6 @@ Provide your ratings in the following JSON format:
         json_str = judge_response.split("```json")[1].split("```")[0].strip()
         scores = json.loads(json_str)
         return scores
-    
-    def _get_memory_usage(self) -> float:
-        """Get current memory usage"""
-        # This is a simplified implementation
-        # For real implementation, use psutil or resource libraries
-        return 0.0
     
     def _count_tokens(self, query: str, response: str) -> int:
         """Count tokens in query and response"""
@@ -377,7 +316,7 @@ Provide your ratings in the following JSON format:
 
 if __name__ == "__main__":
     # Initialize evaluator
-    evaluator = RAGEvaluator()
+    evaluator = RAGEvaluator(use_llm_judge=True)
     # no judge model for now
     #evaluator = RAGEvaluator(judge_model=your_judge_model)
 

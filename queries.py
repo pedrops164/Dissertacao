@@ -11,29 +11,89 @@ Each set is provided in both English and Portuguese (Portugal) for multilingual 
 
 # Factual retrieval queries - tests ability to retrieve specific facts accurately
 factual_queries_en = [
-    "What are the primary differences between transformer and recurrent neural networks?",
-    "How does PageRank algorithm work and what are its limitations?",
-    "What is the difference between L1 and L2 regularization in machine learning?",
-    "Explain how ROUGE and BLEU metrics evaluate text generation quality",
-    "What are the key components of BERT's architecture?",
-    "How does beam search differ from greedy decoding in sequence generation?",
-    "What is the mathematical formulation of attention mechanism in transformers?",
-    "Explain the differences between precision and recall in information retrieval",
-    "What are knowledge distillation techniques in deep learning?",
-    "How does few-shot learning differ from zero-shot learning in NLP?"
+    (
+        "What are the primary differences between transformer and recurrent neural networks?",
+        "Transformers process all tokens in a sequence simultaneously using self-attention mechanisms, allowing for parallelization and better long-range dependency modeling. Recurrent Neural Networks (RNNs), including LSTMs and GRUs, process input sequentially, which limits parallelism and makes capturing long-term dependencies more difficult. Transformers also use positional encoding to maintain order, while RNNs inherently maintain sequence order through recurrence."
+    ),
+    (
+        "How does PageRank algorithm work and what are its limitations?",
+        "PageRank is an algorithm that assigns a numerical weight to each webpage based on its importance, calculated iteratively using the link structure of the web. It models web navigation as a Markov chain, where the rank of a page is determined by the ranks of the pages linking to it. Limitations include susceptibility to link spam, inability to capture semantic relevance, and issues with ranking new or low-link pages. It also assumes equal likelihood of link-following, which may not reflect user behavior."
+    ),
+    #(
+    #    "What is the difference between L1 and L2 regularization in machine learning?",
+    #    "L1 regularization (Lasso) adds the absolute value of coefficients to the loss function, promoting sparsity and feature selection. L2 regularization (Ridge) adds the squared values of coefficients, encouraging smaller but non-zero weights. L1 can drive weights to zero, effectively removing features, while L2 generally shrinks weights without making them exactly zero. The choice between them depends on the problem, such as interpretability vs. smoothness."
+    #),
+    #(
+    #    "Explain how ROUGE and BLEU metrics evaluate text generation quality",
+    #    "ROUGE (Recall-Oriented Understudy for Gisting Evaluation) evaluates text by measuring overlap of n-grams, word sequences, and word pairs between generated and reference texts, focusing on recall. BLEU (Bilingual Evaluation Understudy) measures the precision of n-gram overlaps between the generated text and references, typically used in machine translation. BLEU penalizes short outputs through brevity penalty, while ROUGE is better for summarization where recall is more important."
+    #),
+    #(
+    #    "What are the key components of BERT's architecture?",
+    #    "BERT (Bidirectional Encoder Representations from Transformers) uses only the encoder stack of the original transformer architecture. Key components include multi-head self-attention layers, feed-forward neural networks, layer normalization, and residual connections. It is pre-trained using masked language modeling (MLM) and next sentence prediction (NSP) tasks. BERT is bidirectional, meaning it attends to both left and right context simultaneously, enabling deeper understanding of word meaning."
+    #),
+    #(
+    #    "How does beam search differ from greedy decoding in sequence generation?",
+    #    "Greedy decoding selects the highest probability token at each step, which can lead to suboptimal overall sequences. Beam search maintains multiple hypotheses (beams) at each time step, expanding and keeping the top-k sequences with the highest cumulative probability. This allows it to explore a larger space and typically results in more coherent and accurate outputs, though it is more computationally expensive than greedy decoding."
+    #),
+    #(
+    #    "What is the mathematical formulation of attention mechanism in transformers?",
+    #    "The scaled dot-product attention is formulated as: Attention(Q, K, V) = softmax(QK^T / √d_k) V, where Q (query), K (key), and V (value) are linear projections of the input embeddings, and d_k is the dimensionality of the key vectors. This computes attention weights by measuring the similarity between queries and keys, then applies them to the values to generate context-aware representations."
+    #),
+    #(
+    #    "Explain the differences between precision and recall in information retrieval",
+    #    "Precision is the ratio of relevant documents retrieved to the total retrieved (true positives / (true positives + false positives)), measuring accuracy. Recall is the ratio of relevant documents retrieved to the total relevant documents available (true positives / (true positives + false negatives)), measuring completeness. High precision means fewer irrelevant results; high recall means most relevant results are retrieved. They often trade off against each other."
+    #),
+    #(
+    #    "What are knowledge distillation techniques in deep learning?",
+    #    "Knowledge distillation involves training a smaller, more efficient student model to mimic the behavior of a larger, more complex teacher model. This is done by minimizing the difference between the student’s outputs and the soft targets (logits) produced by the teacher. Techniques include soft-label distillation, intermediate representation matching, and response-based or feature-based transfer. It enables model compression while retaining much of the performance of the original model."
+    #),
+    #(
+    #    "How does few-shot learning differ from zero-shot learning in NLP?",
+    #    "Few-shot learning involves training or adapting a model with a small number of labeled examples per class, while zero-shot learning requires the model to generalize to tasks or classes it has never seen before, based on semantic information or task descriptions. Zero-shot typically leverages pretrained models with natural language prompts or external knowledge. Few-shot relies on in-context learning or fine-tuning with minimal data."
+    #)
 ]
 
 factual_queries_pt = [
-    "Quais são as principais diferenças entre redes neuronais transformers e recorrentes?",
-    "Como funciona o algoritmo PageRank e quais são as suas limitações?",
-    "Qual é a diferença entre regularização L1 e L2 em aprendizagem automática?",
-    "Explique como as métricas ROUGE e BLEU avaliam a qualidade da geração de texto",
-    "Quais são os componentes principais da arquitetura BERT?",
-    "Como é que a pesquisa em feixe (beam search) difere da descodificação gulosa na geração de sequências?",
-    "Qual é a formulação matemática do mecanismo de atenção nos transformers?",
-    "Explique as diferenças entre precisão e recall na recuperação de informação",
-    "O que são técnicas de destilação de conhecimento em deep learning?",
-    "Como é que a aprendizagem few-shot difere da aprendizagem zero-shot em PNL?"
+    (
+        "Quais são as principais diferenças entre redes neuronais transformers e recorrentes?",
+        "Transformers processam todos os tokens de uma sequência simultaneamente usando mecanismos de autoatenção, o que permite paralelismo e melhor modelagem de dependências de longo prazo. Redes Neuronais Recorrentes (RNNs), incluindo LSTMs e GRUs, processam a entrada sequencialmente, limitando o paralelismo e dificultando a captura de dependências de longo alcance. Transformers usam codificações posicionais para manter a ordem, enquanto RNNs mantêm a ordem através da recorrência."
+    ),
+    (
+        "Como funciona o algoritmo PageRank e quais são as suas limitações?",
+        "PageRank é um algoritmo que atribui um peso numérico a cada página da web com base na sua importância, calculado iterativamente a partir da estrutura de links da web. Ele modela a navegação como uma cadeia de Markov, onde a importância de uma página depende da importância das páginas que apontam para ela. Suas limitações incluem suscetibilidade a spam de links, incapacidade de capturar relevância semântica, e dificuldade em classificar páginas novas ou com poucos links."
+    ),
+    (
+        "Qual é a diferença entre regularização L1 e L2 em aprendizagem automática?",
+        "A regularização L1 (Lasso) adiciona o valor absoluto dos coeficientes à função de perda, promovendo esparsidade e seleção de atributos. A regularização L2 (Ridge) adiciona o quadrado dos coeficientes, encorajando coeficientes menores porém não nulos. L1 pode zerar coeficientes, eliminando atributos, enquanto L2 tende a reduzi-los sem zerar. A escolha depende do problema, como interpretabilidade versus suavidade do modelo."
+    ),
+    (
+        "Explique como as métricas ROUGE e BLEU avaliam a qualidade da geração de texto",
+        "ROUGE (Recall-Oriented Understudy for Gisting Evaluation) mede a sobreposição de n-gramas, sequências e pares de palavras entre o texto gerado e referências, focando em recall. BLEU (Bilingual Evaluation Understudy) mede a precisão da sobreposição de n-gramas, normalmente em tradução automática. BLEU penaliza saídas muito curtas com uma penalidade de brevidade, enquanto ROUGE é mais usado em sumarização, onde o recall é mais importante."
+    ),
+    (
+        "Quais são os componentes principais da arquitetura BERT?",
+        "BERT (Bidirectional Encoder Representations from Transformers) utiliza apenas o codificador (encoder) do transformador original. Seus componentes principais incluem camadas de autoatenção multi-cabeça, redes neurais feed-forward, normalização de camadas e conexões residuais. É pré-treinado com tarefas de modelagem de linguagem mascarada (MLM) e predição da próxima sentença (NSP). O BERT é bidirecional, considerando simultaneamente o contexto à esquerda e à direita."
+    ),
+    (
+        "Como é que a pesquisa em feixe (beam search) difere da descodificação gulosa na geração de sequências?",
+        "A descodificação gulosa escolhe o token de maior probabilidade em cada passo, podendo resultar em sequências subótimas. A pesquisa em feixe (beam search) mantém múltiplas hipóteses (feixes) a cada etapa, expandindo e retendo as sequências com maior probabilidade cumulativa. Isso permite uma busca mais ampla e geralmente produz saídas mais coerentes, embora com maior custo computacional."
+    ),
+    (
+        "Qual é a formulação matemática do mecanismo de atenção nos transformers?",
+        "A atenção por produto escalar escalado é formulada como: Attention(Q, K, V) = softmax(QK^T / √d_k) V, onde Q (queries), K (keys) e V (values) são projeções lineares dos embeddings de entrada, e d_k é a dimensionalidade dos vetores-chave. A atenção é calculada como a similaridade entre consultas e chaves, aplicada aos valores para gerar representações contextualizadas."
+    ),
+    (
+        "Explique as diferenças entre precisão e recall na recuperação de informação",
+        "Precisão é a razão entre os documentos relevantes recuperados e o total de documentos recuperados (verdadeiros positivos / (verdadeiros positivos + falsos positivos)), medindo a exatidão. Recall é a razão entre os documentos relevantes recuperados e o total de documentos relevantes existentes (verdadeiros positivos / (verdadeiros positivos + falsos negativos)), medindo a completude. Alta precisão significa menos resultados irrelevantes; alto recall significa mais resultados relevantes foram encontrados."
+    ),
+    (
+        "O que são técnicas de destilação de conhecimento em deep learning?",
+        "A destilação de conhecimento envolve treinar um modelo menor e mais eficiente (aluno) para imitar o comportamento de um modelo maior e mais complexo (professor). Isso é feito minimizando a diferença entre as saídas do aluno e as saídas suaves (logits) do professor. As técnicas incluem destilação de rótulos suaves, correspondência de representações intermediárias e transferência baseada em resposta ou características. Isso permite compressão de modelos com manutenção de desempenho."
+    ),
+    (
+        "Como é que a aprendizagem few-shot difere da aprendizagem zero-shot em PNL?",
+        "Aprendizagem few-shot envolve treinar ou adaptar um modelo com poucos exemplos rotulados por classe. Zero-shot requer que o modelo generalize para tarefas ou classes nunca vistas antes, usando informações semânticas ou descrições da tarefa. Zero-shot geralmente usa modelos pré-treinados com prompts em linguagem natural ou conhecimento externo. Few-shot pode usar aprendizado em contexto ou fine-tuning com dados mínimos."
+    )
 ]
 
 # Reasoning queries - tests logical reasoning and inference capability
