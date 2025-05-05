@@ -3,3 +3,4 @@ chroma_db_gigaverbo/*
 __pycache__/*
 *.log
 .env
+*.json

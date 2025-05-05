@@ -1,11 +1,14 @@
 # This is the implementation of the base LLM, without any RAG.
 from llm_client import openai_client
+import time
 
 def generate_response_no_rag(query):
     """
     This function takes a query as input and returns a response from the base LLM.
     It uses the OpenAI API to get the response.
     """
+    print(f"\n--- Starting No-RAG Process for Query: '{query}' ---")
+    start_time = time.time()
 
     # Get the response from the OpenAI API
     response = openai_client.chat.completions.create(
@@ -17,10 +20,11 @@ def generate_response_no_rag(query):
         stop=None,
     )
 
-
     # Extract the text from the response
     text = response.choices[0].message.content
 
+    end_time = time.time()
+    print(f"\n--- No-RAG Process Completed in {end_time - start_time:.2f} seconds ---")
     return text
 
 if __name__ == "__main__":

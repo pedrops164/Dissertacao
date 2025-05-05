@@ -1,0 +1,416 @@
+"""
+evaluation.py - Framework for evaluating LLM and RAG systems
+This file provides functions and classes to evaluate and compare different RAG implementations:
+- Basic LLM
+- Self-RAG
+- Fusion RAG
+- CRAG
+
+It includes automated metrics and LLM-as-judge evaluation approaches.
+"""
+
+import json
+import time
+import numpy as np
+from typing import List, Dict, Any, Tuple, Optional
+from dataclasses import dataclass
+from llm_system import LLMSystem
+
+# Import needed libraries for the specific implementat
+# import torch
+# from transformers import AutoModelForCausalLM, AutoTokenizer
+# from openai import OpenAI
+# Add specific imports for your RAG implementations
+
+# Define evaluation result data structure
+@dataclass
+class EvaluationEntry:
+    """A single evaluation entry for a specific question"""
+    question: str
+    response: str
+    retrieved_docs: List[str]
+    metrics: Dict[str, float]
+    
+    def to_dict(self):
+        return {
+            "question": self.question,
+            "response": self.response,
+            "retrieved_docs": self.retrieved_docs,
+            "metrics": self.metrics
+        }
+
+@dataclass
+class EvaluationResult:
+    """Collection of evaluation entries for a system"""
+    system_name: str
+    entries: List[EvaluationEntry]
+    avg_metrics: Dict[str, float] = None
+    
+    def __post_init__(self):
+        """Calculate average metrics across all entries if not provided"""
+        if self.avg_metrics is None:
+            self.calculate_avg_metrics()
+    
+    def calculate_avg_metrics(self):
+        """Calculate average metrics across all entries"""
+        if not self.entries:
+            self.avg_metrics = {}
+            return
+            
+        # Get all metric keys
+        all_metrics = set()
+        for entry in self.entries:
+            all_metrics.update(entry.metrics.keys())
+            
+        # Calculate average for each metric
+        self.avg_metrics = {}
+        for metric in all_metrics:
+            values = [entry.metrics.get(metric, 0.0) for entry in self.entries if metric in entry.metrics]
+            if values:
+                self.avg_metrics[metric] = sum(values) / len(values)
+            else:
+                self.avg_metrics[metric] = 0.0
+            
+    def to_dict(self):
+        """Convert the result to a dictionary for serialization"""
+        return {
+            "system_name": self.system_name,
+            "entries": [entry.to_dict() for entry in self.entries],
+            "avg_metrics": self.avg_metrics
+        }
+
+class RAGEvaluator:
+    """Framework for evaluating and comparing RAG systems"""
+    
+    def __init__(self, judge_model=None, ground_truth=None):
+        """
+        Initialize the evaluator
+        
+        Args:
+            judge_model: Model to use for LLM-as-judge evaluations
+            ground_truth: Dictionary mapping questions to gold standard answers
+        """
+        self.judge_model = judge_model
+        self.ground_truth = ground_truth
+        self.results = {}
+        
+    def evaluate_system(self, system: LLMSystem, queries: List[str], 
+                       retrieval_metrics: bool = True, content_metrics: bool = True,
+                       efficiency_metrics: bool = True) -> List[EvaluationResult]:
+        """
+        Evaluate a RAG system on a set of queries
+        
+        Args:
+            system_name: Name of the system being evaluated
+            system: The actual system object with query method
+            queries: List of query strings
+            retrieval_metrics: Whether to calculate retrieval-specific metrics
+            content_metrics: Whether to calculate content quality metrics
+            efficiency_metrics: Whether to measure efficiency metrics
+            
+        Returns:
+            List of EvaluationResult objects
+        """
+        system_name = system.system_name
+        entries = []
+        
+        for query in queries:
+            # Measure efficiency metrics
+            start_time = time.time()
+            memory_before = self._get_memory_usage()
+            
+            # Get response from system
+            response, retrieved_docs = self._get_system_response(system, query)
+            
+            # Calculate efficiency metrics
+            latency = time.time() - start_time
+            memory_usage = self._get_memory_usage() - memory_before
+            token_count = self._count_tokens(query, response)
+            
+            # Initialize metrics dictionary
+            metrics = {
+                "latency": latency,
+                "memory_usage": memory_usage,
+                "token_count": token_count
+            }
+            
+            # Calculate retrieval quality metrics if applicable
+            if retrieval_metrics:
+                retrieval_scores = self._calculate_retrieval_metrics(query, retrieved_docs)
+                metrics.update(retrieval_scores)
+                
+            # Calculate content quality metrics if applicable
+            if content_metrics:
+                content_scores = self._calculate_content_metrics(query, response, retrieved_docs)
+                metrics.update(content_scores)
+            
+            # Create entry
+            #entry = {
+            #    "question": query,
+            #    "response": response,
+            #    "retrieved_docs": retrieved_docs,
+            #    "metrics": metrics
+            #}
+            entry = EvaluationEntry(
+                question=query,
+                response=response,
+                retrieved_docs=retrieved_docs,
+                metrics=metrics
+            )
+            
+            entries.append(entry)
+           
+        # Create result with all entries
+        result = EvaluationResult(
+            system_name=system_name,
+            entries=entries
+        )
+         
+        self.results[system_name] = result
+        return result
+
+    def _get_system_response(self, system, query: str) -> Tuple[str, List[str]]:
+        """
+        Get response from a system, handling different implementations
+        
+        Returns:
+            Tuple of (response_text, retrieved_documents)
+        """
+        # This needs to be adapted to your specific system implementations
+        try:
+            # Example for systems that return both response and retrieved docs
+            response, retrieved_docs = system.query(query)
+            return response, retrieved_docs
+        except Exception as e:
+            # Fallback for systems that only return response
+            try:
+                response = system.query(query)
+                return response, []
+            except Exception as e:
+                print(f"Error getting response from system: {e}")
+                return "", []
+
+    def _calculate_retrieval_metrics(self, query: str, retrieved_docs: List[str]) -> Dict[str, float]:
+        """Calculate retrieval quality metrics"""
+        # This implementation would depend on having relevance judgments for documents
+        # For now, returning placeholder values
+        return {
+            "precision_at_k": 0.0,
+            "recall_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg": 0.0
+        }
+        
+    def _calculate_content_metrics(self, query: str, response: str, 
+                                  retrieved_docs: List[str]) -> Dict[str, float]:
+        """Calculate content quality metrics using LLM-as-judge"""
+        if self.judge_model is None:
+            # Return placeholder scores if no judge model available
+            return {
+                "factual_correctness": 0.0,
+                "answer_relevance": 0.0,
+                "hallucination_score": 0.0,
+                "completeness": 0.0,
+                "coherence": 0.0
+            }
+            
+        # Example LLM-as-judge implementation
+        scores = self._llm_judge_evaluation(query, response, retrieved_docs)
+        return scores
+        
+    def _llm_judge_evaluation(self, query: str, response: str, 
+                             retrieved_docs: List[str]) -> Dict[str, float]:
+        """
+        Use an LLM to evaluate the quality of the response
+        
+        Returns:
+            Dictionary of scores for different quality dimensions
+        """
+        # Create prompt for LLM judge
+        prompt = self._create_judge_prompt(query, response, retrieved_docs)
+        
+        # Get evaluation from judge model
+        # This implementation depends on your specific judge model
+        judge_response = self._get_judge_response(prompt)
+        
+        # Parse scores from judge response
+        try:
+            scores = self._parse_judge_scores(judge_response)
+            return scores
+        except Exception as e:
+            print(f"Error parsing judge scores: {e}")
+            return {
+                "factual_correctness": 0.0,
+                "answer_relevance": 0.0,
+                "hallucination_score": 0.0,
+                "completeness": 0.0,
+                "coherence": 0.0
+            }
+    
+    def _create_judge_prompt(self, query: str, response: str, 
+                            retrieved_docs: List[str]) -> str:
+        """Create evaluation prompt for judge model"""
+        # Construct context from retrieved documents
+        context = "\n\n".join([f"Document {i+1}: {doc}" for i, doc in enumerate(retrieved_docs)])
+        
+        prompt = f"""Evaluate the following response to a query. Rate each aspect on a scale of 1-10.
+
+Query: {query}
+
+Retrieved Context:
+{context}
+
+Response to Evaluate:
+{response}
+
+Please evaluate the response on the following criteria:
+1. Factual Correctness (1-10): Is the information in the response factually accurate according to the retrieved context?
+2. Answer Relevance (1-10): How relevant is the response to the query?
+3. Hallucination (1-10): Does the response contain information not supported by the retrieved context? (10 = no hallucination, 1 = completely hallucinated)
+4. Completeness (1-10): Does the response address all aspects of the query?
+5. Coherence (1-10): Is the response well-structured, logical, and easy to understand?
+
+Provide your ratings in the following JSON format:
+```json
+{
+  "factual_correctness": 0,
+  "answer_relevance": 0,
+  "hallucination_score": 0,
+  "completeness": 0,
+  "coherence": 0
+}
+```
+"""
+        return prompt
+    
+    def _get_judge_response(self, prompt: str) -> str:
+        """Get evaluation from judge model"""
+        # This implementation depends on your specific judge model
+        # Example for OpenAI API:
+        """
+        client = OpenAI()
+        completion = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return completion.choices[0].message.content
+        """
+        
+        # Placeholder implementation
+        return """```json
+{
+  "factual_correctness": 7,
+  "answer_relevance": 8,
+  "hallucination_score": 6,
+  "completeness": 7,
+  "coherence": 8
+}
+```"""
+    
+    def _parse_judge_scores(self, judge_response: str) -> Dict[str, float]:
+        """Parse scores from judge response"""
+        # Extract JSON from response
+        json_str = judge_response.split("```json")[1].split("```")[0].strip()
+        scores = json.loads(json_str)
+        return scores
+    
+    def _get_memory_usage(self) -> float:
+        """Get current memory usage"""
+        # This is a simplified implementation
+        # For real implementation, use psutil or resource libraries
+        return 0.0
+    
+    def _count_tokens(self, query: str, response: str) -> int:
+        """Count tokens in query and response"""
+        # This is a simplified implementation
+        # For real implementation, use tokenizer from your LLM
+        return len(query.split()) + len(response.split())
+    
+    def compare_systems(self, system_names: List[str] = None) -> Dict[str, Dict[str, float]]:
+        """
+        Compare multiple systems across all metrics
+        
+        Args:
+            system_names: List of system names to compare (None for all)
+            
+        Returns:
+            Dictionary with average scores for each system and metric
+        """
+        if not self.results:
+            return {}
+            
+        if system_names is None:
+            system_names = list(self.results.keys())
+            
+        comparison = {}
+        
+        for system_name in system_names:
+            system_result = self.results.get(system_name, None)
+            
+            if not system_result:
+                continue
+                
+            comparison[system_name] = system_result.avg_metrics
+            
+        return comparison
+    
+    def save_results(self, output_file: str):
+        """Save evaluation results to file"""
+        with open(output_file, 'w') as f:
+            json.dump([r.to_dict() for r in list(self.results.values())], f, indent=2)
+    
+    def load_results(self, input_file: str):
+        """Load evaluation results from file"""
+        with open(input_file, 'r') as f:
+            data = json.load(f)
+            
+        self.results = []
+        for item in data:
+            result = EvaluationResult(
+                system_name=item["system_name"],
+                question=item["question"],
+                response=item["response"],
+                retrieved_docs=item["retrieved_docs"],
+                metrics=item["metrics"]
+            )
+            self.results.append(result)
+
+if __name__ == "__main__":
+    # Initialize evaluator
+    evaluator = RAGEvaluator()
+    # no judge model for now
+    #evaluator = RAGEvaluator(judge_model=your_judge_model)
+
+    # Import queries
+    from queries import factual_queries_en, reasoning_queries_en
+    from llm_system import NoRAGSystem, SelfRAGSystem, FusionRAGSystem, CRAGRAGSystem
+
+    no_rag_system = NoRAGSystem("No-RAG System")
+    self_rag_system = SelfRAGSystem("Self-RAG System")
+    #fusion_rag_system = FusionRAGSystem("Fusion-RAG System")
+    #crag_rag_system = CRAGRAGSystem("CRAG-RAG System")
+
+    print("Evaluating systems...")
+
+    # Evaluate basic LLM
+    basic_llm_results = evaluator.evaluate_system(
+        no_rag_system,
+        factual_queries_en
+    )
+
+    print("Basic LLM evaluation complete.")
+
+    # Evaluate Self-RAG
+    self_rag_results = evaluator.evaluate_system(
+        self_rag_system,
+        factual_queries_en
+    )
+
+    print("Self-RAG evaluation complete.")
+
+    # Compare systems
+    comparison = evaluator.compare_systems()
+    print(json.dumps(comparison, indent=2))
+
+    # Save results
+    evaluator.save_results("rag_evaluation_results.json")
