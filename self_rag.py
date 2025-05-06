@@ -1,16 +1,14 @@
-import re
 import time
 from llm_client import call_llm_assessment # Your LLM client setup
 from vector_database import retrieve_context # Hybrid search + RRF context retrieval
 from prompts import get_self_rag_retrieval_prompt, get_self_rag_critique_prompt, get_self_rag_generation_prompt_message, get_self_rag_critique_answer_prompt # Your prompt setup
-
-prompts_lang = "en" # Set the default language for prompts
+from config import config
 
 # --- Configuration ---
 # How many initial documents to retrieve before critique/filtering
-SELF_RAG_RETRIEVAL_K = 7
+SELF_RAG_RETRIEVAL_K = config.get("SELF_RAG_RETRIEVAL_K") # Get the language from config
 # How many relevant documents to finally use for generation context
-SELF_RAG_FINAL_CONTEXT_N = 3
+SELF_RAG_FINAL_CONTEXT_N = config.get("SELF_RAG_FINAL_CONTEXT_N") # Get the language from config
 
 # --- Self-RAG Core Logic ---
 
@@ -31,7 +29,7 @@ def generate_response_self_rag(query):
 
     # --- Step 1: Decide if Retrieval is Necessary ---
     print("\n[Step 1/5] Deciding if retrieval is needed...")
-    retrieval_prompt = get_self_rag_retrieval_prompt(query, prompts_lang)
+    retrieval_prompt = get_self_rag_retrieval_prompt(query)
     decision = call_llm_assessment(retrieval_prompt, max_tokens=10)
     print(f"  > LLM Decision on Retrieval: {decision}")
 
@@ -70,7 +68,7 @@ def generate_response_self_rag(query):
         relevant_docs = []
         for i, doc_text in enumerate(retrieved_docs):
             if not doc_text: continue
-            critique_prompt = get_self_rag_critique_prompt(query, doc_text, prompts_lang)
+            critique_prompt = get_self_rag_critique_prompt(query, doc_text)
             critique = call_llm_assessment(critique_prompt, max_tokens=10)
             print(f"  > Critiquing Doc {i+1}: Result = {critique}")
             if critique and "IRRELEVANT" not in critique.upper():
@@ -90,7 +88,7 @@ def generate_response_self_rag(query):
 
     # --- Step 4: Generate Answer ---
     print("\n[Step 4/5] Generating answer...")
-    generation_prompt_message = get_self_rag_generation_prompt_message(query, filtered_context, prompts_lang)
+    generation_prompt_message = get_self_rag_generation_prompt_message(query, filtered_context)
 
     try:
         generated_answer = call_llm_assessment(generation_prompt=generation_prompt_message, max_tokens=500, temperature=0.1)
@@ -102,7 +100,7 @@ def generate_response_self_rag(query):
 
     # --- Step 5: Critique Generated Answer (Self-Reflection) ---
     print("\n[Step 5/5] Critiquing generated answer...")
-    critique_answer_prompt = get_self_rag_critique_answer_prompt(query, filtered_context, generated_answer, prompts_lang)
+    critique_answer_prompt = get_self_rag_critique_answer_prompt(query, filtered_context, generated_answer)
     final_critique = call_llm_assessment(critique_answer_prompt, max_tokens=10)
     print(f"  > Final Answer Critique Result: {final_critique}")
 

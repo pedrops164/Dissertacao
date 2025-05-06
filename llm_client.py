@@ -1,12 +1,11 @@
-import os
+from config import config
 from openai import OpenAI
-from dotenv import load_dotenv
-# Load environment variables from .env file
-load_dotenv()
+
+nebius_api_key = config.get("nebius_api_key")
 
 openai_client = OpenAI(
     base_url="https://api.studio.nebius.com/v1/",
-    api_key=os.getenv("NEBIUS_API_KEY")  # Retrieve the API key from environment variables
+    api_key=nebius_api_key
 )
 
 # --- Helper for LLM Assessment Call ---

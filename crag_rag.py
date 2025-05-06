@@ -10,8 +10,6 @@ import logging
 import json
 from prompts import get_crag_assessment_prompt, get_crag_rewrite_prompt
 
-prompts_lang = "en" # Set the default language for prompts
-
 # --- Logging Setup ---
 # Create logger
 logger = logging.getLogger('CorrectiveRAG')
@@ -68,7 +66,7 @@ def assess_context_relevance(query, context=None):
     # Limit context length for the assessment prompt
     context_snippet = context[:2000] # Use first 2000 chars for assessment
 
-    assessment_prompt = get_crag_assessment_prompt(query, context_snippet, prompts_lang)
+    assessment_prompt = get_crag_assessment_prompt(query, context_snippet)
 
     decision_str = call_llm_assessment(assessment_prompt)
 
@@ -103,7 +101,7 @@ def rewrite_query_for_websearch(query):
         str: Rewritten query optimized for web search, or the original query on failure.
     """
 
-    rewrite_prompt = get_crag_rewrite_prompt(query, prompts_lang)
+    rewrite_prompt = get_crag_rewrite_prompt(query)
 
     # Use the generic LLM helper
     rewritten_query = call_llm_assessment(rewrite_prompt, max_tokens=60, temperature=0.0)

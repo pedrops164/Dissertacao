@@ -17,12 +17,6 @@ from dataclasses import dataclass
 from llm_system import LLMSystem
 from llm_client import call_llm_assessment
 
-# Import needed libraries for the specific implementat
-# import torch
-# from transformers import AutoModelForCausalLM, AutoTokenizer
-# from openai import OpenAI
-# Add specific imports for your RAG implementations
-
 # Define evaluation result data structure
 @dataclass
 class EvaluationEntry:
@@ -167,19 +161,21 @@ class RAGEvaluator:
         Returns:
             Tuple of (response_text, retrieved_documents)
         """
-        # This needs to be adapted to your specific system implementations
         try:
-            # Example for systems that return both response and retrieved docs
-            response, retrieved_docs = system.query(query)
-            return response, retrieved_docs
+            # Make a single call to the system
+            result = system.query(query)
+            
+            # Check if the result is already a tuple with two elements
+            if isinstance(result, tuple) and len(result) == 2:
+                response, retrieved_docs = result
+                return response, retrieved_docs
+            else:
+                # If it's not a tuple, assume it's just the response
+                return result, []
+                
         except Exception as e:
-            # Fallback for systems that only return response
-            try:
-                response = system.query(query)
-                return response, []
-            except Exception as e:
-                print(f"Error getting response from system: {e}")
-                return "", []
+            print(f"Error getting response from system: {e}")
+            return "", []
         
     def _calculate_content_metrics(self, query: str, ground_truth: str, response: str) -> Dict[str, float]:
         """Calculate content quality metrics using LLM-as-judge"""

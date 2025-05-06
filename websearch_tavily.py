@@ -2,19 +2,10 @@
 from tavily import TavilyClient # Import Tavily client
 
 import os
-
-# --- Environment Variable Loading (Optional but recommended) ---
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-    print("Loaded environment variables from .env file.")
-except ImportError:
-    print("dotenv library not found, ensure TAVILY_API_KEY is set manually.")
+from config import config
 
 # --- Configuration ---
-TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
-if not TAVILY_API_KEY:
-    raise ValueError("TAVILY_API_KEY environment variable not set.") # Or raise an error
+TAVILY_API_KEY = config.get("tavily_api_key") # Get Tavily API key from config
 
 # Initialize Tavily Client (only if API key exists)
 tavily_client = TavilyClient(api_key=TAVILY_API_KEY) if TAVILY_API_KEY else None
