@@ -6,7 +6,6 @@ This file contains various sets of queries designed to test and compare differen
 - Fusion RAG
 - CRAG
 
-Each set is provided in both English and Portuguese (Portugal) for multilingual testing.
 """
 
 # Factual retrieval queries - tests ability to retrieve specific facts accurately
@@ -53,49 +52,6 @@ factual_queries_en = [
     #)
 ]
 
-factual_queries_pt = [
-    (
-        "Quais são as principais diferenças entre redes neuronais transformers e recorrentes?",
-        "Transformers processam todos os tokens de uma sequência simultaneamente usando mecanismos de autoatenção, o que permite paralelismo e melhor modelagem de dependências de longo prazo. Redes Neuronais Recorrentes (RNNs), incluindo LSTMs e GRUs, processam a entrada sequencialmente, limitando o paralelismo e dificultando a captura de dependências de longo alcance. Transformers usam codificações posicionais para manter a ordem, enquanto RNNs mantêm a ordem através da recorrência."
-    ),
-    (
-        "Como funciona o algoritmo PageRank e quais são as suas limitações?",
-        "PageRank é um algoritmo que atribui um peso numérico a cada página da web com base na sua importância, calculado iterativamente a partir da estrutura de links da web. Ele modela a navegação como uma cadeia de Markov, onde a importância de uma página depende da importância das páginas que apontam para ela. Suas limitações incluem suscetibilidade a spam de links, incapacidade de capturar relevância semântica, e dificuldade em classificar páginas novas ou com poucos links."
-    ),
-    (
-        "Qual é a diferença entre regularização L1 e L2 em aprendizagem automática?",
-        "A regularização L1 (Lasso) adiciona o valor absoluto dos coeficientes à função de perda, promovendo esparsidade e seleção de atributos. A regularização L2 (Ridge) adiciona o quadrado dos coeficientes, encorajando coeficientes menores porém não nulos. L1 pode zerar coeficientes, eliminando atributos, enquanto L2 tende a reduzi-los sem zerar. A escolha depende do problema, como interpretabilidade versus suavidade do modelo."
-    ),
-    (
-        "Explique como as métricas ROUGE e BLEU avaliam a qualidade da geração de texto",
-        "ROUGE (Recall-Oriented Understudy for Gisting Evaluation) mede a sobreposição de n-gramas, sequências e pares de palavras entre o texto gerado e referências, focando em recall. BLEU (Bilingual Evaluation Understudy) mede a precisão da sobreposição de n-gramas, normalmente em tradução automática. BLEU penaliza saídas muito curtas com uma penalidade de brevidade, enquanto ROUGE é mais usado em sumarização, onde o recall é mais importante."
-    ),
-    (
-        "Quais são os componentes principais da arquitetura BERT?",
-        "BERT (Bidirectional Encoder Representations from Transformers) utiliza apenas o codificador (encoder) do transformador original. Seus componentes principais incluem camadas de autoatenção multi-cabeça, redes neurais feed-forward, normalização de camadas e conexões residuais. É pré-treinado com tarefas de modelagem de linguagem mascarada (MLM) e predição da próxima sentença (NSP). O BERT é bidirecional, considerando simultaneamente o contexto à esquerda e à direita."
-    ),
-    (
-        "Como é que a pesquisa em feixe (beam search) difere da descodificação gulosa na geração de sequências?",
-        "A descodificação gulosa escolhe o token de maior probabilidade em cada passo, podendo resultar em sequências subótimas. A pesquisa em feixe (beam search) mantém múltiplas hipóteses (feixes) a cada etapa, expandindo e retendo as sequências com maior probabilidade cumulativa. Isso permite uma busca mais ampla e geralmente produz saídas mais coerentes, embora com maior custo computacional."
-    ),
-    (
-        "Qual é a formulação matemática do mecanismo de atenção nos transformers?",
-        "A atenção por produto escalar escalado é formulada como: Attention(Q, K, V) = softmax(QK^T / √d_k) V, onde Q (queries), K (keys) e V (values) são projeções lineares dos embeddings de entrada, e d_k é a dimensionalidade dos vetores-chave. A atenção é calculada como a similaridade entre consultas e chaves, aplicada aos valores para gerar representações contextualizadas."
-    ),
-    (
-        "Explique as diferenças entre precisão e recall na recuperação de informação",
-        "Precisão é a razão entre os documentos relevantes recuperados e o total de documentos recuperados (verdadeiros positivos / (verdadeiros positivos + falsos positivos)), medindo a exatidão. Recall é a razão entre os documentos relevantes recuperados e o total de documentos relevantes existentes (verdadeiros positivos / (verdadeiros positivos + falsos negativos)), medindo a completude. Alta precisão significa menos resultados irrelevantes; alto recall significa mais resultados relevantes foram encontrados."
-    ),
-    (
-        "O que são técnicas de destilação de conhecimento em deep learning?",
-        "A destilação de conhecimento envolve treinar um modelo menor e mais eficiente (aluno) para imitar o comportamento de um modelo maior e mais complexo (professor). Isso é feito minimizando a diferença entre as saídas do aluno e as saídas suaves (logits) do professor. As técnicas incluem destilação de rótulos suaves, correspondência de representações intermediárias e transferência baseada em resposta ou características. Isso permite compressão de modelos com manutenção de desempenho."
-    ),
-    (
-        "Como é que a aprendizagem few-shot difere da aprendizagem zero-shot em PNL?",
-        "Aprendizagem few-shot envolve treinar ou adaptar um modelo com poucos exemplos rotulados por classe. Zero-shot requer que o modelo generalize para tarefas ou classes nunca vistas antes, usando informações semânticas ou descrições da tarefa. Zero-shot geralmente usa modelos pré-treinados com prompts em linguagem natural ou conhecimento externo. Few-shot pode usar aprendizado em contexto ou fine-tuning com dados mínimos."
-    )
-]
-
 # Reasoning queries - tests logical reasoning and inference capability
 reasoning_queries_en = [
     "How would RAG systems handle contradictory information from different sources?",
@@ -108,19 +64,6 @@ reasoning_queries_en = [
     "How might RAG architectures evolve to handle multimodal queries?",
     "What techniques could improve RAG performance on minority languages with limited data?",
     "How can we measure and minimize hallucinations in RAG systems?"
-]
-
-reasoning_queries_pt = [
-    "Como é que os sistemas RAG lidam com informações contraditórias de diferentes fontes?",
-    "Quais são as implicações éticas de utilizar sistemas RAG que possam alucinar factos?",
-    "Compare e contraste a eficiência de diferentes métodos de indexação para bases de dados vetoriais",
-    "Como é que os modelos de embeddings podem introduzir enviesamentos nos sistemas RAG?",
-    "Que abordagens poderiam resolver o problema da informação desatualizada em sistemas RAG?",
-    "Como podemos avaliar se um sistema RAG realmente compreende relações semânticas?",
-    "Quais são os compromissos computacionais entre a recuperação ao nível do token e ao nível da passagem?",
-    "Como poderão as arquiteturas RAG evoluir para lidar com consultas multimodais?",
-    "Que técnicas poderiam melhorar o desempenho do RAG em línguas minoritárias com dados limitados?",
-    "Como podemos medir e minimizar alucinações em sistemas RAG?"
 ]
 
 # Ambiguous queries - tests handling of vagueness and clarification capability
@@ -137,19 +80,6 @@ ambiguous_queries_en = [
     "What are the limitations of current approaches?"
 ]
 
-ambiguous_queries_pt = [
-    "Quais são as melhores abordagens para bases de dados vetoriais?",
-    "Como funciona a recuperação?",
-    "Pode explicar embeddings?",
-    "O que é melhor para sistemas RAG?",
-    "Como avaliar as saídas de LLM?",
-    "Fale-me sobre janelas de contexto",
-    "O que devo considerar ao construir um sistema RAG?",
-    "Como é que os transformers lidam com documentos longos?",
-    "Qual arquitetura de modelo é superior?",
-    "Quais são as limitações das abordagens atuais?"
-]
-
 # Complex queries - test ability to handle multi-part questions and synthesize information
 complex_queries_en = [
     "Compare the performance implications of using sparse vs dense retrievers, and explain when you would choose one over the other in production RAG systems",
@@ -162,19 +92,6 @@ complex_queries_en = [
     "Analyze how query expansion techniques and hybrid search methods can improve RAG performance for queries with low lexical overlap with the corpus",
     "Explain the role of fine-tuning in improving RAG system performance, including which components benefit most from fine-tuning and what datasets would be most appropriate",
     "Discuss strategies for handling evolving knowledge bases in RAG systems, including efficient reindexing approaches and incremental updating mechanisms"
-]
-
-complex_queries_pt = [
-    "Compare as implicações de desempenho de utilizar recuperadores esparsos vs densos, e explique quando escolheria um em detrimento do outro em sistemas RAG de produção",
-    "Explique como diferentes estratégias de segmentação afetam o desempenho do RAG, fornecendo exemplos específicos de quando a segmentação ao nível da frase, do parágrafo e semântica seria mais apropriada",
-    "Analise o impacto da engenharia de prompts na qualidade das saídas RAG, e forneça exemplos específicos de técnicas de prompt eficazes para diferentes tipos de tarefas de recuperação",
-    "Discuta as diferenças arquitetónicas entre as implementações Self-RAG, Fusion RAG e CRAG, incluindo as suas vantagens únicas e potenciais modos de falha",
-    "Explique como a seleção do modelo de embedding impacta o desempenho RAG em diferentes domínios, e recomende modelos de embedding específicos para documentação técnica, textos jurídicos e dados conversacionais",
-    "Compare estratégias de reclassificação para sistemas RAG e explique como a fusão de classificação recíproca difere da reclassificação de codificador cruzado em termos de sobrecarga computacional e eficácia",
-    "Descreva métodos para avaliar alucinações em sistemas RAG, incluindo métricas automatizadas e abordagens de avaliação humana, com os seus respetivos pontos fortes e limitações",
-    "Analise como técnicas de expansão de consultas e métodos de pesquisa híbrida podem melhorar o desempenho RAG para consultas com baixa sobreposição lexical com o corpus",
-    "Explique o papel do fine-tuning na melhoria do desempenho do sistema RAG, incluindo quais componentes beneficiam mais do fine-tuning e quais conjuntos de dados seriam mais apropriados",
-    "Discuta estratégias para lidar com bases de conhecimento em evolução em sistemas RAG, incluindo abordagens eficientes de reindexação e mecanismos de atualização incremental"
 ]
 
 # Technical specific queries - test domain expertise and technical depth
@@ -191,19 +108,6 @@ technical_queries_en = [
     "What techniques are used to mitigate catastrophic forgetting in retrieval-augmented language models?"
 ]
 
-technical_queries_pt = [
-    "Explique como funciona a indexação HNSW em bases de dados vetoriais e as suas características de desempenho em comparação com índices planos",
-    "Quais são as limitações do BM25 para pesquisa semântica e como é que os recuperadores híbridos abordam estas limitações?",
-    "Como é que o mecanismo de atenção lida com o problema de complexidade quadrática nos transformers?",
-    "Descreva as diferenças entre bi-encoders e cross-encoders em sistemas de recuperação de informação",
-    "Como é que abordagens de aprendizagem contrastiva como SimCSE melhoram a qualidade dos embeddings para recuperação?",
-    "Quais são os estrangulamentos computacionais na implementação de RLHF para sistemas RAG?",
-    "Explique como a quantização afeta o desempenho e a precisão dos modelos de embedding na recuperação",
-    "Quais são as abordagens atuais para lidar com raciocínio temporal em sistemas RAG?",
-    "Como é que as arquiteturas de recuperação de interação tardia como ColBERT diferem da recuperação densa tradicional?",
-    "Que técnicas são utilizadas para mitigar o esquecimento catastrófico em modelos de linguagem aumentados por recuperação?"
-]
-
 # Edge case queries - test robustness to unusual or challenging queries
 edge_case_queries_en = [
     "Explain quantum computing using only terms from classical machine learning",
@@ -216,19 +120,6 @@ edge_case_queries_en = [
     "What are the challenges of implementing RAG for highly specialized medical literature?",
     "How would you design a RAG system for retrieving information from a corpus in multiple languages?",
     "What approaches could make RAG systems more robust to adversarial queries?"
-]
-
-edge_case_queries_pt = [
-    "Explique a computação quântica utilizando apenas termos da aprendizagem automática clássica",
-    "Quais são os modos de falha mais comuns em RAG que não envolvem alucinação?",
-    "Como desenharia um sistema RAG para recuperar informações de partituras musicais?",
-    "Compare abordagens RAG para repositórios de código versus documentos em linguagem natural",
-    "Como podem os sistemas RAG lidar eficazmente com negação e contrafactuais?",
-    "Que técnicas utilizaria para RAG em fórmulas e equações matemáticas?",
-    "Como devem os sistemas RAG lidar com consultas que exigem raciocínio numérico?",
-    "Quais são os desafios da implementação de RAG para literatura médica altamente especializada?",
-    "Como desenharia um sistema RAG para recuperar informações de um corpus em múltiplas línguas?",
-    "Que abordagens poderiam tornar os sistemas RAG mais robustos contra consultas adversárias?"
 ]
 
 # Multi-hop queries - test ability to connect information across multiple documents
@@ -245,19 +136,6 @@ multihop_queries_en = [
     "What are the connections between traditional information retrieval evaluation metrics and modern RAG performance measures?"
 ]
 
-multihop_queries_pt = [
-    "Quais são as conexões entre técnicas de redução de dimensionalidade e desempenho de recuperação em sistemas RAG?",
-    "Como é que os princípios da teoria da informação se relacionam com estratégias ótimas de segmentação para recuperação de documentos?",
-    "Compare como diferentes arquiteturas RAG lidam com o compromisso entre relevância e diversidade do contexto",
-    "Explique como os conceitos de transfer learning se aplicam à geração aumentada por recuperação entre domínios",
-    "Que métodos combinam estruturas de grafos de conhecimento com embeddings vetoriais para melhorar a recuperação?",
-    "Como é que diferentes abordagens de citação e atribuição nas saídas RAG afetam a confiança e fiabilidade do utilizador?",
-    "Que técnicas fazem a ponte entre o raciocínio simbólico e a recuperação neural em sistemas RAG modernos?",
-    "Como podem os princípios de aprendizagem ativa melhorar os sistemas RAG quando lidam com adaptação de domínio?",
-    "Explique como os conceitos de inferência causal podem melhorar a explicabilidade das saídas RAG",
-    "Quais são as conexões entre métricas tradicionais de avaliação de recuperação de informação e medidas modernas de desempenho RAG?"
-]
-
 # Performance optimization queries - test understanding of system efficiency 
 optimization_queries_en = [
     "What techniques can reduce token usage while maintaining RAG quality?",
@@ -272,19 +150,6 @@ optimization_queries_en = [
     "What are effective approaches for RAG pipeline parallelization?"
 ]
 
-optimization_queries_pt = [
-    "Que técnicas podem reduzir o uso de tokens mantendo a qualidade do RAG?",
-    "Como pode o pré-processamento de consultas melhorar a eficiência da recuperação em sistemas RAG?",
-    "Quais são os compromissos entre precisão e latência em diferentes arquiteturas RAG?",
-    "Compare estratégias de caching para sistemas RAG de alto rendimento",
-    "Como podem os sistemas RAG ser otimizados para servir com recursos computacionais limitados?",
-    "Quais são as abordagens efetivas de processamento em lote para sistemas RAG que lidam com múltiplas consultas?",
-    "Como se comparam diferentes implementações de bases de dados vetoriais em termos de rendimento e latência de consulta?",
-    "Que técnicas podem reduzir a pegada de memória de grandes índices de embedding?",
-    "Como podem os algoritmos de vizinhos mais próximos aproximados ser afinados para desempenho RAG ideal?",
-    "Quais são abordagens eficazes para paralelização de pipelines RAG?"
-]
-
 # All query sets combined for convenience
 all_query_sets_en = {
     "factual": factual_queries_en,
@@ -297,19 +162,8 @@ all_query_sets_en = {
     "optimization": optimization_queries_en
 }
 
-all_query_sets_pt = {
-    "factual": factual_queries_pt,
-    "reasoning": reasoning_queries_pt,
-    "ambiguous": ambiguous_queries_pt,
-    "complex": complex_queries_pt,
-    "technical": technical_queries_pt,
-    "edge_case": edge_case_queries_pt,
-    "multihop": multihop_queries_pt,
-    "optimization": optimization_queries_pt
-}
-
 # Helper function to get a specific query set in either language
-def get_query_set(query_type, language="en"):
+def get_query_set(query_type):
     """
     Retrieves a specific query set in the specified language.
     
@@ -320,13 +174,4 @@ def get_query_set(query_type, language="en"):
     Returns:
         list: List of queries in the specified language
     """
-    if language.lower() == "en":
-        return all_query_sets_en.get(query_type.lower(), [])
-    elif language.lower() == "pt":
-        return all_query_sets_pt.get(query_type.lower(), [])
-    else:
-        raise ValueError(f"Unsupported language: {language}. Use 'en' or 'pt'.")
-
-# Example usage:
-# factual_en = get_query_set("factual", "en")
-# factual_pt = get_query_set("factual", "pt")
+    return all_query_sets_en.get(query_type.lower(), [])

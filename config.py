@@ -16,7 +16,6 @@ class Config:
     def _initialize(self):
         """Initialize configuration values from environment variables."""
         # Define your environment variables here with defaults
-        self.prompts_lang = os.environ.get("PROMPTS_LANG", "en")
         self.self_rag_retrieval_k = int(os.environ.get("SELF_RAG_RETRIEVAL_K", 7))
         self.self_rag_final_context_n = int(os.environ.get("SELF_RAG_FINAL_CONTEXT_N", 3))
         self.openai_api_key = os.environ.get("OPENAI_API_KEY")
@@ -27,12 +26,6 @@ class Config:
         self.SELF_RAG_RETRIEVAL_K = os.environ.get("SELF_RAG_RETRIEVAL_K")
         self.SELF_RAG_FINAL_CONTEXT_N = os.environ.get("SELF_RAG_FINAL_CONTEXT_N")
 
-
-        # You can add validation here if needed
-        if self.prompts_lang not in ["en", "pt"]:  # Example validation
-            print(f"Warning: Unsupported language '{self.prompts_lang}'. Falling back to 'en'")
-            self.prompts_lang = "en"
-    
     def get(self, key: str, default: Any = None) -> Any:
         """Get a configuration value by key name."""
         return getattr(self, key, default)
