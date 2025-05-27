@@ -24,7 +24,6 @@ class EvaluationEntry:
     question: str
     ground_truth: Optional[str]
     response: str
-    retrieved_docs: List[str]
     metrics: Dict[str, float]
     
     def to_dict(self):
@@ -32,7 +31,6 @@ class EvaluationEntry:
             "question": self.question,
             "ground_truth": self.ground_truth,
             "response": self.response,
-            "retrieved_docs": self.retrieved_docs,
             "metrics": self.metrics
         }
 
@@ -118,11 +116,10 @@ class RAGEvaluator:
             start_time = time.time()
             
             # Get response from system
-            response, retrieved_docs = self._get_system_response(system, query)
+            response, token_count = self._get_system_response(system, query)
             
             # Calculate efficiency metrics
             latency = time.time() - start_time
-            token_count = self._count_tokens(query, response)
             
             # Initialize metrics dictionary
             metrics = {
@@ -139,7 +136,6 @@ class RAGEvaluator:
                 question=query,
                 ground_truth=ground_truth,
                 response=response,
-                retrieved_docs=retrieved_docs,
                 metrics=metrics
             )
             
@@ -163,19 +159,13 @@ class RAGEvaluator:
         """
         try:
             # Make a single call to the system
-            result = system.query(query)
-            
-            # Check if the result is already a tuple with two elements
-            if isinstance(result, tuple) and len(result) == 2:
-                response, retrieved_docs = result
-                return response, retrieved_docs
-            else:
-                # If it's not a tuple, assume it's just the response
-                return result, []
+            response, tokens_used = system.query(query)
+
+            return response, tokens_used
                 
         except Exception as e:
             print(f"Error getting response from system: {e}")
-            return "", []
+            return "", 0
         
     def _calculate_content_metrics(self, query: str, ground_truth: str, response: str) -> Dict[str, float]:
         """Calculate content quality metrics using LLM-as-judge"""

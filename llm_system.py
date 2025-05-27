@@ -26,7 +26,8 @@ class SelfRAGSystem(LLMSystem):
 
     def query(self, prompt: str) -> str:
         # Simulate response generation with Self-RAG
-        return generate_response_self_rag(prompt)["generated_answer"]
+        response =  generate_response_self_rag(prompt)
+        return response["generated_answer"], response["tokens_count"]
     
 class FusionRAGSystem(LLMSystem):
     def __init__(self, system_name: str):

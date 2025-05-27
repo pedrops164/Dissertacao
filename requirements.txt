@@ -5,3 +5,4 @@ uuid
 datasets
 rank_bm25
 tavily-python
+nltk

@@ -1,4 +1,4 @@
-from llm_client import openai_client
+from llm_client import call_llm_assessment
 
 def generate_response_rag(query, context=""):
     """
@@ -11,26 +11,22 @@ def generate_response_rag(query, context=""):
     Returns:
         str: Generated response
     """
-    system_prompt = """És um assistente de IA. Responde à pergunta do utilizador com base no contexto fornecido.
-    Se o contexto contiver informações irrelevantes para responder à pergunta, ignora-o e utiliza o teu conhecimento."""
-
+    # make prompts in english
+    system_prompt = """You are an AI assistant. Answer the user's question based on the provided context.
+    If the context contains irrelevant information to answer the question, ignore it and use your knowledge."""
     # Format the user prompt with the context and query
-    user_prompt = f"""Contexto:
+    user_prompt = f"""Context:
     {context}
-
-    Pergunta: {query}
-
-    Por favor, responde à pergunta."""
-
-    # Generate the response using the OpenAI API
-    response = openai_client.chat.completions.create(
-        model="meta-llama/Llama-3.2-3B-Instruct",  # Specify the model to use
-        messages=[
-            {"role": "system", "content": system_prompt},  # System message to guide the assistant
-            {"role": "user", "content": user_prompt}  # User message with context and query
-        ],
-        temperature=0.1  # Set the temperature for response generation
+    Question: {query}
+    Please answer the question."""
+    
+    response, token_count = call_llm_assessment(
+        temperature=0.1,
+        generation_prompt=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
     )
     
     # Return the generated response
-    return response.choices[0].message.content
+    return response, token_count

@@ -61,14 +61,14 @@ def assess_context_relevance(query, context=None):
     # Handle cases where no context was retrieved initially
     if not context: # Check if there's no context
         logger.info("No meaningful context retrieved from vector DB. Decision: 1 (Web Search ONLY).")
-        return 1
+        return 1, 0
 
     # Limit context length for the assessment prompt
     context_snippet = context[:2000] # Use first 2000 chars for assessment
 
     assessment_prompt = get_crag_assessment_prompt(query, context_snippet)
 
-    decision_str = call_llm_assessment(assessment_prompt)
+    decision_str, total_tokens = call_llm_assessment(assessment_prompt)
 
     # Parse the LLM decision
     if decision_str:
@@ -81,13 +81,13 @@ def assess_context_relevance(query, context=None):
             if decision_int == 1: logger.info("Assessment Conclusion: Context irrelevant/insufficient or query needs real-time data. Use Web Search ONLY.")
             elif decision_int == 2: logger.info("Assessment Conclusion: Context relevant but needs supplement. Use BOTH.")
             else: logger.info("Assessment Conclusion: Context sufficient. Use Local Context ONLY.")
-            return decision_int
+            return decision_int, total_tokens
         else:
             logger.warning(f"Could not parse LLM assessment decision ('{decision_str}'). Defaulting to 2 (Use BOTH).")
-            return 2 # Fallback to using both if parsing fails
+            return 2, total_tokens # Fallback to using both if parsing fails
     else:
         logger.warning("LLM assessment call failed. Defaulting to 2 (Use BOTH).")
-        return 2 # Fallback to using both if LLM call fails
+        return 2, total_tokens # Fallback to using both if LLM call fails
 
 def rewrite_query_for_websearch(query):
     """
@@ -104,16 +104,16 @@ def rewrite_query_for_websearch(query):
     rewrite_prompt = get_crag_rewrite_prompt(query)
 
     # Use the generic LLM helper
-    rewritten_query = call_llm_assessment(rewrite_prompt, max_tokens=60, temperature=0.0)
+    rewritten_query, total_tokens = call_llm_assessment(rewrite_prompt, max_tokens=60, temperature=0.0)
 
     if rewritten_query:
         # Remove potential quotes LLM might add
         rewritten_query = rewritten_query.strip().strip('"')
         logger.info(f"Query rewritten for web search: '{rewritten_query}'")
-        return rewritten_query
+        return rewritten_query, total_tokens
     else:
         logger.warning("LLM rewrite failed. Using original query for web search.")
-        return query # Fallback to original query
+        return query, 0 # Fallback to original query
 
 
 def perform_web_search(query):
@@ -169,6 +169,7 @@ def generate_response_corrective_rag(query):
         "duration_seconds": None,
         "status": "In Progress"
     }
+    tokens_count = 0
 
     # Step 1: Retrieve initial context from the vector database
     print("\n[Step 1/5] Retrieving initial context from Vector DB...")
@@ -184,7 +185,8 @@ def generate_response_corrective_rag(query):
 
     # Step 2: Assess if web search is needed based on the query and initial context
     print("\n[Step 2/5] Assessing context relevance and web search need...")
-    context_relevance_decision = assess_context_relevance(query, local_context)
+    context_relevance_decision, n_tokens = assess_context_relevance(query, local_context)
+    tokens_count += n_tokens
     execution_data["assessment_decision"] = context_relevance_decision
     logger.info(f"Context relevance assessment decision: {context_relevance_decision}")
 
@@ -196,7 +198,8 @@ def generate_response_corrective_rag(query):
     if execution_data["websearch_performed"]:
         logger.info("Assessment decision requires web search (Decision 1 or 2).")
         # Rewrite the query for web search
-        websearch_query = rewrite_query_for_websearch(query)
+        websearch_query, n_tokens = rewrite_query_for_websearch(query)
+        tokens_count += n_tokens
         execution_data["rewritten_websearch_query"] = websearch_query
 
         # Perform the actual web search
@@ -307,8 +310,7 @@ def generate_response_corrective_rag(query):
     logger.info(f"--- Corrective RAG process completed for query: '{query}' ---")
     logger.info(f"Generated response (first 200 chars): {response[:200]}...") # Log snippet of response
 
-
-    return response
+    return response, tokens_count
 
 # --- Example Usage ---
 if __name__ == "__main__":
