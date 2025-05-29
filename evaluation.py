@@ -13,17 +13,20 @@ import json
 import time
 import numpy as np
 from typing import List, Dict, Any, Tuple, Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from llm_system import LLMSystem
 from llm_client import call_llm_assessment
+from abc import ABC, abstractmethod # Import ABC and abstractmethod
+from bioasq import load_bioasq_yesno_questions
 
 # Define evaluation result data structure
 @dataclass
 class EvaluationEntry:
     """A single evaluation entry for a specific question"""
     question: str
-    ground_truth: Optional[str]
+    ground_truth: str # Can be string for open-domain, or specific type for others
     response: str
+    # Metrics specific to this single entry (e.g., latency for this query, or if it was correct for binary)
     metrics: Dict[str, float]
     
     def to_dict(self):
@@ -34,47 +37,260 @@ class EvaluationEntry:
             "metrics": self.metrics
         }
 
+# --- Abstract Base Class for Evaluation Results ---
 @dataclass
-class EvaluationResult:
-    """Collection of evaluation entries for a system"""
+class BaseEvaluationResult(ABC):
+    """Abstract base class for collecting evaluation entries for a system."""
     system_name: str
     entries: List[EvaluationEntry]
-    avg_metrics: Dict[str, float] = None
-    
+    # This dictionary will store the aggregated/summary metrics calculated by subclasses.
+    summary_metrics: Dict[str, float] = field(default_factory=dict)
+
     def __post_init__(self):
-        """Calculate average metrics across all entries if not provided"""
-        if self.avg_metrics is None:
-            self.calculate_avg_metrics()
-    
-    def calculate_avg_metrics(self):
-        """Calculate average metrics across all entries"""
-        if not self.entries:
-            self.avg_metrics = {}
-            return
+        """Ensure summary metrics are calculated after initialization if entries exist."""
+        if self.entries and not self.summary_metrics: # Calculate if not pre-filled and entries exist
+            self.calculate_summary_metrics()
+
+    @abstractmethod
+    def calculate_summary_metrics(self) -> None:
+        """
+        Abstract method to calculate specific summary metrics for the evaluation type.
+        Subclasses must implement this method to populate self.summary_metrics.
+        """
+        pass
             
-        # Get all metric keys
-        all_metrics = set()
-        for entry in self.entries:
-            all_metrics.update(entry.metrics.keys())
-            
-        # Calculate average for each metric
-        self.avg_metrics = {}
-        for metric in all_metrics:
-            values = [entry.metrics.get(metric, 0.0) for entry in self.entries if metric in entry.metrics]
-            if values:
-                self.avg_metrics[metric] = sum(values) / len(values)
-            else:
-                self.avg_metrics[metric] = 0.0
-            
-    def to_dict(self):
-        """Convert the result to a dictionary for serialization"""
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert the result to a dictionary for serialization."""
         return {
             "system_name": self.system_name,
+            "evaluation_type": self.__class__.__name__, # Add type for clarity when loading
             "entries": [entry.to_dict() for entry in self.entries],
-            "avg_metrics": self.avg_metrics
+            "summary_metrics": self.summary_metrics
         }
 
-class RAGEvaluator:
+# --- Concrete Subclass for Open-Domain Question Answering ---
+@dataclass
+class OpenDomainEvaluationResult(BaseEvaluationResult):
+    """Evaluation results for open-domain question answering systems."""
+
+    def calculate_summary_metrics(self) -> None:
+        """Calculate average metrics across all entries for open-domain QA."""
+        if not self.entries:
+            self.summary_metrics = {}
+            return
+            
+        # Gather all unique metric keys from individual entries' metrics dictionaries
+        # These are expected to be things like latency, token_count, factual_correctness, etc.
+        all_individual_metric_keys = set()
+        for entry in self.entries:
+            all_individual_metric_keys.update(entry.metrics.keys())
+            
+        calculated_summary_metrics = {}
+        for metric_key in all_individual_metric_keys:
+            values = [entry.metrics.get(metric_key) for entry in self.entries if entry.metrics.get(metric_key) is not None]
+            if values:
+                # Ensure all values are numeric for averaging
+                numeric_values = [v for v in values if isinstance(v, (int, float))]
+                if numeric_values:
+                    calculated_summary_metrics[f"avg_{metric_key}"] = sum(numeric_values) / len(numeric_values)
+                else:
+                    # Handle cases where a metric key exists but has no numeric values (e.g. all None or non-numeric)
+                    calculated_summary_metrics[f"avg_{metric_key}"] = 0.0 # Or None, or skip
+            else:
+                calculated_summary_metrics[f"avg_{metric_key}"] = 0.0 # Or None, or skip
+        
+        self.summary_metrics = calculated_summary_metrics
+
+# --- Concrete Subclass for Binary Classification (Yes/No) Questions ---
+@dataclass
+class BinaryClassificationEvaluationResult(BaseEvaluationResult):
+    """
+    Evaluation results for systems answering binary (e.g., Yes/No) questions.
+    Assumes `ground_truth` in EvaluationEntry is the expected binary label (e.g., "yes", "no").
+    Assumes `response` in EvaluationEntry is the system's predicted binary label.
+    The `metrics` in each EvaluationEntry should contain an `is_correct` field (1.0 for correct, 0.0 for incorrect).
+    """
+
+    def _normalize_label(self, label: str) -> Optional[str]:
+        """Helper to normalize labels to lower case for comparison."""
+        if isinstance(label, str):
+            return label.strip(' .').lower()
+        return None
+
+    def calculate_summary_metrics(self) -> None:
+        """Calculate accuracy and other relevant metrics for binary classification."""
+        if not self.entries:
+            self.summary_metrics = {}
+            return
+
+        correct_predictions = 0
+        total_predictions = len(self.entries)
+        
+        for entry in self.entries:
+            # Ensure ground_truth and response are strings for normalization
+            gt_normalized = self._normalize_label(str(entry.ground_truth))
+            resp_normalized = self._normalize_label(entry.response)
+
+            # Primary metric: Accuracy based on 'is_correct' if available in entry.metrics
+            # This allows the per-entry metric calculation to handle complex correctness logic
+            if gt_normalized == resp_normalized:
+                correct_predictions += 1
+        
+        accuracy = (correct_predictions / total_predictions) if total_predictions > 0 else "N/A"
+        
+        self.summary_metrics = {
+            "accuracy": accuracy,
+            "total_questions": float(total_predictions),
+            "correct_predictions": float(correct_predictions),
+        }
+    
+# Make RAGEvaluator an Abstract Base Class
+class RAGEvaluator(ABC):
+    """
+    Abstract base class for evaluating and comparing RAG systems.
+    Concrete evaluators must implement evaluate_system and compare_systems.
+    """
+
+    def __init__(self):
+        self.results = {}
+
+    @abstractmethod
+    def evaluate_system(self, system: LLMSystem, queries: List[Any]) -> BaseEvaluationResult: # Return single EvaluationResult
+        """
+        Evaluate a RAG system on a set of queries.
+        This method must be implemented by subclasses.
+        
+        Args:
+            system: The LLMSystem object to evaluate.
+            queries: List of queries. Can be strings or tuples (query, ground_truth).
+            
+        Returns:
+            An EvaluationResult object for the evaluated system.
+        """
+        pass
+
+    def compare_systems(self) -> Dict[str, Dict[str, float]]:
+        """
+        Compare multiple systems across all metrics
+        
+        Args:
+            system_names: List of system names to compare (None for all)
+            
+        Returns:
+            Dictionary with average scores for each system and metric
+        """
+        if not self.results:
+            return {}
+            
+        system_names = list(self.results.keys())
+            
+        comparison = {}
+        
+        for system_name in system_names:
+            system_result = self.results.get(system_name, None)
+            
+            if not system_result:
+                continue
+                
+            comparison[system_name] = system_result.summary_metrics
+            
+        return comparison
+    
+    def save_results(self, output_file: str):
+        """Save evaluation results to file"""
+        with open(output_file, 'w') as f:
+            json.dump([r.to_dict() for r in list(self.results.values())], f, indent=2)
+
+class RAGEvaluatorYesNoQuestion(RAGEvaluator):
+    """Framework for evaluating and comparing RAG systems on yes/no questions"""
+        
+    def evaluate_system(self, system: LLMSystem, queries: List[Any]) -> BinaryClassificationEvaluationResult:
+        """
+        Evaluate a RAG system on a set of yes/no queries
+        
+        Args:
+            system: The actual system object with query method
+            queries: List of query strings
+            
+        Returns:
+            List of EvaluationResult objects
+        """
+        system_name = system.system_name
+        entries = []
+
+        if queries is None or len(queries) == 0:
+            print(f"No queries provided for evaluation of {system_name}.")
+            return entries
+        
+        assert isinstance(queries, list) or isinstance(queries, tuple), "Queries must be a list of strings or tuples (query, ground_truth)"
+
+        for query, ground_truth in queries:
+            # Measure efficiency metrics
+            start_time = time.time()
+            yesno_query = RAGEvaluatorYesNoQuestion.get_yesno_query(query)
+            
+            # Get response from system
+            response, token_count = self._get_system_response(system, yesno_query)
+            
+            # Calculate efficiency metrics
+            latency = time.time() - start_time
+
+            # Initialize metrics dictionary
+            metrics = {
+                "latency": latency,
+                "token_count": token_count
+            }
+                
+            entry = EvaluationEntry(
+                question=query,
+                ground_truth=ground_truth,
+                response=response,
+                metrics=metrics
+            )
+            
+            entries.append(entry)
+           
+        # Create result with all entries
+        result = BinaryClassificationEvaluationResult(
+            system_name=system_name,
+            entries=entries,
+        )
+         
+        self.results[system_name] = result
+        return result
+    
+    @staticmethod
+    def get_yesno_query(query: str) -> str:
+        """
+        Convert a query to a yes/no question format
+        
+        Args:
+            query: Original query string
+            
+        Returns:
+            Yes/No formatted question
+        """
+        return f"{query}\nRespond only with 'yes' or 'no'."
+
+    def _get_system_response(self, system, query: str) -> Tuple[str, List[str]]:
+        """
+        Get response from a system, handling different implementations
+        
+        Returns:
+            Tuple of (response_text, retrieved_documents)
+        """
+        try:
+            # Make a single call to the system
+            response, tokens_used = system.query(query)
+
+            return response, tokens_used
+                
+        except Exception as e:
+            print(f"Error getting response from system: {e}")
+            return "", 0
+
+
+class RAGEvaluatorOpenQuestion(RAGEvaluator):
     """Framework for evaluating and comparing RAG systems"""
     
     def __init__(self, use_llm_judge=False):
@@ -84,10 +300,10 @@ class RAGEvaluator:
         Args:
             judge_model: Model to use for LLM-as-judge evaluations
         """
+        super().__init__()
         self.use_llm_judge = use_llm_judge
-        self.results = {}
         
-    def evaluate_system(self, system: LLMSystem, queries: List[Any], content_metrics: bool = True) -> List[EvaluationResult]:
+    def evaluate_system(self, system: LLMSystem, queries: List[Any]) -> OpenDomainEvaluationResult:
         """
         Evaluate a RAG system on a set of queries
         
@@ -95,7 +311,6 @@ class RAGEvaluator:
             system_name: Name of the system being evaluated
             system: The actual system object with query method
             queries: List of query strings
-            content_metrics: Whether to calculate content quality metrics
             
         Returns:
             List of EvaluationResult objects
@@ -128,8 +343,8 @@ class RAGEvaluator:
             }
                 
             # Calculate content quality metrics if applicable
-            if content_metrics and self.use_llm_judge:
-                content_scores = self._calculate_content_metrics(query, ground_truth, response)
+            if self.use_llm_judge:
+                content_scores = self._llm_judge_evaluation(query, ground_truth, response)
                 metrics.update(content_scores)
             
             entry = EvaluationEntry(
@@ -142,7 +357,7 @@ class RAGEvaluator:
             entries.append(entry)
            
         # Create result with all entries
-        result = EvaluationResult(
+        result = OpenDomainEvaluationResult(
             system_name=system_name,
             entries=entries
         )
@@ -150,7 +365,7 @@ class RAGEvaluator:
         self.results[system_name] = result
         return result
 
-    def _get_system_response(self, system, query: str) -> Tuple[str, List[str]]:
+    def _get_system_response(self, system: LLMSystem, query: str) -> Tuple[str, List[str]]:
         """
         Get response from a system, handling different implementations
         
@@ -166,11 +381,6 @@ class RAGEvaluator:
         except Exception as e:
             print(f"Error getting response from system: {e}")
             return "", 0
-        
-    def _calculate_content_metrics(self, query: str, ground_truth: str, response: str) -> Dict[str, float]:
-        """Calculate content quality metrics using LLM-as-judge"""
-        scores = self._llm_judge_evaluation(query, ground_truth, response)
-        return scores
         
     def _llm_judge_evaluation(self, query: str, ground_truth: str, response: str) -> Dict[str, float]:
         """
@@ -244,71 +454,16 @@ Provide your ratings in the following JSON format:
         json_str = judge_response.split("```json")[1].split("```")[0].strip()
         scores = json.loads(json_str)
         return scores
-    
-    def _count_tokens(self, query: str, response: str) -> int:
-        """Count tokens in query and response"""
-        # This is a simplified implementation
-        # For real implementation, use tokenizer from your LLM
-        return len(query.split()) + len(response.split())
-    
-    def compare_systems(self, system_names: List[str] = None) -> Dict[str, Dict[str, float]]:
-        """
-        Compare multiple systems across all metrics
-        
-        Args:
-            system_names: List of system names to compare (None for all)
-            
-        Returns:
-            Dictionary with average scores for each system and metric
-        """
-        if not self.results:
-            return {}
-            
-        if system_names is None:
-            system_names = list(self.results.keys())
-            
-        comparison = {}
-        
-        for system_name in system_names:
-            system_result = self.results.get(system_name, None)
-            
-            if not system_result:
-                continue
-                
-            comparison[system_name] = system_result.avg_metrics
-            
-        return comparison
-    
-    def save_results(self, output_file: str):
-        """Save evaluation results to file"""
-        with open(output_file, 'w') as f:
-            json.dump([r.to_dict() for r in list(self.results.values())], f, indent=2)
-    
-    def load_results(self, input_file: str):
-        """Load evaluation results from file"""
-        with open(input_file, 'r') as f:
-            data = json.load(f)
-            
-        self.results = []
-        for item in data:
-            result = EvaluationResult(
-                system_name=item["system_name"],
-                question=item["question"],
-                response=item["response"],
-                retrieved_docs=item["retrieved_docs"],
-                metrics=item["metrics"]
-            )
-            self.results.append(result)
 
 if __name__ == "__main__":
     # Initialize evaluator
-    evaluator = RAGEvaluator(use_llm_judge=True)
-    # no judge model for now
-    #evaluator = RAGEvaluator(judge_model=your_judge_model)
+    evaluator = RAGEvaluatorYesNoQuestion()
 
     # Import queries
     from queries import factual_queries_en, reasoning_queries_en
     from llm_system import NoRAGSystem, SelfRAGSystem, FusionRAGSystem, CRAGRAGSystem
+
+    bioasq_queries = load_bioasq_yesno_questions()
 
     no_rag_system = NoRAGSystem("No-RAG System")
     self_rag_system = SelfRAGSystem("Self-RAG System")
@@ -320,7 +475,7 @@ if __name__ == "__main__":
     # Evaluate basic LLM
     basic_llm_results = evaluator.evaluate_system(
         no_rag_system,
-        factual_queries_en
+        bioasq_queries[:10]
     )
 
     print("Basic LLM evaluation complete.")
@@ -328,7 +483,7 @@ if __name__ == "__main__":
     # Evaluate Self-RAG
     self_rag_results = evaluator.evaluate_system(
         self_rag_system,
-        factual_queries_en
+        bioasq_queries[:10]
     )
 
     print("Self-RAG evaluation complete.")

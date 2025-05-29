@@ -16,7 +16,8 @@ from dataset_loaders import load_googlenq_data, load_pubmed_data, get_googlenq_d
 # --- Configuration ---
 EMBEDDING_MODEL = "BAAI/bge-en-icl"
 DEFAULT_N_RESULTS = 3
-NUM_ROWS_TO_LOAD = 50000 # Number of ORIGINAL documents to process
+#NUM_ROWS_TO_LOAD = 50000 # Number of ORIGINAL documents to process
+NUM_ROWS_TO_LOAD = 1000000 # Number of ORIGINAL documents to process
 
 # ChromaDB Configuration
 CHROMA_PERSIST_DIR = "./chroma_db_wikipedia" # Directory to store ChromaDB data
@@ -29,7 +30,8 @@ BM25_INDEX_DIR = "./bm25_data"
 BM25_INDEX_FILENAME = "bm25_index.pkl"
 BM25_TEXTS_FILENAME = "bm25_texts.pkl" # To store texts associated with BM25
 
-MAX_WORKERS = 8 # <--- ADDED: Number of parallel workers for embedding
+MAX_WORKERS = 8 # Number of parallel workers for embedding
+MAX_PENDING_FUTURES_FACTOR = 3 # e.g., allow up to MAX_WORKERS * 2 pending tasks
 
 # --- Vector Database Class using ChromaDB ---
 class VectorDatabase:
@@ -125,56 +127,79 @@ class VectorDatabase:
             #all_texts_for_bm25 = []
             total_added_chroma = 0
             population_start_time = time.time()
-            futures = []
+            
+            active_futures = []
+            # data_loader_func is expected to be a generator yielding batches of CHUNKED texts
+            batch_iterator = data_loader_func(target_original_docs_to_process, BATCH_SIZE) 
+            
+            processed_batches_count = 0
+            # This counter will track batches submitted to the executor
+            # It's distinct from processed_batches_count which tracks completed batches.
+            _submitted_batch_global_counter = 0
+            
+            max_concurrent_futures = MAX_WORKERS * MAX_PENDING_FUTURES_FACTOR
 
-            # Use ThreadPoolExecutor for parallel embedding and adding
+
             with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-                print("Starting to load data and submit batches to executor...")
-                batch_count = 0
-                # Iterate through batches yielded by the data loader
-                for batch_texts in data_loader_func(target_original_docs_to_process, BATCH_SIZE):
-                    if not batch_texts:
-                        print("Warning: Empty batch received from data loader. Skipping.")
-                        continue
-
-                    batch_count += 1
-                    # Store texts for BM25 (still needs all texts in memory for rank_bm25)
-                    #all_texts_for_bm25.extend(batch_texts)
-
-                    # Submit the *received batch* directly for processing
-                    future = executor.submit(self._add_documents_batch_chroma, batch_texts)
-                    futures.append(future)
-
-                    if batch_count % 20 == 0: # Log progress every 20 batches submitted
-                        #print(f"  Submitted {batch_count} batches ({len(all_texts_for_bm25):,} docs) to executor...")
-                        print(f"  Submitted {batch_count} batches to executor...")
-
-                print(f"Finished loading data. Submitted {len(futures)} total batches. Waiting for processing...")
-
-                # Process results as they complete to get the total count
-                results = []
-                processed_count = 0
-                for future in concurrent.futures.as_completed(futures):
-                    processed_count += 1
+                
+                # Inner helper function to encapsulate submission logic
+                def _submit_next_batch_to_executor(iterator, active_futures_list):
+                    nonlocal _submitted_batch_global_counter # To modify the counter in the outer scope
                     try:
-                        data = future.result() # Get the count from _add_documents_batch_chroma
-                        results.append(data)
-                    except Exception as exc:
-                        print(f'Batch generated an exception during processing: {exc}')
-                        results.append(0) # Count as 0 added if an error occurs
+                        batch_texts = next(iterator)
+                        if not batch_texts: # Handle empty batch from loader
+                            print("Warning: Data loader yielded an empty batch. Stopping submission.")
+                            return False # Indicate nothing was submitted
+                        
+                        future = executor.submit(self._add_documents_batch_chroma, batch_texts)
+                        active_futures_list.append(future)
+                        _submitted_batch_global_counter += 1
+                        # Log submission of initial batches
+                        if _submitted_batch_global_counter <= max_concurrent_futures:
+                             print(f"  Submitted initial task {_submitted_batch_global_counter}/{max_concurrent_futures} to executor...")
+                        elif _submitted_batch_global_counter % 50 == 0: # Log every 50 submissions after initial fill
+                             print(f"  Submitted task {_submitted_batch_global_counter} to executor...")
+                        return True # Task submitted
+                    except StopIteration:
+                        pass # Iterator exhausted
+                    return False # No task submitted
 
-                    if processed_count % 10 == 0 or processed_count == len(futures):
-                        elapsed = time.time() - population_start_time
-                        print(f"  Processed {processed_count}/{len(futures)} batches... ({elapsed:.1f}s)")
+                # Fill the queue initially
+                for _ in range(max_concurrent_futures):
+                    if not _submit_next_batch_to_executor(batch_iterator, active_futures):
+                        break 
+                
+                while active_futures:
+                    done_futures, active_futures_set = concurrent.futures.wait(
+                        active_futures, return_when=concurrent.futures.FIRST_COMPLETED
+                    )
+                    active_futures = list(active_futures_set) 
+                    
+                    for future in done_futures:
+                        processed_batches_count += 1
+                        try:
+                            added_count = future.result()
+                            total_added_chroma += added_count
+                        except Exception as exc:
+                            print(f'A batch (task {processed_batches_count}) generated an exception during processing: {exc}')
+                        
+                        if processed_batches_count % 20 == 0 or not active_futures: 
+                            elapsed = time.time() - population_start_time
+                            print(f"  Completed {processed_batches_count} tasks. Total chunks added: {total_added_chroma:,}. Pending: {len(active_futures)}. Elapsed: {elapsed:.1f}s")
 
+                    # Try to replenish the queue with new tasks
+                    while len(active_futures) < max_concurrent_futures:
+                        if not _submit_next_batch_to_executor(batch_iterator, active_futures):
+                            break 
+                
+                print(f"All {_submitted_batch_global_counter} submitted tasks have been processed.")
+            # End of 'with executor' block
 
-            total_added_chroma = sum(results)
             #self.bm25_index.set_texts(all_texts_for_bm25)
 
             population_end_time = time.time()
             print(f"Finished ChromaDB population. Added {total_added_chroma:,} chunks in {population_end_time - population_start_time:.2f}s.")
             print(f"Collection '{self.collection_name}' now contains {self.collection.count():,} chunks.")
-            #print(f"Total documents now in memory for BM25: {len(all_texts_for_bm25):,}")
         else:
             # Chroma has data, but script restarted, bm25 index isnt built.
             # Load texts from Chroma to build BM25.
@@ -234,6 +259,7 @@ class BM25Index:
         self._build_bm25()
 
     # --- Simple Tokenizer for BM25 ---
+    @staticmethod
     def simple_tokenizer(text):
         """Basic tokenizer: lowercase and split by non-alphanumeric characters."""
         if not isinstance(text, str):
@@ -369,11 +395,9 @@ if __name__ == "__main__":
         print("\n--- Testing vector_database.py with ChromaDB & GigaVerbo data ---")
 
         test_queries = [
-            "What are the common side effects of metformin in the treatment of type 2 diabetes?",
-            "How does the gut microbiota influence the efficacy of immunotherapy in cancer treatment?",
-            "Summarize the current understanding of the role of amyloid-beta in the pathogenesis of Alzheimer's disease.",
-            "What biomarkers are currently being investigated for early detection of pancreatic cancer?",
-            "Compare the efficacy of mRNA vaccines versus traditional inactivated vaccines for COVID-19.",
+            "Is HIV/STD control in Jamaica making a difference?",
+            "Is Panton-Valentine leucocidin associated with the pathogenesis of Staphylococcus aureus bacteraemia in the UK?",
+            "Are even impaired fasting blood glucose levels preoperatively associated with increased mortality after CABG surgery?",
         ]
         #dev_google_nq_questions = get_googlenq_dev_questions(5)
 

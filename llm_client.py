@@ -13,7 +13,7 @@ def call_llm_assessment(prompt=None, max_tokens=1000, temperature=0.0, generatio
     """Makes a focused LLM call for assessment tasks."""
     try:
         response = openai_client.chat.completions.create(
-            model="meta-llama/Llama-3.2-3B-Instruct", # Or your chosen assessment model
+            model="meta-llama/Meta-Llama-3.1-8B-Instruct",
             messages=generation_prompt if generation_prompt else [{"role": "user", "content": prompt}],
             max_tokens=max_tokens,
             temperature=temperature,
