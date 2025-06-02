@@ -26,6 +26,9 @@ class Config:
         self.SELF_RAG_RETRIEVAL_K = os.environ.get("SELF_RAG_RETRIEVAL_K")
         self.SELF_RAG_FINAL_CONTEXT_N = os.environ.get("SELF_RAG_FINAL_CONTEXT_N")
 
+        # worker threads
+        self.n_workers = int(os.environ.get("N_WORKERS", 8))
+
     def get(self, key: str, default: Any = None) -> Any:
         """Get a configuration value by key name."""
         return getattr(self, key, default)

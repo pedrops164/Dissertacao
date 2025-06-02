@@ -9,6 +9,7 @@ import time
 import logging
 import json
 from prompts import get_crag_assessment_prompt, get_crag_rewrite_prompt
+from typing import Tuple
 
 # --- Logging Setup ---
 # Create logger
@@ -130,7 +131,7 @@ def perform_web_search(query):
     context = search_tavily(query)
     return context # Return the concatenated context from the search results
 
-def generate_response_corrective_rag(query):
+def generate_response_corrective_rag(query) -> Tuple[str, int]:
     """
     Generates a response using Corrective RAG. This process involves:
     1. Retrieving initial context from a vector database.
@@ -175,6 +176,7 @@ def generate_response_corrective_rag(query):
     print("\n[Step 1/5] Retrieving initial context from Vector DB...")
     logger.info("Attempting to retrieve initial context from Vector DB.")
     local_context = retrieve_context(query) # Retrieve top N chunks based on similarity
+    local_context = "\n\n---\n\n".join(local_context) # Join the retrieved chunks into a single string
     execution_data["local_context_retrieved"] = local_context
     execution_data["local_context_length"] = len(local_context) if local_context else 0
 
@@ -285,7 +287,8 @@ def generate_response_corrective_rag(query):
     print("\n[Step 5/5] Generating final response...")
     logger.info("Generating final response using the compiled context.")
     # Call the simple RAG function with the compiled final context and the original query
-    response = generate_response_rag(query, final_context)
+    response, n_tokens = generate_response_rag(query, final_context)
+    tokens_count += n_tokens
     execution_data["generated_response"] = response
 
 

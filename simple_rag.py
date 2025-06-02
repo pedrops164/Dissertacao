@@ -30,3 +30,11 @@ def generate_response_rag(query, context=""):
     
     # Return the generated response
     return response, token_count
+
+# Example usage
+if __name__ == "__main__":
+    query = "What is the capital of France?"
+    context = "Paris is the capital and most populous city of France."
+    
+    response, tokens = generate_response_rag(query, context)
+    print(f"Response: {response}\nTokens used: {tokens}")

@@ -17,7 +17,7 @@ from dataset_loaders import load_googlenq_data, load_pubmed_data, get_googlenq_d
 EMBEDDING_MODEL = "BAAI/bge-en-icl"
 DEFAULT_N_RESULTS = 3
 #NUM_ROWS_TO_LOAD = 50000 # Number of ORIGINAL documents to process
-NUM_ROWS_TO_LOAD = 1000000 # Number of ORIGINAL documents to process
+NUM_ROWS_TO_LOAD = 5000 # Number of ORIGINAL documents to process
 
 # ChromaDB Configuration
 CHROMA_PERSIST_DIR = "./chroma_db_wikipedia" # Directory to store ChromaDB data
@@ -200,15 +200,15 @@ class VectorDatabase:
             population_end_time = time.time()
             print(f"Finished ChromaDB population. Added {total_added_chroma:,} chunks in {population_end_time - population_start_time:.2f}s.")
             print(f"Collection '{self.collection_name}' now contains {self.collection.count():,} chunks.")
-        else:
-            # Chroma has data, but script restarted, bm25 index isnt built.
-            # Load texts from Chroma to build BM25.
-            print("\n--- Loading Texts from ChromaDB for BM25 ---")
-            texts = self._get_all_documents_from_chroma()
-            if not texts:
-                raise ValueError("No texts available from ChromaDB for BM25 index.")
-            self.bm25_index.set_texts(texts)
-            print(f"Loaded {len(texts):,} chunks from ChromaDB into memory for BM25.")
+        #else:
+        #    # Chroma has data, but script restarted, bm25 index isnt built.
+        #    # Load texts from Chroma to build BM25.
+        #    print("\n--- Loading Texts from ChromaDB for BM25 ---")
+        #    texts = self._get_all_documents_from_chroma()
+        #    if not texts:
+        #        raise ValueError("No texts available from ChromaDB for BM25 index.")
+        #    self.bm25_index.set_texts(texts)
+        #    print(f"Loaded {len(texts):,} chunks from ChromaDB into memory for BM25.")
 
         return True
 
@@ -382,43 +382,6 @@ def retrieve_context(query, n_results=DEFAULT_N_RESULTS):
 
     print(f"\nRetrieving context for query: '{query}' using ChromaDB")
     results = vector_db.search_vector(query, n_results=n_results)
-
-    # Combine the results into a single context string, separated clearly
-    context = "\n\n---\n\n".join(results)
-    if not context:
-        print("No relevant context found in the ChromaDB database for this query.")
-    return context
-
-# --- Example Usage (for direct execution testing) ---
-if __name__ == "__main__":
-    if vector_db: # Only run tests if initialization succeeded
-        print("\n--- Testing vector_database.py with ChromaDB & GigaVerbo data ---")
-
-        test_queries = [
-            "Is HIV/STD control in Jamaica making a difference?",
-            "Is Panton-Valentine leucocidin associated with the pathogenesis of Staphylococcus aureus bacteraemia in the UK?",
-            "Are even impaired fasting blood glucose levels preoperatively associated with increased mortality after CABG surgery?",
-        ]
-        #dev_google_nq_questions = get_googlenq_dev_questions(5)
-
-        for query in test_queries:
-            print("-" * 40)
-            print(f"Query: {query}")
-            context = retrieve_context(query, n_results=3)
-            print("\nRetrieved Context Snippets (from ChromaDB):")
-            print(context if context else "[No context retrieved]")
-            
-            # Test BM25 search
-            #if vector_db.bm25_index:
-            #     print("\nPerforming BM25 test search...")
-            #     bm25_results = vector_db.bm25_index.search_bm25(query, n_results=2)
-            #     print("\nRetrieved Context Snippets (from BM25 Keyword Search):")
-            #     bm25_context = "\n\n---\n\n".join(bm25_results)
-            #     print(bm25_context if bm25_context else "[No context retrieved from BM25 search]")
-            #else:
-            #    print("\nBM25 index not available for testing.")
-            #print("-" * 40)
-
-        print("\n--- Test Complete ---")
-    else:
-        print("\nSkipping tests as VectorDatabase (ChromaDB) failed to initialize or populate.")
+    if not results:
+        raise ValueError("No results found in ChromaDB for the given query.")
+    return results

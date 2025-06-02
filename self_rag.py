@@ -1,7 +1,7 @@
 import time
-from llm_client import call_llm_assessment # Your LLM client setup
+from llm_client import call_llm_assessment, query_llm_with_context
 from vector_database import retrieve_context # Hybrid search + RRF context retrieval
-from prompts import get_self_rag_retrieval_prompt, get_self_rag_critique_prompt, get_self_rag_generation_prompt_message, get_self_rag_critique_answer_prompt # Your prompt setup
+from prompts import get_self_rag_retrieval_prompt, get_self_rag_critique_prompt, get_self_rag_generation_prompt_message, get_self_rag_critique_answer_prompt
 from config import config
 
 # --- Configuration ---
@@ -49,15 +49,8 @@ def generate_response_self_rag(query):
     # --- Step 2: Retrieve Documents (if needed) ---
     if needs_retrieval:
         print(f"\n[Step 2/5] Retrieving Top-{SELF_RAG_RETRIEVAL_K} documents (Hybrid Search + RRF)...")
-        # Use the existing hybrid retrieval, but get more docs initially
-        # retrieve_context returns a single string, we need individual docs for critique.
-        # We need to modify retrieve_context or add a function to get ranked docs *before* joining.
-        # For now, let's SIMULATE getting individual docs by splitting the context.
-        # THIS IS A HACK - ideally vector_database returns a list here.
         #temp_context = retrieve_context(query, n_results=SELF_RAG_RETRIEVAL_K, retrieval_k=SELF_RAG_RETRIEVAL_K * 2) # Fetch more
-        temp_context = retrieve_context(query, n_results=SELF_RAG_RETRIEVAL_K) # Fetch more
-        if temp_context:
-             retrieved_docs = temp_context.split("\n\n---\n\n")
+        retrieved_docs = retrieve_context(query, n_results=SELF_RAG_RETRIEVAL_K) # Fetch more
         print(f"  > Retrieved {len(retrieved_docs)} candidate documents.")
 
         if not retrieved_docs:
@@ -91,16 +84,8 @@ def generate_response_self_rag(query):
 
     # --- Step 4: Generate Answer ---
     print("\n[Step 4/5] Generating answer...")
-    generation_prompt_message = get_self_rag_generation_prompt_message(query, filtered_context)
-
-    try:
-        generated_answer, n_tokens = call_llm_assessment(generation_prompt=generation_prompt_message, max_tokens=500, temperature=0.1)
-        tokens_count += n_tokens
-        print(f"  > Generated Answer (Initial): {generated_answer[:200]}...")
-    except Exception as e:
-         print(f"Error during LLM generation call: {e}")
-         generated_answer = "[Error generating initial answer]"
-
+    generated_answer, n_tokens = query_llm_with_context(query, filtered_context)
+    tokens_count += n_tokens
 
     # --- Step 5: Critique Generated Answer (Self-Reflection) ---
     print("\n[Step 5/5] Critiquing generated answer...")

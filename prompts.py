@@ -1,4 +1,5 @@
 from config import config
+from datetime import datetime
 
 crag_assessment_prompt_en = \
 """Evaluate the relevance and sufficiency of the provided 'Retrieved Context' for answering the 'Query'. Consider if the context directly addresses the query and if the query might require more up-to-date information than the context likely provides (suggesting web search).
@@ -99,3 +100,7 @@ def get_self_rag_critique_answer_prompt(query: str, filtered_context: str, gener
     Get the critique answer prompt
     """
     return self_rag_critique_answer_prompt.format(query=query, filtered_context=filtered_context[:1000], generated_answer=generated_answer)
+
+# set date dynamically
+date_today = datetime.now().strftime("%Y-%m-%d")
+base_system_prompt = f"You are a helpful AI assistant. Today is {date_today}. Your task is to assist users by providing accurate and relevant information based on the provided context or general knowledge. Always strive to be factual, concise, and helpful."
