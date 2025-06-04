@@ -72,7 +72,7 @@ def rerank_documents(query: str, documents: list[str]) -> list[str]:
 
 # --- Reranker RAG Core Logic ---
 
-def generate_response_with_reranker(query):
+def generate_response_reranker_rag(query):
     """
     Generates a response using a RAG pipeline with a reranking step.
 
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     ]
 
     for q in test_queries:
-        result = generate_response_with_reranker(q)
+        result = generate_response_reranker_rag(q)
         print("\n" + "="*50)
         print(f"Query: {result['query']}")
         print(f"Generated Answer: {result['generated_answer']}")

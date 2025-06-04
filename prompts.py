@@ -1,5 +1,4 @@
 from config import config
-from datetime import datetime
 
 crag_assessment_prompt_en = \
 """Evaluate the relevance and sufficiency of the provided 'Retrieved Context' for answering the 'Query'. Consider if the context directly addresses the query and if the query might require more up-to-date information than the context likely provides (suggesting web search).
@@ -101,6 +100,38 @@ def get_self_rag_critique_answer_prompt(query: str, filtered_context: str, gener
     """
     return self_rag_critique_answer_prompt.format(query=query, filtered_context=filtered_context[:1000], generated_answer=generated_answer)
 
-# set date dynamically
-date_today = datetime.now().strftime("%Y-%m-%d")
-base_system_prompt = f"You are a helpful AI assistant. Today is {date_today}. Your task is to assist users by providing accurate and relevant information based on the provided context or general knowledge. Always strive to be factual, concise, and helpful."
+base_system_prompt = "You are a helpful assistant. Answer the user's question directly. If context is provided, use it to inform your answer. DO NOT MENTION THE CONTEXT OR ITS RELEVANCE IN YOUR RESPONSE."
+
+llm_judge_prompt = \
+"""Evaluate the following response to a query. Rate each aspect on a scale of 1-10.
+
+Query: {query}
+
+Ground Truth: {ground_truth}
+
+Response to Evaluate:
+{response}
+
+Please evaluate the response on the following criteria:
+1. Factual Correctness (1-10): Is the information in the response factually accurate according to the retrieved context?
+2. Answer Relevance (1-10): How relevant is the response to the query?
+3. Hallucination (1-10): Does the response contain information not supported by the retrieved context? (10 = no hallucination, 1 = completely hallucinated)
+4. Completeness (1-10): Does the response address all aspects of the query?
+5. Coherence (1-10): Is the response well-structured, logical, and easy to understand?
+
+Provide your ratings in the following JSON format:
+```json
+{{
+  "factual_correctness": 0,
+  "answer_relevance": 0,
+  "hallucination_score": 0,
+  "completeness": 0,
+  "coherence": 0
+}}
+```
+"""
+def get_llm_judge_prompt(query: str, ground_truth: str, response: str) -> str:
+    """
+    Get the LLM judge prompt
+    """
+    return llm_judge_prompt.format(query=query, ground_truth=ground_truth, response=response)

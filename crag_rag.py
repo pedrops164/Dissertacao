@@ -1,6 +1,6 @@
 # Implementation of Corrective RAG using web search as fallback mechanism if the retrieved context isn't sufficient.
 
-from vector_database import vector_db, DEFAULT_N_RESULTS, retrieve_context # <--- Import the retrieval function
+from vector_database import retrieve_context # <--- Import the retrieval function
 from simple_rag import generate_response_rag # <--- Import the simple RAG function
 from llm_client import call_llm_assessment # Your LLM client setup
 from websearch_tavily import search_tavily # Import Tavily client

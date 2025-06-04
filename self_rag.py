@@ -6,9 +6,9 @@ from config import config
 
 # --- Configuration ---
 # How many initial documents to retrieve before critique/filtering
-SELF_RAG_RETRIEVAL_K = config.get("SELF_RAG_RETRIEVAL_K") # Get the language from config
+SELF_RAG_INITIAL_K = config.get("SELF_RAG_INITIAL_K")
 # How many relevant documents to finally use for generation context
-SELF_RAG_FINAL_CONTEXT_N = config.get("SELF_RAG_FINAL_CONTEXT_N") # Get the language from config
+SELF_RAG_FINAL_CONTEXT_K = config.get("RAG_FINAL_CONTEXT_K")
 
 # --- Self-RAG Core Logic ---
 
@@ -48,10 +48,8 @@ def generate_response_self_rag(query):
 
     # --- Step 2: Retrieve Documents (if needed) ---
     if needs_retrieval:
-        print(f"\n[Step 2/5] Retrieving Top-{SELF_RAG_RETRIEVAL_K} documents (Hybrid Search + RRF)...")
-        #temp_context = retrieve_context(query, n_results=SELF_RAG_RETRIEVAL_K, retrieval_k=SELF_RAG_RETRIEVAL_K * 2) # Fetch more
-        retrieved_docs = retrieve_context(query, n_results=SELF_RAG_RETRIEVAL_K) # Fetch more
-        print(f"  > Retrieved {len(retrieved_docs)} candidate documents.")
+        print(f"\n[Step 2/5] Retrieving Top-{SELF_RAG_INITIAL_K} documents (Hybrid Search + RRF)...")
+        retrieved_docs = retrieve_context(query, n_results=SELF_RAG_INITIAL_K) # Fetch more
 
         if not retrieved_docs:
              print("  > Warning: Retrieval needed but no documents found.")
@@ -71,7 +69,7 @@ def generate_response_self_rag(query):
                 relevant_docs.append(doc_text)
                 print(f"    >> Doc {i+1} kept.")
             # Early exit if we have enough relevant docs
-            if len(relevant_docs) >= SELF_RAG_FINAL_CONTEXT_N:
+            if len(relevant_docs) >= SELF_RAG_FINAL_CONTEXT_K:
                  print(f"  > Found sufficient ({len(relevant_docs)}) relevant documents. Stopping critique early.")
                  break
 
@@ -80,7 +78,7 @@ def generate_response_self_rag(query):
         else:
              print(f"  > Selected {len(relevant_docs)} relevant documents for context.")
              # Prepare final context string from relevant docs
-             filtered_context = "\n\n---\n\n".join(relevant_docs[:SELF_RAG_FINAL_CONTEXT_N])
+             filtered_context = "\n\n---\n\n".join(relevant_docs[:SELF_RAG_FINAL_CONTEXT_K])
 
     # --- Step 4: Generate Answer ---
     print("\n[Step 4/5] Generating answer...")

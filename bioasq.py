@@ -97,6 +97,77 @@ def load_bioasq_yesno_questions(bioasq_dir_path: str = "BIOASQ") -> List[Tuple[s
     print(f"Finished processing BioASQ directory. Found {len(yes_no_questions)} 'yesno' questions in total from {subdirectories_processed} subdirectories.")
     return yes_no_questions
 
+def load_bioasq_open_questions(bioasq_dir_path: str = "BIOASQ") -> List[Tuple[str, str]]:
+    """
+    Loads 'factoid', 'list', or 'summary' type questions and their ideal answers
+    from JSON files within subdirectories of the specified BioASQ directory.
+
+    The 'ideal_answer' field is a list; the first element is taken.
+
+    Args:
+        bioasq_dir_path: The file path to the main BIOASQ directory.
+
+    Returns:
+        A list of tuples, where each tuple is (question_body, ideal_answer_string).
+        Returns an empty list if the directory doesn't exist or no suitable
+        questions are found.
+    """
+    open_questions: List[Tuple[str, str]] = []
+    target_types = ["factoid", "list", "summary"]
+
+    if not os.path.isdir(bioasq_dir_path):
+        raise FileNotFoundError(f"Directory not found at {bioasq_dir_path}")
+
+    print(f"Starting to load BioASQ open-ended questions ({', '.join(target_types)}) from: {bioasq_dir_path}")
+    subdirectories_processed = 0
+    total_json_files_processed = 0
+    total_open_questions_found = 0
+
+    for item_name in os.listdir(bioasq_dir_path):
+        item_path = os.path.join(bioasq_dir_path, item_name)
+        if os.path.isdir(item_path):
+            subdirectories_processed += 1
+            # print(f"  Processing subdirectory: {item_name}") # Less verbose
+            for filename in os.listdir(item_path):
+                if filename.endswith(".json"):
+                    file_path = os.path.join(item_path, filename)
+                    total_json_files_processed +=1
+                    try:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            data = json.load(f)
+                        
+                        questions_list = data.get("questions")
+                        if not isinstance(questions_list, list):
+                            continue
+                        
+                        for question_obj in questions_list:
+                            if not isinstance(question_obj, dict):
+                                continue
+
+                            q_type = question_obj.get("type")
+                            q_body = question_obj.get("body")
+                            q_ideal_answer_list = question_obj.get("ideal_answer")
+
+                            if q_type in target_types:
+                                if isinstance(q_body, str) and q_body.strip() and \
+                                   isinstance(q_ideal_answer_list, list) and \
+                                   len(q_ideal_answer_list) > 0 and \
+                                   isinstance(q_ideal_answer_list[0], str) and \
+                                   q_ideal_answer_list[0].strip():
+                                    
+                                    ideal_answer_str = q_ideal_answer_list[0].strip()
+                                    open_questions.append((q_body.strip(), ideal_answer_str))
+                                    total_open_questions_found +=1
+                                # else:
+                                    # print(f"      Info: Open question of type '{q_type}' missing valid body or ideal_answer in {file_path}. Q: {q_body[:30]}...")
+                    except json.JSONDecodeError:
+                        print(f"    Error: Could not decode JSON from {file_path}. Skipping.")
+                    except Exception as e:
+                        print(f"    Error processing file {file_path}: {e}")
+
+    print(f"Finished open-ended scan: Processed {subdirectories_processed} subdirs, {total_json_files_processed} JSON files. Found {total_open_questions_found} open questions.")
+    return open_questions
+
 if __name__ == '__main__':
     # --- Example Usage ---
     # Create a dummy BIOASQ directory structure for testing

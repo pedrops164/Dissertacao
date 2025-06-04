@@ -3,6 +3,7 @@ from no_rag import generate_response_no_rag
 from self_rag import generate_response_self_rag
 from fusion_rag import generate_response_fusion_rag
 from crag_rag import generate_response_corrective_rag
+from reranker_rag import generate_response_reranker_rag
 from typing import Tuple
 
 class LLMSystem(ABC):
@@ -45,3 +46,12 @@ class CRAGRAGSystem(LLMSystem):
     def query(self, prompt: str) -> Tuple[str, int]:
         # Simulate response generation with CRAG-RAG
         return generate_response_corrective_rag(prompt)
+    
+class RerankerRAGSystem(LLMSystem):
+    def __init__(self, system_name: str):
+        super().__init__(system_name)
+
+    def query(self, prompt: str) -> Tuple[str, int]:
+        # Simulate response generation with Reranker-RAG
+        response = generate_response_reranker_rag(prompt)  # Assuming similar to CRAG for now
+        return response["generated_answer"], response["tokens_count"]

@@ -15,16 +15,19 @@ class Config:
     
     def _initialize(self):
         """Initialize configuration values from environment variables."""
-        # Define your environment variables here with defaults
-        self.self_rag_retrieval_k = int(os.environ.get("SELF_RAG_RETRIEVAL_K", 7))
-        self.self_rag_final_context_n = int(os.environ.get("SELF_RAG_FINAL_CONTEXT_N", 3))
         self.openai_api_key = os.environ.get("OPENAI_API_KEY")
         self.nebius_api_key = os.environ.get("NEBIUS_API_KEY")
         self.tavily_api_key = os.environ.get("TAVILY_API_KEY")
+
+        # llm config
+        self.LLM_MODEL = os.environ.get("LLM_MODEL") # Default LLM model
         
+        # rag config
+        self.RAG_FINAL_CONTEXT_K = int(os.environ.get("RAG_FINAL_CONTEXT_K", 5)) # How many relevant context documents to finally use for generation
         # self rag config
-        self.SELF_RAG_RETRIEVAL_K = os.environ.get("SELF_RAG_RETRIEVAL_K")
-        self.SELF_RAG_FINAL_CONTEXT_N = os.environ.get("SELF_RAG_FINAL_CONTEXT_N")
+        self.SELF_RAG_INITIAL_K = int(os.environ.get("SELF_RAG_INITIAL_K", 10)) # Number of docs to retrieve for self-rag
+        # fusion rag config
+        self.FUSION_RAG_INITIAL_K = int(os.environ.get("FUSION_RAG_INITIAL_K", 10)) # Number of docs to retrieve for fusion rag
 
         # worker threads
         self.n_workers = int(os.environ.get("N_WORKERS", 8))

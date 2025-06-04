@@ -16,8 +16,9 @@ from dataclasses import dataclass, field
 from llm_system import LLMSystem
 from llm_client import call_llm_assessment
 from abc import ABC, abstractmethod # Import ABC and abstractmethod
-from bioasq import load_bioasq_yesno_questions
+from bioasq import load_bioasq_yesno_questions, load_bioasq_open_questions
 import concurrent.futures # Import for ThreadPoolExecutor
+from prompts import get_llm_judge_prompt
 
 # Define evaluation result data structure
 @dataclass
@@ -197,6 +198,14 @@ class RAGEvaluator(ABC):
             
         return comparison
     
+    @abstractmethod
+    def get_name(self) -> str:
+        """Get the name of the evaluator class"""
+        pass
+
+    def get_result_dicts(self) -> List[Dict[str, Any]]:
+        return [r.to_dict() for r in list(self.results.values())]
+    
     def save_results(self, output_file: str):
         """Save evaluation results to file"""
         with open(output_file, 'w') as f:
@@ -275,23 +284,6 @@ class RAGEvaluatorYesNoQuestion(RAGEvaluator):
         """
         return f"{query}\nRespond only with 'yes' or 'no'."
 
-    def _get_system_response(self, system: LLMSystem, query: str) -> Tuple[str, int]:
-        """
-        Get response from a system, handling different implementations
-        
-        Returns:
-            Tuple of (response_text, retrieved_documents)
-        """
-        try:
-            # Make a single call to the system
-            response, tokens_used = system.query(query)
-
-            return response, tokens_used
-                
-        except Exception as e:
-            print(f"Error getting response from system: {e}")
-            return "", 0
-
     def _process_single_query(self, system: LLMSystem, query_tuple: Tuple[str, str]) -> EvaluationEntry:
         """
         Processes a single query: formats it, gets system response, calculates metrics.
@@ -302,7 +294,7 @@ class RAGEvaluatorYesNoQuestion(RAGEvaluator):
         start_time = time.time()
         yesno_formatted_query = RAGEvaluatorYesNoQuestion.get_yesno_query(query)
         
-        response, token_count = self._get_system_response(system, yesno_formatted_query)
+        response, token_count = system.query(yesno_formatted_query)
         
         latency = time.time() - start_time
 
@@ -322,6 +314,10 @@ class RAGEvaluatorYesNoQuestion(RAGEvaluator):
             response=normalized_response,       # Store normalized response
             metrics=metrics
         )
+    
+    def get_name(self) -> str:
+        """Get the name of the evaluator class"""
+        return "Yes/No Question Evaluator"
 
 
 class RAGEvaluatorOpenQuestion(RAGEvaluator):
@@ -336,8 +332,43 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
         """
         super().__init__(n_workers=n_workers)
         self.use_llm_judge = use_llm_judge
+
+    def _process_single_open_query(self, system: LLMSystem, query_tuple: Tuple[str, str]) -> EvaluationEntry:
+        """
+        Processes a single open-ended query: gets system response, calculates metrics,
+        and optionally performs LLM-as-judge evaluation.
+        This function is executed by each worker thread.
+        """
+        query, ground_truth = query_tuple
         
-    def evaluate_system(self, system: LLMSystem, queries: List[Any]) -> OpenDomainEvaluationResult:
+        start_time = time.time()
+        
+        # Get response from the system being evaluated
+        response_text, token_count = system.query(query) # Uses inherited method
+        
+        latency = time.time() - start_time
+        
+        metrics: Dict[str, float] = {
+            "latency": latency,
+            "token_count": float(token_count)
+        }
+            
+        # Calculate content quality metrics using LLM-as-judge if applicable
+        if self.use_llm_judge and ground_truth is not None: # LLM Judge typically needs ground truth
+            # _llm_judge_evaluation is inherited from RAGEvaluator (or defined there)
+            content_scores = self._llm_judge_evaluation(query, ground_truth, response_text)
+            metrics.update(content_scores)
+        elif self.use_llm_judge and ground_truth is None:
+            print(f"  Skipping LLM judge for query '{query[:50]}...' as no ground truth provided.")
+            
+        return EvaluationEntry(
+            question=query,
+            ground_truth=ground_truth,
+            response=response_text,
+            metrics=metrics
+        )
+        
+    def evaluate_system(self, system: LLMSystem, queries: List[Tuple[str, str]]) -> OpenDomainEvaluationResult:
         """
         Evaluate a RAG system on a set of queries
         
@@ -353,43 +384,30 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
         entries = []
 
         if queries is None or len(queries) == 0:
-            print(f"No queries provided for evaluation of {system_name}.")
-            return entries
+            raise ValueError(f"No queries provided for evaluation of {system_name}. Please provide a list of query strings or tuples (query, ground_truth).")
         
         if isinstance(queries[0], str):
-            # If queries are strings, convert to list of tuples with ground truth
-            queries = [(q, None) for q in queries]
+            raise ValueError(f"Queries for {self.__class__.__name__} must be a list of strings or tuples (query, ground_truth). Got {type(queries[0])} instead.")
         
-        for query, ground_truth in queries:
-            # Measure efficiency metrics
-            start_time = time.time()
-            
-            # Get response from system
-            response, token_count = self._get_system_response(system, query)
-            
-            # Calculate efficiency metrics
-            latency = time.time() - start_time
-            
-            # Initialize metrics dictionary
-            metrics = {
-                "latency": latency,
-                "token_count": token_count
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.n_workers) as executor:
+            future_to_query_tuple = {
+                executor.submit(self._process_single_open_query, system, query_tuple): query_tuple
+                for query_tuple in queries
             }
-                
-            # Calculate content quality metrics if applicable
-            if self.use_llm_judge:
-                content_scores = self._llm_judge_evaluation(query, ground_truth, response)
-                metrics.update(content_scores)
             
-            entry = EvaluationEntry(
-                question=query,
-                ground_truth=ground_truth,
-                response=response,
-                metrics=metrics
-            )
-            
-            entries.append(entry)
-           
+            processed_count = 0
+            for future in concurrent.futures.as_completed(future_to_query_tuple):
+                original_query_tuple = future_to_query_tuple[future]
+                try:
+                    entry = future.result()
+                    entries.append(entry)
+                except Exception as exc:
+                    print(f"Query '{original_query_tuple[0][:50]}...' generated an exception during processing: {exc}")
+                finally:
+                    processed_count += 1
+                    if processed_count % 10 == 0 or processed_count == len(queries):
+                        print(f"  Processed {processed_count}/{len(queries)} open-domain queries...")
+
         # Create result with all entries
         result = OpenDomainEvaluationResult(
             system_name=system_name,
@@ -398,23 +416,6 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
          
         self.results[system_name] = result
         return result
-
-    def _get_system_response(self, system: LLMSystem, query: str) -> Tuple[str, List[str]]:
-        """
-        Get response from a system, handling different implementations
-        
-        Returns:
-            Tuple of (response_text, retrieved_documents)
-        """
-        try:
-            # Make a single call to the system
-            response, tokens_used = system.query(query)
-
-            return response, tokens_used
-                
-        except Exception as e:
-            print(f"Error getting response from system: {e}")
-            return "", 0
         
     def _llm_judge_evaluation(self, query: str, ground_truth: str, response: str) -> Dict[str, float]:
         """
@@ -424,11 +425,11 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
             Dictionary of scores for different quality dimensions
         """
         # Create prompt for LLM judge
-        prompt = self._create_judge_prompt(query, ground_truth, response)
+        prompt = get_llm_judge_prompt(query, ground_truth, response)
         
         # Get evaluation from judge model
         # This implementation depends on your specific judge model
-        judge_response = self._get_judge_response(prompt)
+        judge_response, _ = call_llm_assessment(prompt=prompt, max_tokens=500)
         
         # Parse scores from judge response
         try:
@@ -444,89 +445,106 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
                 "coherence": 0.0
             }
     
-    def _create_judge_prompt(self, query: str, ground_truth: str, response: str) -> str:
-        """Create evaluation prompt for judge model"""
-        # Construct context from retrieved documents
-        
-        prompt = f"""Evaluate the following response to a query. Rate each aspect on a scale of 1-10.
-
-Query: {query}
-
-Ground Truth: {ground_truth}
-
-Response to Evaluate:
-{response}
-
-Please evaluate the response on the following criteria:
-1. Factual Correctness (1-10): Is the information in the response factually accurate according to the retrieved context?
-2. Answer Relevance (1-10): How relevant is the response to the query?
-3. Hallucination (1-10): Does the response contain information not supported by the retrieved context? (10 = no hallucination, 1 = completely hallucinated)
-4. Completeness (1-10): Does the response address all aspects of the query?
-5. Coherence (1-10): Is the response well-structured, logical, and easy to understand?
-
-Provide your ratings in the following JSON format:
-```json
-{{
-  "factual_correctness": 0,
-  "answer_relevance": 0,
-  "hallucination_score": 0,
-  "completeness": 0,
-  "coherence": 0
-}}
-```
-"""
-        return prompt
-    
-    def _get_judge_response(self, prompt: str) -> str:
-        """Get evaluation from judge model"""
-        response, _ = call_llm_assessment(prompt=prompt, max_tokens=500)
-        return response
-
-    
     def _parse_judge_scores(self, judge_response: str) -> Dict[str, float]:
         """Parse scores from judge response"""
         # Extract JSON from response
         json_str = judge_response.split("```json")[1].split("```")[0].strip()
         scores = json.loads(json_str)
         return scores
+    
+    def get_name(self) -> str:
+        """Get the name of the evaluator class"""
+        return "Open Question Evaluator"
+    
+class RAGBenchmark:
+    """
+    A benchmark class to evaluate multiple RAG systems on sets of queries.
+    """
+    def __init__(self):
+        self.evaluators: List[RAGEvaluator] = []
 
+    def eval_yes_no_questions(self, systems: List[LLMSystem], queries: List[Tuple[str, str]], n_workers: int = 1):
+        """
+        Evaluate multiple systems on yes/no questions.
+        
+        Args:
+            systems: List of LLMSystem objects to evaluate.
+            queries: List of (query_string, ground_truth_string) tuples.
+            n_workers: Number of parallel workers to use.
+            
+        Returns:
+            Dictionary mapping system names to their evaluation results.
+        """
+        evaluator = RAGEvaluatorYesNoQuestion(n_workers=n_workers)
+        for system in systems:
+            evaluator.evaluate_system(system, queries)
+        self.evaluators.append(evaluator)  # Store evaluator for potential future use
+    
+    def eval_open_questions(self, systems: List[LLMSystem], queries: List[Tuple[str, str]], n_workers: int = 1):
+        """
+        Evaluate multiple systems on open-domain questions.
+        
+        Args:
+            systems: List of LLMSystem objects to evaluate.
+            queries: List of query strings.
+            n_workers: Number of parallel workers to use.
+            use_llm_judge: Whether to use an LLM as a judge for content quality.
+            
+        Returns:
+            Dictionary mapping system names to their evaluation results.
+        """
+        evaluator = RAGEvaluatorOpenQuestion(n_workers=n_workers, use_llm_judge=True)
+        for system in systems:
+            evaluator.evaluate_system(system, queries)
+        self.evaluators.append(evaluator)  # Store evaluator for potential future use
+
+    def save_results(self, output_file: str):
+        """
+        Save all evaluation results from all evaluators to a single file.
+        
+        Args:
+            output_file: Path to save the results JSON file.
+        """
+        all_results = {}
+        for evaluator in self.evaluators:
+            all_results[evaluator.get_name()] = evaluator.get_result_dicts()
+        
+        with open(output_file, 'w') as f:
+            json.dump(all_results, f, indent=2)
+            
 if __name__ == "__main__":
     # Initialize evaluator
     from config import config
     n_workers = config.n_workers
-    evaluator = RAGEvaluatorYesNoQuestion(n_workers=n_workers)
 
     # Import queries
-    from llm_system import NoRAGSystem, SelfRAGSystem, FusionRAGSystem, CRAGRAGSystem
+    from llm_system import NoRAGSystem, SelfRAGSystem, FusionRAGSystem, CRAGRAGSystem, RerankerRAGSystem
 
-    bioasq_queries = load_bioasq_yesno_questions()
+    bioasq_yesno_queries = load_bioasq_yesno_questions()
+    bioasq_open_queries = load_bioasq_open_questions()
 
     no_rag_system = NoRAGSystem("No-RAG System")
     self_rag_system = SelfRAGSystem("Self-RAG System")
-    #fusion_rag_system = FusionRAGSystem("Fusion-RAG System")
-    #crag_rag_system = CRAGRAGSystem("CRAG-RAG System")
+    reranker_rag_system = RerankerRAGSystem("Reranker-RAG System")
+    fusion_rag_system = FusionRAGSystem("Fusion-RAG System")
+    crag_rag_system = CRAGRAGSystem("CRAG-RAG System")
+
+    rag_benchmark = RAGBenchmark()
 
     print("Evaluating systems...")
 
-    # Evaluate basic LLM
-    basic_llm_results = evaluator.evaluate_system(
-        no_rag_system,
-        bioasq_queries
+    rag_benchmark.eval_yes_no_questions(
+        #systems=[no_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system],
+        systems=[no_rag_system, fusion_rag_system],
+        queries=bioasq_yesno_queries[:10], 
+        n_workers=n_workers
     )
 
-    print("Basic LLM evaluation complete.")
-
-    # Evaluate Self-RAG
-    self_rag_results = evaluator.evaluate_system(
-        self_rag_system,
-        bioasq_queries
-    )
-
-    print("Self-RAG evaluation complete.")
-
-    # Compare systems
-    comparison = evaluator.compare_systems()
-    print(json.dumps(comparison, indent=2))
+    #rag_benchmark.eval_open_questions(
+    #    systems=[no_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system], 
+    #    queries=bioasq_open_queries, 
+    #    n_workers=n_workers
+    #)
 
     # Save results
-    evaluator.save_results("rag_evaluation_results.json")
+    rag_benchmark.save_results("rag_evaluation_results.json")

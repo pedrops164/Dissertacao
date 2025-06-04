@@ -15,7 +15,6 @@ from dataset_loaders import load_googlenq_data, load_pubmed_data, get_googlenq_d
 
 # --- Configuration ---
 EMBEDDING_MODEL = "BAAI/bge-en-icl"
-DEFAULT_N_RESULTS = 3
 #NUM_ROWS_TO_LOAD = 50000 # Number of ORIGINAL documents to process
 NUM_ROWS_TO_LOAD = 5000 # Number of ORIGINAL documents to process
 
@@ -32,6 +31,10 @@ BM25_TEXTS_FILENAME = "bm25_texts.pkl" # To store texts associated with BM25
 
 MAX_WORKERS = 8 # Number of parallel workers for embedding
 MAX_PENDING_FUTURES_FACTOR = 3 # e.g., allow up to MAX_WORKERS * 2 pending tasks
+
+# RAG Configuration
+from config import config
+DEFAULT_N_RESULTS = config.get("SELF_RAG_FINAL_CONTEXT_K") # Default number of results to return from retrieval
 
 # --- Vector Database Class using ChromaDB ---
 class VectorDatabase:
@@ -200,15 +203,15 @@ class VectorDatabase:
             population_end_time = time.time()
             print(f"Finished ChromaDB population. Added {total_added_chroma:,} chunks in {population_end_time - population_start_time:.2f}s.")
             print(f"Collection '{self.collection_name}' now contains {self.collection.count():,} chunks.")
-        #else:
-        #    # Chroma has data, but script restarted, bm25 index isnt built.
-        #    # Load texts from Chroma to build BM25.
-        #    print("\n--- Loading Texts from ChromaDB for BM25 ---")
-        #    texts = self._get_all_documents_from_chroma()
-        #    if not texts:
-        #        raise ValueError("No texts available from ChromaDB for BM25 index.")
-        #    self.bm25_index.set_texts(texts)
-        #    print(f"Loaded {len(texts):,} chunks from ChromaDB into memory for BM25.")
+        else:
+            # Chroma has data, but script restarted, bm25 index isnt built.
+            # Load texts from Chroma to build BM25.
+            print("\n--- Loading Texts from ChromaDB for BM25 ---")
+            texts = self._get_all_documents_from_chroma()
+            if not texts:
+                raise ValueError("No texts available from ChromaDB for BM25 index.")
+            self.bm25_index.set_texts(texts)
+            print(f"Loaded {len(texts):,} chunks from ChromaDB into memory for BM25.")
 
         return True
 
@@ -226,7 +229,10 @@ class VectorDatabase:
         query_embedding = query_embedding_list[0]
         try:
             results = self.collection.query(query_embeddings=[query_embedding.tolist()], n_results=n_results, include=['documents'])
-            documents = results.get('documents', [[]])[0]
+            documents_list = results.get('documents')
+            if documents_list is None or not documents_list or documents_list[0] is None:
+                return []
+            documents = documents_list[0]
             print(f"Vector search completed in {time.time() - start_time:.4f}s, found {len(documents)} results.")
             return documents
         except Exception as e:
@@ -331,7 +337,7 @@ class BM25Index:
                  print(f"BM25 search completed in {time.time() - start_time:.4f}s, found 0 results with score > 0.")
                  return []
 
-            top_n_indices = sorted(positive_score_indices, key=lambda i: scores[i], reverse=True)[:n_results]
+            top_n_indices = sorted(positive_score_indices, key=lambda i: float(scores[i]), reverse=True)[:n_results]
             documents = [self.texts[i] for i in top_n_indices]
             
             # for i in top_n_indices:
@@ -366,7 +372,7 @@ except Exception as e:
     print(f"Failed during VectorDatabase setup or population: {e}")
     traceback.print_exc()
     print("Ensure ChromaDB is installed (`pip install chromadb rank_bm25 datasets sentence-transformers`) and dependencies are met.")
-    print("Check API key (if using OpenAI embeddings) and network connection.")
+    print("Check API key and network connection.")
     print("--- Vector Database Setup Failed ---")
     vector_db = None
 
@@ -382,6 +388,4 @@ def retrieve_context(query, n_results=DEFAULT_N_RESULTS):
 
     print(f"\nRetrieving context for query: '{query}' using ChromaDB")
     results = vector_db.search_vector(query, n_results=n_results)
-    if not results:
-        raise ValueError("No results found in ChromaDB for the given query.")
     return results
