@@ -100,6 +100,54 @@ def get_self_rag_critique_answer_prompt(query: str, filtered_context: str, gener
     """
     return self_rag_critique_answer_prompt.format(query=query, filtered_context=filtered_context[:1000], generated_answer=generated_answer)
 
+""" HYDE RAG PROMPTS """
+
+def get_hyde_rag_prompt(user_query: str) -> str:
+    """
+    Generates a system prompt for an LLM to create a hypothetical document for HyDE RAG.
+
+    This function takes a user's query and embeds it into a larger prompt
+    that instructs the LLM to generate a hypothetical research paper abstract
+    in a specific format (Title and Abstract). This generated document is designed
+    to resemble the chunks in a medical vector database.
+
+    Args:
+        user_query: The original question from the user.
+
+    Returns:
+        A formatted string containing the full system prompt to be sent to the LLM.
+    """
+
+    # The core prompt template with instructions, a one-shot example, and a placeholder for the user query.
+    # Using a raw f-string (rf"""...""") is good practice to handle backslashes if any exist.
+    hyde_prompt = rf"""
+You are an expert medical research assistant. Your task is to take a user's question and generate a hypothetical research paper abstract that provides a detailed answer. This generated document will be used to find similar, real documents in a database.
+
+The generated document **must** follow this exact format:
+
+**Title:** \[A formal, scientific title for a hypothetical research paper that answers the query]
+**Abstract:** \[A detailed abstract for the hypothetical paper. It should describe the background, methods, results, and conclusion of a plausible study that answers the user's question. Use precise medical terminology and maintain a scientific tone.]
+
+---
+
+### **Example**
+
+**User Query:** "What is a treatment plan for spontaneous leukemia in AKR mice using immunotherapy and chemoradiotherapy?"
+
+**Generated Document:**
+**Title:** Graft versus leukemia. VI. Adoptive immunotherapy in combination with chemoradiotherapy for spontaneous leukemia-lymphoma in AKR mice.
+**Abstract:** A three-step treatment plan incorporating adoptive immunotherapy and chemoradiotherapy was used to treat AKR (H-2k) mice bearing spontaneous leukemia-lymphoma (SLL). 1) Leukemic mice were treated with chemoradiotherapy for immunosuppression and leukemia cytoreduction. 2) To introduce a graft-versus-leukemia reaction against residual malignant cells, the immunosuppressed AKR mice were given immunocompetent cells from H-2 mismatched DBA/2 (H-2d) donors. 3) To "rescue" the AKR hosts from incipient graft-versus-host disease, the mismatched DBA/2 cells were killed with combination chemotherapy, and cells from allogeneic H-2 matched RF (H-2k) donors were administered to restore hematopoiesis. Leukemic AKR mice thus treated had significant prolongation of their median survival time and a higher 60-day survival rate post treatment than did untreated controls, chemoradiotherapy controls, or control mice that received chemoradiotherapy plus cells from syngeneic donors. Therefore, adoptive immunotherapy may be useful as an adjunct to conventional therapy for treatment of SLL in AKR mice.
+
+---
+
+Now, please generate a hypothetical document for the following user query. Create a plausible, detailed, and scientifically-toned Title and Abstract. Don't include the answer to the question.
+
+**User Query:** "{user_query}"
+"""
+    return hyde_prompt
+
+
+
 base_system_prompt = "You are a helpful assistant. Answer the user's question directly. If context is provided, use it to inform your answer. DO NOT MENTION THE CONTEXT OR ITS RELEVANCE IN YOUR RESPONSE."
 
 llm_judge_prompt = \

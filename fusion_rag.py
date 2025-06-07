@@ -1,6 +1,5 @@
 
 from vector_database import vector_db # <--- Import the retrieval function
-from simple_rag import generate_response_rag # <--- Import the simple RAG function
 from config import config
 from llm_client import query_llm_with_context
 # Fusion Configuration
@@ -101,10 +100,9 @@ def generate_response_fusion_rag(query):
         # Optional: Handle case where no context is found (e.g., fall back to no-RAG or inform the LLM)
         context = "No specific context was found for this query." # Provide default text
 
-    print(f"Retrieved Context:\n---\n{context[:300]}...\n---")
+    print(f"Retrieved Context:\n---\n{context}...\n---")
 
     return query_llm_with_context(query, context)
-    #return generate_response_rag(query, context)
 
 if __name__ == "__main__":
     # Example usage (ensure vector_database.py ran its setup)

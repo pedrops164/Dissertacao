@@ -429,7 +429,7 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
         
         # Get evaluation from judge model
         # This implementation depends on your specific judge model
-        judge_response, _ = call_llm_assessment(prompt=prompt, max_tokens=500)
+        judge_response, _ = call_llm_assessment(prompt=prompt, max_tokens=500, use_judge_model=True)
         
         # Parse scores from judge response
         try:
@@ -518,30 +518,34 @@ if __name__ == "__main__":
     n_workers = config.n_workers
 
     # Import queries
-    from llm_system import NoRAGSystem, SelfRAGSystem, FusionRAGSystem, CRAGRAGSystem, RerankerRAGSystem
+    from llm_system import NoRAGSystem, SimpleRAGSystem, SelfRAGSystem, FusionRAGSystem, CRAGRAGSystem, RerankerRAGSystem, HyDERAGSystem
 
-    bioasq_yesno_queries = load_bioasq_yesno_questions()
-    bioasq_open_queries = load_bioasq_open_questions()
+    question_limit = config.EVAL_N_QUESTIONS
+
+    bioasq_yesno_queries = load_bioasq_yesno_questions()[:question_limit]
+    bioasq_open_queries = load_bioasq_open_questions()[:question_limit]
 
     no_rag_system = NoRAGSystem("No-RAG System")
+    simple_rag_system = SimpleRAGSystem("Simple RAG System")  # Placeholder for a simple RAG system
     self_rag_system = SelfRAGSystem("Self-RAG System")
     reranker_rag_system = RerankerRAGSystem("Reranker-RAG System")
     fusion_rag_system = FusionRAGSystem("Fusion-RAG System")
     crag_rag_system = CRAGRAGSystem("CRAG-RAG System")
+    hyde_rag_system = HyDERAGSystem("HyDE-RAG System")
 
     rag_benchmark = RAGBenchmark()
 
     print("Evaluating systems...")
 
     rag_benchmark.eval_yes_no_questions(
-        #systems=[no_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system],
-        systems=[no_rag_system, fusion_rag_system],
-        queries=bioasq_yesno_queries[:10], 
+        systems=[no_rag_system, simple_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
+        #systems=[no_rag_system, hyde_rag_system],
+        queries=bioasq_yesno_queries, 
         n_workers=n_workers
     )
 
     #rag_benchmark.eval_open_questions(
-    #    systems=[no_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system], 
+    #    systems=[no_rag_system, simple_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
     #    queries=bioasq_open_queries, 
     #    n_workers=n_workers
     #)
