@@ -31,7 +31,7 @@ def generate_response_self_rag(query):
     # --- Step 1: Decide if Retrieval is Necessary ---
     print("\n[Step 1/5] Deciding if retrieval is needed...")
     retrieval_prompt = get_self_rag_retrieval_prompt(query)
-    decision, n_tokens = call_llm_assessment(retrieval_prompt, max_tokens=10)
+    decision, n_tokens = call_llm_assessment(retrieval_prompt)
     tokens_count += n_tokens
     print(f"  > LLM Decision on Retrieval: {decision}")
 
@@ -62,7 +62,7 @@ def generate_response_self_rag(query):
         for i, doc_text in enumerate(retrieved_docs):
             if not doc_text: continue
             critique_prompt = get_self_rag_critique_prompt(query, doc_text)
-            critique, n_tokens = call_llm_assessment(critique_prompt, max_tokens=10)
+            critique, n_tokens = call_llm_assessment(critique_prompt)
             tokens_count += n_tokens
             print(f"  > Critiquing Doc {i+1}: Result = {critique}")
             if critique and "IRRELEVANT" not in critique.upper():
@@ -88,7 +88,7 @@ def generate_response_self_rag(query):
     # --- Step 5: Critique Generated Answer (Self-Reflection) ---
     print("\n[Step 5/5] Critiquing generated answer...")
     critique_answer_prompt = get_self_rag_critique_answer_prompt(query, filtered_context, generated_answer)
-    final_critique, n_tokens = call_llm_assessment(critique_answer_prompt, max_tokens=10)
+    final_critique, n_tokens = call_llm_assessment(critique_answer_prompt)
     tokens_count += n_tokens
     print(f"  > Final Answer Critique Result: {final_critique}")
 

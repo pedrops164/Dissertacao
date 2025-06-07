@@ -28,7 +28,7 @@ MAX_PENDING_FUTURES_FACTOR = 3 # e.g., allow up to MAX_WORKERS * 2 pending tasks
 EMBEDDING_MODEL = config.get("NEBIUS_EMBEDDING_MODEL") # Get the embedding model from config
 
 # RAG Configuration
-DEFAULT_N_RESULTS = config.get("SELF_RAG_FINAL_CONTEXT_K") # Default number of results to return from retrieval
+DEFAULT_N_RESULTS = config.get("RAG_FINAL_CONTEXT_K") # Default number of results to return from retrieval
 
 # Vector Database Configuration
 # Ensure the database size is one of the available options

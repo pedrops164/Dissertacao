@@ -104,7 +104,7 @@ def rewrite_query_for_websearch(query):
     rewrite_prompt = get_crag_rewrite_prompt(query)
 
     # Use the generic LLM helper
-    rewritten_query, total_tokens = call_llm_assessment(rewrite_prompt, max_tokens=60, temperature=0.0)
+    rewritten_query, total_tokens = call_llm_assessment(rewrite_prompt)
 
     if rewritten_query:
         # Remove potential quotes LLM might add
