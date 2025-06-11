@@ -1,5 +1,5 @@
 
-from vector_database import vector_db # <--- Import the retrieval function
+#from vectordb.chroma_db import vector_db # <--- Import the retrieval function
 from config import config
 from llm_client import query_llm_with_context
 # Fusion Configuration

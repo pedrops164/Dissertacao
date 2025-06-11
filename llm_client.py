@@ -65,7 +65,7 @@ def call_llm_assessment(prompt=None, max_tokens=1000, temperature=0.0, generatio
     tokens_used = response.usage.total_tokens
     return extracted_answer, tokens_used
     
-def query_llm_with_context(query: str, context: str = "", max_tokens: int = 1000, temperature: float = 0.0) -> Tuple[str, int]:
+def query_llm_with_context(query: str, context: str = "", temperature: float = 0.0) -> Tuple[str, int]:
     """Queries the LLM with a given query and optional context."""
 
     # The system prompt is crucial for guiding behavior.
@@ -85,7 +85,6 @@ def query_llm_with_context(query: str, context: str = "", max_tokens: int = 1000
     response = openai_client.chat.completions.create(
         model=base_llm_model,
         messages=messages,
-        max_tokens=max_tokens,
         temperature=temperature,
         n=1,
         stop=None,

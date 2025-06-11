@@ -1,6 +1,6 @@
 from llm_client import query_llm_with_context
 from config import config
-from vector_database import retrieve_context
+from vectordb import vector_db
 
 RAG_FINAL_CONTEXT_K = config.get("RAG_FINAL_CONTEXT_K")
 
@@ -16,7 +16,7 @@ def generate_response_simple_rag(query):
         str: Generated response
     """
     # retrieve relevant documents from the vector database
-    retrieved_docs = retrieve_context(query, n_results=RAG_FINAL_CONTEXT_K)
+    retrieved_docs = vector_db.retrieve_context(query, n_results=RAG_FINAL_CONTEXT_K)
     # build context from retrieved documents
     context = "\n\n---\n\n".join(retrieved_docs) if retrieved_docs else ""
     

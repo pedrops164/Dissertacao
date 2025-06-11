@@ -1,6 +1,6 @@
 # Implementation of Corrective RAG using web search as fallback mechanism if the retrieved context isn't sufficient.
 
-from vector_database import retrieve_context # <--- Import the retrieval function
+from vectordb import vector_db
 from llm_client import call_llm_assessment, query_llm_with_context # Your LLM client setup
 from websearch_tavily import search_tavily # Import Tavily client
 import re
@@ -174,7 +174,7 @@ def generate_response_corrective_rag(query) -> Tuple[str, int]:
     # Step 1: Retrieve initial context from the vector database
     print("\n[Step 1/5] Retrieving initial context from Vector DB...")
     logger.info("Attempting to retrieve initial context from Vector DB.")
-    local_context = retrieve_context(query) # Retrieve top N chunks based on similarity
+    local_context = vector_db.retrieve_context(query) # Retrieve top N chunks based on similarity
     local_context = "\n\n---\n\n".join(local_context) # Join the retrieved chunks into a single string
     execution_data["local_context_retrieved"] = local_context
     execution_data["local_context_length"] = len(local_context) if local_context else 0

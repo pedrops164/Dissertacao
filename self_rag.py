@@ -1,6 +1,6 @@
 import time
 from llm_client import call_llm_assessment, query_llm_with_context
-from vector_database import retrieve_context # Hybrid search + RRF context retrieval
+from vectordb import vector_db
 from prompts import get_self_rag_retrieval_prompt, get_self_rag_critique_prompt, get_self_rag_generation_prompt_message, get_self_rag_critique_answer_prompt
 from config import config
 
@@ -49,7 +49,7 @@ def generate_response_self_rag(query):
     # --- Step 2: Retrieve Documents (if needed) ---
     if needs_retrieval:
         print(f"\n[Step 2/5] Retrieving Top-{SELF_RAG_INITIAL_K} documents (Hybrid Search + RRF)...")
-        retrieved_docs = retrieve_context(query, n_results=SELF_RAG_INITIAL_K) # Fetch more
+        retrieved_docs = vector_db.retrieve_context(query, n_results=SELF_RAG_INITIAL_K) # Fetch more
 
         if not retrieved_docs:
              print("  > Warning: Retrieval needed but no documents found.")

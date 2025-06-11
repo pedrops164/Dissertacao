@@ -7,6 +7,7 @@ import gzip
 import time
 import traceback
 from chunking import chunk_with_metadata # Import the chunking function
+from typing import Optional
 
 GOOGLE_NQ_TRAIN_FILEPATH = "v1.0-simplified_simplified-nq-train.jsonl.gz"
 GOOGLE_NQ_DEV_FILEPATH = "v1.0-simplified_simplified-nq-train.jsonl.gz"
@@ -238,16 +239,17 @@ def get_googlenq_dev_questions(n_questions: int):
         print(f"An error occurred while reading the file: {e}")
         return []
 
-def load_pubmed_data(num_original_docs_to_load=None, batch_size=500):
+def load_pubmed_data(docs_to_load: Optional[int] = None, batch_size=500, skip_n_docs: int = 0):
     """
     Loads the MedRAG/pubmed dataset from Hugging Face using streaming.
-    If num_original_docs_to_load is None, it attempts to load all documents.
+    Skips a specified number of documents before starting to load.
+    If docs_to_load is None, it attempts to load all documents.
     It extracts title and abstract, and yields them in batches.
     Prints progress, including total count if available.
 
     Args:
         batch_size (int): The size of each batch to yield.
-        num_original_docs_to_load (int, optional): The target number of documents to load.
+        docs_to_load (int, optional): The target number of documents to load.
                                                     If None or < 0, attempts to load all.
                                                     Defaults to None.
 
@@ -258,15 +260,15 @@ def load_pubmed_data(num_original_docs_to_load=None, batch_size=500):
     DATASET_PATH = "MedRAG/pubmed"
     DATASET_SPLIT = 'train'
 
-    load_all = (num_original_docs_to_load is None or num_original_docs_to_load < 0)
+    load_all = (docs_to_load is None or docs_to_load < 0)
 
     # Determine how many docs we *intend* to process for progress reporting
     if load_all:
         docs_to_process_display = "all available"
         limit_for_progress = None # We don't know the limit
     else:
-        docs_to_process_display = f"{num_original_docs_to_load:,}"
-        limit_for_progress = num_original_docs_to_load
+        docs_to_process_display = f"{docs_to_load:,}"
+        limit_for_progress = docs_to_load
 
     print(f"\nAttempting to load {docs_to_process_display} documents from '{DATASET_PATH}'...")
 
@@ -279,11 +281,14 @@ def load_pubmed_data(num_original_docs_to_load=None, batch_size=500):
         # Load the dataset stream
         dataset_stream = load_dataset(DATASET_PATH, streaming=True, split=DATASET_SPLIT)
 
-        # Set the stream based on whether we load all or a specific number
-        if load_all:
-            processing_stream = dataset_stream
-        else:
-            processing_stream = dataset_stream.take(num_original_docs_to_load)
+        # Apply the .skip() method if necessary
+        if skip_n_docs > 0:
+            print(f"  Skipping {skip_n_docs:,} documents...")
+            dataset_stream = dataset_stream.skip(skip_n_docs)
+            print("  Skipping complete.")
+
+        # Apply the .take() method to the (potentially skipped) stream
+        processing_stream = dataset_stream if load_all else dataset_stream.take(docs_to_load)
 
         # Iterate through the dataset stream
         for example in processing_stream:

@@ -19,9 +19,3 @@ def generate_response_no_rag(query: str) -> Tuple[str, int]:
     end_time = time.time()
     print(f"\n--- No-RAG Process Completed in {end_time - start_time:.2f} seconds ---")
     return response, token_count
-
-if __name__ == "__main__":
-    # Example usage
-    query = "Quem escreveu 'Os Lusíadas'?"
-    response = generate_response_no_rag(query)
-    print(f"Response: {response}")

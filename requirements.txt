@@ -6,3 +6,5 @@ datasets
 rank_bm25
 tavily-python
 nltk
+google-generativeai
+qdrant-client

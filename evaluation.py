@@ -65,7 +65,7 @@ class BaseEvaluationResult(ABC):
         return {
             "system_name": self.system_name,
             "evaluation_type": self.__class__.__name__, # Add type for clarity when loading
-            "entries": [entry.to_dict() for entry in self.entries],
+            #"entries": [entry.to_dict() for entry in self.entries],
             "summary_metrics": self.summary_metrics
         }
 
@@ -518,7 +518,7 @@ if __name__ == "__main__":
     n_workers = config.n_workers
 
     # Import queries
-    from llm_system import NoRAGSystem, SimpleRAGSystem, SelfRAGSystem, FusionRAGSystem, CRAGRAGSystem, RerankerRAGSystem, HyDERAGSystem
+    from llm_system import NoRAGSystem, SimpleRAGSystem, SelfRAGSystem, CRAGRAGSystem, RerankerRAGSystem, HyDERAGSystem
 
     question_limit = config.EVAL_N_QUESTIONS
 
@@ -529,7 +529,7 @@ if __name__ == "__main__":
     simple_rag_system = SimpleRAGSystem("Simple RAG System")  # Placeholder for a simple RAG system
     self_rag_system = SelfRAGSystem("Self-RAG System")
     reranker_rag_system = RerankerRAGSystem("Reranker-RAG System")
-    fusion_rag_system = FusionRAGSystem("Fusion-RAG System")
+    #fusion_rag_system = FusionRAGSystem("Fusion-RAG System")
     crag_rag_system = CRAGRAGSystem("CRAG-RAG System")
     hyde_rag_system = HyDERAGSystem("HyDE-RAG System")
 
@@ -538,9 +538,9 @@ if __name__ == "__main__":
     print("Evaluating systems...")
 
     rag_benchmark.eval_yes_no_questions(
-        systems=[no_rag_system, simple_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
-        #systems=[no_rag_system, hyde_rag_system],
-        queries=bioasq_yesno_queries, 
+        #systems=[no_rag_system, simple_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
+        systems=[no_rag_system, simple_rag_system],
+        queries=bioasq_yesno_queries[:100], 
         n_workers=n_workers
     )
 

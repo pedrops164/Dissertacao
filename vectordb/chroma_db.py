@@ -12,6 +12,7 @@ import concurrent.futures
 from collections.abc import Callable
 from dataset_loaders import load_pubmed_data  # Import dataset loaders
 from config import config
+from base_db import VectorDB
 
 # --- Configuration ---
 
@@ -21,7 +22,7 @@ BM25_INDEX_FILENAME = "bm25_index.pkl"
 BM25_TEXTS_FILENAME = "bm25_texts.pkl" # To store texts associated with BM25
 USE_BM25 = config.get("USE_BM25", True) # Whether to use BM25 for keyword search
 
-MAX_WORKERS = 8 # Number of parallel workers for embedding
+MAX_WORKERS = 4 # Number of parallel workers for embedding
 MAX_PENDING_FUTURES_FACTOR = 3 # e.g., allow up to MAX_WORKERS * 2 pending tasks
 
 # Embedding model configuration
@@ -48,7 +49,7 @@ if not os.path.exists(DB_DIR):
     os.makedirs(DB_DIR, exist_ok=True)
 
 # --- Vector Database Class using ChromaDB ---
-class VectorDatabase:
+class ChromaDB(VectorDB):
     """
     Manages document embeddings and similarity search using ChromaDB for persistence.
     """
@@ -61,7 +62,7 @@ class VectorDatabase:
         self.collection = self.client.get_or_create_collection(name=DATABASE_NAME)
         
         # Ensure the collection is populated with data
-        self.populate_collection_if_needed(
+        self.populate_data(
             target_original_docs_to_process=DB_SIZE,
             data_loader_func=load_pubmed_data,  # Use the appropriate data loader function
         )
@@ -133,10 +134,10 @@ class VectorDatabase:
             print(f"Error retrieving all documents from ChromaDB: {e}")
             return []
 
-    def populate_collection_if_needed(self, target_original_docs_to_process, data_loader_func):
+    def populate_data(self, target_original_docs_to_process, data_loader_func):
         """Checks collection count and populates it if necessary."""
         current_chunk_count = self.collection.count()
-        needs_chroma_population = current_chunk_count == 0
+        needs_chroma_population = current_chunk_count < target_original_docs_to_process
 
         print(f"Checking collection '{self.collection_name}'. Found {current_chunk_count:,} chunks.")
         print(f"Target original documents to process for potential population: {target_original_docs_to_process:,}")
@@ -146,10 +147,13 @@ class VectorDatabase:
             print(f"\n--- Populating ChromaDB with Parallel Embedding (Streaming) ---")
             total_added_chroma = 0
             population_start_time = time.time()
+
+            remaining_docs_to_process = target_original_docs_to_process - current_chunk_count
+            skip_count = max(0, current_chunk_count)
             
             active_futures = []
             # data_loader_func is expected to be a generator yielding batches of CHUNKED texts
-            batch_iterator = data_loader_func(target_original_docs_to_process, BATCH_SIZE) 
+            batch_iterator = data_loader_func(remaining_docs_to_process, BATCH_SIZE, skip_n_docs=skip_count) 
             
             processed_batches_count = 0
             # This counter will track batches submitted to the executor
@@ -241,6 +245,16 @@ class VectorDatabase:
         except Exception as e:
             print(f"Error querying ChromaDB: {e}")
             return []
+        
+    # --- Main retrieval function for RAG ---
+    def retrieve_context(self, query, n_results=DEFAULT_N_RESULTS):
+        """
+        Retrieves relevant context from the ChromaDB vector database based on the query.
+        """
+
+        print(f"\nRetrieving context for query: '{query}' using ChromaDB")
+        results = vector_db.search_vector(query, n_results=n_results)
+        return results
         
 class BM25Index:
     def __init__(self, text_loader_func: Callable):
@@ -360,19 +374,12 @@ class BM25Index:
              return []
 
 
-# --- Initialization and Population ---
-print("--- Initializing Vector Database Setup (ChromaDB) ---")
-# Initialize the VectorDatabase class, connecting to ChromaDB
-vector_db = VectorDatabase()
-
-print("--- Vector Database Setup Complete ---")
-
-# --- Main retrieval function for RAG ---
-def retrieve_context(query, n_results=DEFAULT_N_RESULTS):
-    """
-    Retrieves relevant context from the ChromaDB vector database based on the query.
-    """
-
-    print(f"\nRetrieving context for query: '{query}' using ChromaDB")
-    results = vector_db.search_vector(query, n_results=n_results)
-    return results
+if __name__ == "__main__":
+    vector_db = ChromaDB()
+    
+    query = "Can PRL3-zumab inhibit PRL3+ cancer cells in vitro and in vivo?"
+    results = vector_db.retrieve_context(query, 5)
+    print("\n--- Retrieval Results ---")
+    for result in results:
+        print(f"- {result}")
+        print()

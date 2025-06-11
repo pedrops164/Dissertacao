@@ -18,6 +18,7 @@ class Config:
         self.openai_api_key = os.environ.get("OPENAI_API_KEY")
         self.nebius_api_key = os.environ.get("NEBIUS_API_KEY")
         self.tavily_api_key = os.environ.get("TAVILY_API_KEY")
+        self.GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
         # llm config
         self.LLM_MODEL = os.environ.get("LLM_MODEL") # Default LLM model

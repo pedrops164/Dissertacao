@@ -1,6 +1,6 @@
 import time
 from llm_client import query_llm_with_context
-from vector_database import retrieve_context
+from vectordb import vector_db
 from config import config
 
 # --- Configuration ---
@@ -91,7 +91,7 @@ def generate_response_reranker_rag(query):
     print(f"\n[Step 1/4] Retrieving Top-{INITIAL_RETRIEVAL_K} documents for reranking...")
     # This function should return a list of document texts
     # It might internally use your hybrid search + RRF
-    initial_docs = retrieve_context(query, n_results=INITIAL_RETRIEVAL_K)
+    initial_docs = vector_db.retrieve_context(query, n_results=INITIAL_RETRIEVAL_K)
     if not initial_docs:
         print("  > No documents retrieved. Proceeding without context.")
         initial_docs = []
