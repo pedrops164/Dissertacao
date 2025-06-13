@@ -4,7 +4,7 @@ from vectordb import vector_db
 
 RAG_FINAL_CONTEXT_K = config.get("RAG_FINAL_CONTEXT_K")
 
-def generate_response_simple_rag(query):
+def generate_response_simple_rag(query: str, formatted_query: str):
     """
     Generate a response based on the query using RAG.
     Retrieves context from the vector database before calling the LLM.
@@ -20,4 +20,4 @@ def generate_response_simple_rag(query):
     # build context from retrieved documents
     context = "\n\n---\n\n".join(retrieved_docs) if retrieved_docs else ""
     
-    return query_llm_with_context(query, context)
+    return query_llm_with_context(formatted_query, context)

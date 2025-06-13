@@ -3,7 +3,7 @@ from llm_client import call_llm_assessment
 import time
 from typing import Tuple
 
-def generate_response_no_rag(query: str) -> Tuple[str, int]:
+def generate_response_no_rag(query: str, formatted_query: str) -> Tuple[str, int]:
     """
     This function takes a query as input and returns a response from the base LLM.
     It uses the OpenAI API to get the response.
@@ -13,7 +13,7 @@ def generate_response_no_rag(query: str) -> Tuple[str, int]:
 
     response, token_count = call_llm_assessment(
         temperature=0.1,
-        prompt=query,
+        prompt=formatted_query,
     )
 
     end_time = time.time()

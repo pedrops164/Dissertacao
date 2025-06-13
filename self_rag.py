@@ -12,7 +12,7 @@ SELF_RAG_FINAL_CONTEXT_K = config.get("RAG_FINAL_CONTEXT_K")
 
 # --- Self-RAG Core Logic ---
 
-def generate_response_self_rag(query):
+def generate_response_self_rag(query: str, formatted_query: str):
     """
     Generates a response using a simulated Self-RAG workflow.
 
@@ -82,7 +82,7 @@ def generate_response_self_rag(query):
 
     # --- Step 4: Generate Answer ---
     print("\n[Step 4/5] Generating answer...")
-    generated_answer, n_tokens = query_llm_with_context(query, filtered_context)
+    generated_answer, n_tokens = query_llm_with_context(formatted_query, filtered_context)
     tokens_count += n_tokens
 
     # --- Step 5: Critique Generated Answer (Self-Reflection) ---

@@ -294,7 +294,7 @@ class RAGEvaluatorYesNoQuestion(RAGEvaluator):
         start_time = time.time()
         yesno_formatted_query = RAGEvaluatorYesNoQuestion.get_yesno_query(query)
         
-        response, token_count = system.query(yesno_formatted_query)
+        response, token_count = system.query(query, yesno_formatted_query)
         
         latency = time.time() - start_time
 
@@ -344,7 +344,7 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
         start_time = time.time()
         
         # Get response from the system being evaluated
-        response_text, token_count = system.query(query) # Uses inherited method
+        response_text, token_count = system.query(query, query) # Uses inherited method
         
         latency = time.time() - start_time
         
@@ -538,9 +538,9 @@ if __name__ == "__main__":
     print("Evaluating systems...")
 
     rag_benchmark.eval_yes_no_questions(
-        #systems=[no_rag_system, simple_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
-        systems=[no_rag_system, simple_rag_system],
-        queries=bioasq_yesno_queries[:100], 
+        systems=[simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
+        #systems=[no_rag_system, simple_rag_system],
+        queries=bioasq_yesno_queries[:25],
         n_workers=n_workers
     )
 

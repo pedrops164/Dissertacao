@@ -39,19 +39,18 @@ def extract_answer_from_model_response(llm_output: str) -> str:
         return llm_output_stripped
 
 # --- Helper for LLM Assessment Call ---
-def call_llm_assessment(prompt=None, max_tokens=1000, temperature=0.0, generation_prompt=None, use_judge_model=False) -> Tuple[str, int]:
+def call_llm_assessment(prompt=None, temperature=0.0, generation_prompt=None, use_judge_model=False) -> Tuple[str, int]:
     """Makes a focused LLM call for assessment tasks."""
     assert prompt is not None or generation_prompt is not None, "Either prompt or generation_prompt must be provided."
     try:
         model = judge_llm_model if use_judge_model else base_llm_model
         if generation_prompt:
             messages = generation_prompt
-        else:
+        elif prompt:
             messages = [ChatCompletionUserMessageParam(role="user", content=prompt)]
         response = openai_client.chat.completions.create(
             model=model,
             messages=messages,
-            max_tokens=max_tokens,
             temperature=temperature,
             n=1,
             stop=None,

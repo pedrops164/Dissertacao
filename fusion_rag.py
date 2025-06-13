@@ -81,7 +81,7 @@ def retrieve_context_fusion(query, final_k=RAG_FINAL_CONTEXT_K, retrieval_k=FUSI
         
     return context
 
-def generate_response_fusion_rag(query):
+def generate_response_fusion_rag(query: str, formatted_query: str):
     """
     Generate a response based on the query using RAG.
     Retrieves context from the vector database before calling the LLM.
@@ -102,7 +102,7 @@ def generate_response_fusion_rag(query):
 
     print(f"Retrieved Context:\n---\n{context}...\n---")
 
-    return query_llm_with_context(query, context)
+    return query_llm_with_context(formatted_query, context)
 
 if __name__ == "__main__":
     # Example usage (ensure vector_database.py ran its setup)

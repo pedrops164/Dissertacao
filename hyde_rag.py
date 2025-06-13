@@ -6,13 +6,13 @@ from llm_client import query_llm_with_context
 
 RAG_FINAL_CONTEXT_K = config.get("RAG_FINAL_CONTEXT_K")
 
-def generate_response_hyde_rag(prompt: str) -> Tuple[str, int]:
+def generate_response_hyde_rag(query: str, formatted_query: str) -> Tuple[str, int]:
     """
     Simulate response generation with Hyde-RAG.
     This function is a placeholder and should be replaced with actual implementation.
     """
 
-    hyde_prompt = get_hyde_rag_prompt(prompt)
+    hyde_prompt = get_hyde_rag_prompt(query)
     hypothetical_doc, _ = query_llm_with_context(hyde_prompt, context="")  # Simulate LLM generating a hypothetical document
 
     # retrieve relevant documents from the vector database
@@ -20,4 +20,4 @@ def generate_response_hyde_rag(prompt: str) -> Tuple[str, int]:
     # build context from retrieved documents
     context = "\n\n---\n\n".join(retrieved_docs) if retrieved_docs else ""
     
-    return query_llm_with_context(prompt, context)
+    return query_llm_with_context(formatted_query, context)

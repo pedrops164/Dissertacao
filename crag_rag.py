@@ -130,7 +130,7 @@ def perform_web_search(query):
     context = search_tavily(query)
     return context # Return the concatenated context from the search results
 
-def generate_response_corrective_rag(query) -> Tuple[str, int]:
+def generate_response_corrective_rag(query: str, formatted_query: str) -> Tuple[str, int]:
     """
     Generates a response using Corrective RAG. This process involves:
     1. Retrieving initial context from a vector database.
@@ -286,7 +286,7 @@ def generate_response_corrective_rag(query) -> Tuple[str, int]:
     print("\n[Step 5/5] Generating final response...")
     logger.info("Generating final response using the compiled context.")
     # Call the simple RAG function with the compiled final context and the original query
-    response, n_tokens = query_llm_with_context(query, final_context)
+    response, n_tokens = query_llm_with_context(formatted_query, final_context)
     tokens_count += n_tokens
     execution_data["generated_response"] = response
 

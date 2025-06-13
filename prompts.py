@@ -148,7 +148,7 @@ Now, please generate a hypothetical document for the following user query. Creat
 
 
 
-base_system_prompt = "You are a helpful assistant. Answer the user's question directly. If context is provided, use it to inform your answer. DO NOT MENTION THE CONTEXT OR ITS RELEVANCE IN YOUR RESPONSE."
+base_system_prompt = "You are a helpful assistant. Answer the user's question directly. If context is provided, use it to inform your answer only if it is relevant."
 
 llm_judge_prompt = \
 """Evaluate the following response to a query. Rate each aspect on a scale of 1-10.

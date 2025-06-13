@@ -13,63 +13,63 @@ class LLMSystem(ABC):
         self.system_name = system_name
 
     @abstractmethod
-    def query(self, prompt: str) -> Tuple[str, int]:
+    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, int]:
         pass
 
 class NoRAGSystem(LLMSystem):
     def __init__(self, system_name: str):
         super().__init__(system_name)
 
-    def query(self, prompt: str) -> Tuple[str, int]:
+    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, int]:
         # Simulate response generation without RAG
-        return generate_response_no_rag(prompt)
+        return generate_response_no_rag(prompt, formatted_prompt)
     
 class SimpleRAGSystem(LLMSystem):
     def __init__(self, system_name: str):
         super().__init__(system_name)
 
-    def query(self, prompt: str) -> Tuple[str, int]:
+    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, int]:
         # Simulate response generation with simple RAG
-        return generate_response_simple_rag(prompt)  # Assuming similar to NoRAG for now
+        return generate_response_simple_rag(prompt, formatted_prompt)  # Assuming similar to NoRAG for now
     
 class SelfRAGSystem(LLMSystem):
     def __init__(self, system_name: str):
         super().__init__(system_name)
 
-    def query(self, prompt: str) -> Tuple[str, int]:
+    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, int]:
         # Simulate response generation with Self-RAG
-        response =  generate_response_self_rag(prompt)
+        response =  generate_response_self_rag(prompt, formatted_prompt)
         return response["generated_answer"], response["tokens_count"]
     
 class FusionRAGSystem(LLMSystem):
     def __init__(self, system_name: str):
         super().__init__(system_name)
 
-    def query(self, prompt: str) -> Tuple[str, int]:
+    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, int]:
         # Simulate response generation with Fusion-RAG
-        return generate_response_fusion_rag(prompt)
+        return generate_response_fusion_rag(prompt, formatted_prompt)
     
 class CRAGRAGSystem(LLMSystem):
     def __init__(self, system_name: str):
         super().__init__(system_name)
 
-    def query(self, prompt: str) -> Tuple[str, int]:
+    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, int]:
         # Simulate response generation with CRAG-RAG
-        return generate_response_corrective_rag(prompt)
+        return generate_response_corrective_rag(prompt, formatted_prompt)
     
 class RerankerRAGSystem(LLMSystem):
     def __init__(self, system_name: str):
         super().__init__(system_name)
 
-    def query(self, prompt: str) -> Tuple[str, int]:
+    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, int]:
         # Simulate response generation with Reranker-RAG
-        response = generate_response_reranker_rag(prompt)  # Assuming similar to CRAG for now
+        response = generate_response_reranker_rag(prompt, formatted_prompt)  # Assuming similar to CRAG for now
         return response["generated_answer"], response["tokens_count"]
     
 class HyDERAGSystem(LLMSystem):
     def __init__(self, system_name: str):
         super().__init__(system_name)
 
-    def query(self, prompt: str) -> Tuple[str, int]:
+    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, int]:
         # Simulate response generation with HyDE-RAG
-        return generate_response_hyde_rag(prompt)  # Assuming similar to NoRAG for now
+        return generate_response_hyde_rag(prompt, formatted_prompt)  # Assuming similar to NoRAG for now

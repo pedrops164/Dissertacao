@@ -42,7 +42,7 @@ class QdrantDB(VectorDB):
             url="http://localhost:6333",
             timeout=60 # Set timeout to 60 seconds (default is typically 5 or 10))
         )
-        self.collection_name = "qdrant_vectordb_100k_quant"
+        self.collection_name = "qdrant_vectordb"
         if not self.client.collection_exists(self.collection_name):
             self.client.create_collection(
                 collection_name=self.collection_name,
@@ -57,7 +57,7 @@ class QdrantDB(VectorDB):
                     on_disk=True, # Use on-disk storage for low memory usage
                 ),
             )
-        self.populate_data(335000, load_pubmed_data)
+        self.populate_data(4000000, load_pubmed_data)
         self.client.update_collection(
             collection_name=self.collection_name,
             hnsw_config=HnswConfigDiff(
@@ -131,8 +131,9 @@ class QdrantDB(VectorDB):
                 try:
                     batch_texts = next(iterator)
                     if not batch_texts: return False
-
-                    start_id = total_docs_submitted
+                    # Make the ID absolute by adding the number of points already in the DB.
+                    start_id = num_points + total_docs_submitted
+                    #start_id = total_docs_submitted
                     batch_ids = list(range(start_id, start_id + len(batch_texts)))
                     
                     future = executor.submit(self._embed_and_upsert_chunk, batch_texts, batch_ids)
@@ -188,6 +189,7 @@ class QdrantDB(VectorDB):
 
     def retrieve_context(self, query: str, n_results: int = DEFAULT_N_RESULTS) -> list[str]:
         """Retrieves context from the Qdrant database based on the query."""
+        start = time.time()
         query_vector = self.embedding_model.embed_query(query)
         search_params = None
         if self.use_quantization:
@@ -204,7 +206,11 @@ class QdrantDB(VectorDB):
             limit=n_results,
             search_params=search_params
         )
+        end = time.time()
+        print(f"Retrieved {len(results.points)} results in {end - start:.2f} seconds.")
         # return payloads only
+        #for point in results.points:
+        #    print(f"ID: {point.id}, Score: {point.score:.4f}")
         return [point.payload['text'] for point in results.points]
 
 if __name__ == "__main__":
@@ -215,6 +221,7 @@ if __name__ == "__main__":
     query = "Can PRL3-zumab inhibit PRL3+ cancer cells in vitro and in vivo?"
     results = qdrant_db.retrieve_context(query)
     print("\n--- Retrieval Results ---")
-    for point in results.points:
-        print(f"ID: {point.id}, Score: {point.score:.4f}, Text: {point.payload['text']}")
+    for text in results:
+        #print(f"ID: {point.id}, Score: {point.score:.4f}, Text: {point.payload['text']}")
+        print(text)
         print()

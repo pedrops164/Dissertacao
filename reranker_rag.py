@@ -72,7 +72,7 @@ def rerank_documents(query: str, documents: list[str]) -> list[str]:
 
 # --- Reranker RAG Core Logic ---
 
-def generate_response_reranker_rag(query):
+def generate_response_reranker_rag(query: str, formatted_query: str):
     """
     Generates a response using a RAG pipeline with a reranking step.
 
@@ -121,7 +121,7 @@ def generate_response_reranker_rag(query):
     # --- Step 3: Generate Answer ---
     print("\n[Step 3/4] Generating answer...")
     # Use your existing prompt engineering, passing the refined context
-    generated_answer, n_tokens = query_llm_with_context(query, final_context)
+    generated_answer, n_tokens = query_llm_with_context(formatted_query, final_context)
     tokens_count += n_tokens
 
     # --- Step 4: Return Results ---
