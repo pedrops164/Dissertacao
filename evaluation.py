@@ -28,7 +28,7 @@ class EvaluationEntry:
     ground_truth: str # Can be string for open-domain, or specific type for others
     response: str
     # Metrics specific to this single entry (e.g., latency for this query, or if it was correct for binary)
-    metrics: Dict[str, float]
+    metrics: Dict[str, Any]
     
     def to_dict(self):
         return {
@@ -65,7 +65,7 @@ class BaseEvaluationResult(ABC):
         return {
             "system_name": self.system_name,
             "evaluation_type": self.__class__.__name__, # Add type for clarity when loading
-            #"entries": [entry.to_dict() for entry in self.entries],
+            "entries": [entry.to_dict() for entry in self.entries],
             "summary_metrics": self.summary_metrics
         }
 
@@ -127,23 +127,39 @@ class BinaryClassificationEvaluationResult(BaseEvaluationResult):
         correct_predictions = 0
         total_predictions = len(self.entries)
         
+        all_individual_metric_keys = set()
         for entry in self.entries:
+            all_individual_metric_keys.update(entry.metrics.keys())
             # Ensure ground_truth and response are strings for normalization
             gt_normalized = self._normalize_label(str(entry.ground_truth))
             resp_normalized = self._normalize_label(entry.response)
-
-            # Primary metric: Accuracy based on 'is_correct' if available in entry.metrics
-            # This allows the per-entry metric calculation to handle complex correctness logic
+            # Check if the normalized ground truth matches the normalized response
             if gt_normalized == resp_normalized:
                 correct_predictions += 1
         
         accuracy = (correct_predictions / total_predictions) if total_predictions > 0 else -1
+            
+        calculated_summary_metrics = {}
+
+        for metric_key in all_individual_metric_keys:
+            values = [entry.metrics.get(metric_key) for entry in self.entries if entry.metrics.get(metric_key) is not None]
+            numeric_values = [v for v in values if isinstance(v, (int, float))]
+            bool_values = [v for v in values if isinstance(v, bool)]
+            if bool_values:
+                # If there are boolean values, calculate the proportion of True values
+                calculated_summary_metrics[f"prop_{metric_key}"] = sum(bool_values) / len(bool_values)
+            elif numeric_values:
+                # Ensure all values are numeric for averaging
+                calculated_summary_metrics[f"avg_{metric_key}"] = sum(numeric_values) / len(numeric_values)
+            # for the remaining data types, we dont store as summary metrics (for example strings, lists)
         
-        self.summary_metrics = {
+        self.summary_metrics = calculated_summary_metrics
+        
+        self.summary_metrics.update({
             "accuracy": accuracy,
             "total_questions": float(total_predictions),
             "correct_predictions": float(correct_predictions),
-        }
+        })
     
 # Make RAGEvaluator an Abstract Base Class
 class RAGEvaluator(ABC):
@@ -294,7 +310,7 @@ class RAGEvaluatorYesNoQuestion(RAGEvaluator):
         start_time = time.time()
         yesno_formatted_query = RAGEvaluatorYesNoQuestion.get_yesno_query(query)
         
-        response, token_count = system.query(query, yesno_formatted_query)
+        response, metrics = system.query(query, yesno_formatted_query)
         
         latency = time.time() - start_time
 
@@ -303,10 +319,7 @@ class RAGEvaluatorYesNoQuestion(RAGEvaluator):
         normalized_ground_truth = ground_truth.strip(" .").lower()
 
         # This can be used by BinaryClassificationEvaluationResult
-        metrics = {
-            "latency": latency,
-            "token_count": float(token_count),
-        }
+        metrics["latency"] = latency
             
         return EvaluationEntry(
             question=query,
@@ -344,14 +357,11 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
         start_time = time.time()
         
         # Get response from the system being evaluated
-        response_text, token_count = system.query(query, query) # Uses inherited method
+        response_text, metrics = system.query(query, query) # Uses inherited method
         
         latency = time.time() - start_time
         
-        metrics: Dict[str, float] = {
-            "latency": latency,
-            "token_count": float(token_count)
-        }
+        metrics["latency"] = latency
             
         # Calculate content quality metrics using LLM-as-judge if applicable
         if self.use_llm_judge and ground_truth is not None: # LLM Judge typically needs ground truth
@@ -429,7 +439,7 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
         
         # Get evaluation from judge model
         # This implementation depends on your specific judge model
-        judge_response, _ = call_llm_assessment(prompt=prompt, max_tokens=500, use_judge_model=True)
+        judge_response, _ = call_llm_assessment(prompt=prompt, use_judge_model=True)
         
         # Parse scores from judge response
         try:
@@ -537,18 +547,18 @@ if __name__ == "__main__":
 
     print("Evaluating systems...")
 
-    rag_benchmark.eval_yes_no_questions(
-        systems=[simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
-        #systems=[no_rag_system, simple_rag_system],
-        queries=bioasq_yesno_queries[:25],
-        n_workers=n_workers
-    )
-
-    #rag_benchmark.eval_open_questions(
-    #    systems=[no_rag_system, simple_rag_system, fusion_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
-    #    queries=bioasq_open_queries, 
+    #rag_benchmark.eval_yes_no_questions(
+    #    systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
+    #    #systems=[no_rag_system, simple_rag_system],
+    #    queries=bioasq_yesno_queries[:8],
     #    n_workers=n_workers
     #)
+
+    rag_benchmark.eval_open_questions(
+        systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
+        queries=bioasq_open_queries[:12], 
+        n_workers=n_workers
+    )
 
     # Save results
     rag_benchmark.save_results("rag_evaluation_results.json")

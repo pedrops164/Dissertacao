@@ -128,28 +128,9 @@ def generate_response_reranker_rag(query: str, formatted_query: str):
     end_time = time.time()
     print(f"\n--- RAG with Reranker Process Completed in {end_time - start_time:.2f} seconds ---")
 
-    return {
-        "query": query,
-        "num_initial_retrieved": len(initial_docs),
-        "num_reranked_and_selected": len(reranked_docs),
-        "final_context_used": bool(final_context),
-        "generated_answer": generated_answer,
-        "tokens_count": tokens_count, # If you track generation tokens
+    return generated_answer, {
+        "docs_initially_retrieved_count": len(initial_docs),
+        "reranked_and_selected_count": len(reranked_docs),
+        "reranked_docs": reranked_docs,
+        "tokens_count": tokens_count,
     }
-
-# --- Example Usage ---
-if __name__ == "__main__":
-    test_queries = [
-        "How does photosynthesis work in plants?",
-        "What were the main causes of World War I?",
-    ]
-
-    for q in test_queries:
-        result = generate_response_reranker_rag(q)
-        print("\n" + "="*50)
-        print(f"Query: {result['query']}")
-        print(f"Generated Answer: {result['generated_answer']}")
-        print(f"Docs Initially Retrieved: {result['num_initial_retrieved']}")
-        print(f"Docs Selected After Reranking: {result['num_reranked_and_selected']}")
-        print(f"Final Context Used? {result['final_context_used']}")
-        print("="*50 + "\n")

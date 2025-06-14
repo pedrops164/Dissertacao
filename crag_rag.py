@@ -130,7 +130,7 @@ def perform_web_search(query):
     context = search_tavily(query)
     return context # Return the concatenated context from the search results
 
-def generate_response_corrective_rag(query: str, formatted_query: str) -> Tuple[str, int]:
+def generate_response_corrective_rag(query: str, formatted_query: str) -> Tuple[str, dict]:
     """
     Generates a response using Corrective RAG. This process involves:
     1. Retrieving initial context from a vector database.
@@ -150,34 +150,23 @@ def generate_response_corrective_rag(query: str, formatted_query: str) -> Tuple[
     """
     # Dictionary to store detailed execution information for logging
     execution_data = {
-        "query": query,
-        "start_time": time.time(),
-        "start_time_iso": time.strftime('%Y-%m-%dT%H:%M:%S%z'),
-        "local_context_retrieved": None,
-        "local_context_length": 0,
-        "assessment_decision": None,
         "websearch_performed": False,
         "rewritten_websearch_query": None,
         "websearch_context_retrieved": None,
         "websearch_context_length": 0,
-        "final_context_source": "None",
         "final_context_used": None,
         "final_context_length": 0,
-        "generated_response": None,
-        "end_time": None,
-        "end_time_iso": None,
-        "duration_seconds": None,
-        "status": "In Progress"
     }
     tokens_count = 0
 
     # Step 1: Retrieve initial context from the vector database
     print("\n[Step 1/5] Retrieving initial context from Vector DB...")
     logger.info("Attempting to retrieve initial context from Vector DB.")
-    local_context = vector_db.retrieve_context(query) # Retrieve top N chunks based on similarity
-    local_context = "\n\n---\n\n".join(local_context) # Join the retrieved chunks into a single string
-    execution_data["local_context_retrieved"] = local_context
-    execution_data["local_context_length"] = len(local_context) if local_context else 0
+    retrieved_docs = vector_db.retrieve_context(query) # Retrieve top N chunks based on similarity
+    local_context = "\n\n---\n\n".join(retrieved_docs) # Join the retrieved chunks into a single string
+
+    execution_data["retrieved_docs_count"] = len(retrieved_docs)
+    execution_data["retrieved_docs"] = retrieved_docs
 
     if local_context:
         logger.info(f"Successfully retrieved local context (length: {len(local_context)} chars).")
@@ -261,9 +250,6 @@ def generate_response_corrective_rag(query: str, formatted_query: str) -> Tuple[
             final_context = "No specific context was found for this query."
             context_source_description = "Local Only (context empty)"
 
-    # Log the final context state and length
-    execution_data["final_context_source"] = context_source_description
-
     if final_context and final_context not in [
         "Web search was attempted but returned no information.",
         "Neither local context nor web search provided information for this query.",
@@ -288,14 +274,6 @@ def generate_response_corrective_rag(query: str, formatted_query: str) -> Tuple[
     # Call the simple RAG function with the compiled final context and the original query
     response, n_tokens = query_llm_with_context(formatted_query, final_context)
     tokens_count += n_tokens
-    execution_data["generated_response"] = response
-
-
-    # Log detailed execution data in a structured format (JSON)
-    execution_data["end_time"] = time.time()
-    execution_data["end_time_iso"] = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-    execution_data["duration_seconds"] = execution_data["end_time"] - execution_data["start_time"]
-    execution_data["status"] = "Completed"
 
     # Log the structured data
     # Use json.dumps to serialize the dictionary to a JSON string
@@ -305,47 +283,11 @@ def generate_response_corrective_rag(query: str, formatted_query: str) -> Tuple[
     except Exception as e:
         logger.error(f"Failed to log structured execution data: {e}")
         # Log essential data even if full JSON fails
-        logger.info(f"Fallback Log: Query: {query}, Status: {execution_data['status']}, Duration: {execution_data['duration_seconds']:.2f}s, Decision: {execution_data['assessment_decision']}, Local Len: {execution_data['local_context_length']}, Web Len: {execution_data['websearch_context_length']}, Final Len: {execution_data['final_context_length']}, Final Source: {execution_data['final_context_source']}")
-
+        logger.info(f"Fallback Log: Query: {query}, Decision: {execution_data['assessment_decision']}, Local Len: {execution_data['local_context_length']}, Web Len: {execution_data['websearch_context_length']}, Final Len: {execution_data['final_context_length']}")
 
     # Print completion message
     logger.info(f"--- Corrective RAG process completed for query: '{query}' ---")
     logger.info(f"Generated response (first 200 chars): {response[:200]}...") # Log snippet of response
 
-    return response, tokens_count
-
-# --- Example Usage ---
-if __name__ == "__main__":
-    # Example Queries:
-    test_queries = [
-        # Query likely answerable by vector DB (if populated with relevant data)
-        "Explain the concept of 'Saudade' in the Portuguese culture.",
-        # Query likely needing recent info / web search
-        "What were the results of the last Portuguese elections?",
-         # Query requiring current information not likely in a static DB
-        "What is the weather like in Lisbon tomorrow?",
-        # Query that might benefit from both
-        "Compare the Portuguese economy in 2010 and currently."
-    ]
-
-    for i, q in enumerate(test_queries):
-        print(f"\n" + "="*60)
-        print(f"Processing Query {i+1}/{len(test_queries)}:")
-        print(f"Query: {q}")
-        print("="*60 + "\n")
-        logger.info(f"Processing Query {i+1}/{len(test_queries)}: '{q}'")
-
-        # Make sure vector_database, simple_rag, llm_client, and websearch_tavily
-        # modules are accessible and configured correctly.
-        # The vector DB should be populated if local context scenarios are to be tested effectively.
-        result = generate_response_corrective_rag(q)
-
-        # Print the final result clearly to console after the process finishes
-        print("\n" + "-"*60)
-        print(f"GENERATED ANSWER FOR QUERY {i+1}:")
-        print(f"{result}")
-        print("="*60 + "\n")
-
-
-    print("Corrective RAG Example Usage Finished.")
-    logger.info("Corrective RAG Example Usage Finished.")
+    execution_data["tokens_count"] = tokens_count
+    return response, execution_data

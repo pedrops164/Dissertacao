@@ -6,7 +6,7 @@ from llm_client import query_llm_with_context
 
 RAG_FINAL_CONTEXT_K = config.get("RAG_FINAL_CONTEXT_K")
 
-def generate_response_hyde_rag(query: str, formatted_query: str) -> Tuple[str, int]:
+def generate_response_hyde_rag(query: str, formatted_query: str) -> Tuple[str, dict]:
     """
     Simulate response generation with Hyde-RAG.
     This function is a placeholder and should be replaced with actual implementation.
@@ -20,4 +20,9 @@ def generate_response_hyde_rag(query: str, formatted_query: str) -> Tuple[str, i
     # build context from retrieved documents
     context = "\n\n---\n\n".join(retrieved_docs) if retrieved_docs else ""
     
-    return query_llm_with_context(formatted_query, context)
+    response, tokens_count = query_llm_with_context(formatted_query, context)
+    return response, {
+        "tokens_count": tokens_count,
+        "retrieved_docs": retrieved_docs,
+        "hypothetical_doc": hypothetical_doc
+    }

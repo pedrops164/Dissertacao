@@ -13,7 +13,7 @@ tavily_client = TavilyClient(api_key=TAVILY_API_KEY) if TAVILY_API_KEY else None
 # Max results to fetch from Tavily
 WEB_SEARCH_MAX_RESULTS = 3
 # Max characters per result to include in context (to keep it concise)
-WEB_SEARCH_MAX_CHARS_PER_RESULT = 750
+WEB_SEARCH_MAX_CHARS_PER_RESULT = 1500
 # Search depth for Tavily ('basic' or 'advanced')
 TAVILY_SEARCH_DEPTH = "basic"
 
@@ -42,7 +42,7 @@ def search_tavily(query, search_depth=TAVILY_SEARCH_DEPTH, max_results=WEB_SEARC
             content = res.get('content', '')
             # Limit character count per result to avoid excessive context length
             if content:
-                 contexts.append(f"Source {i+1} URL: {res.get('url', 'N/A')}\nContent: {content[:WEB_SEARCH_MAX_CHARS_PER_RESULT]}...")
+                 contexts.append(f"{content[:WEB_SEARCH_MAX_CHARS_PER_RESULT]}...")
 
         if not contexts:
             print("  > Tavily results found, but no usable content/snippets extracted.")

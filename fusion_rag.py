@@ -102,21 +102,8 @@ def generate_response_fusion_rag(query: str, formatted_query: str):
 
     print(f"Retrieved Context:\n---\n{context}...\n---")
 
-    return query_llm_with_context(formatted_query, context)
-
-if __name__ == "__main__":
-    # Example usage (ensure vector_database.py ran its setup)
-    query1 = "Has amantadine ER been approved by the FDA?"
-    response1 = generate_response_fusion_rag(query1)
-    print(f"\nQuery: {query1}")
-    print(f"Hybrid RAG Response:\n{response1}")
-
-    query2 = "Can PRL3-zumab inhibit PRL3+ cancer cells in vitro and in vivo?"
-    response2 = generate_response_fusion_rag(query2)
-    print(f"\nQuery: {query2}")
-    print(f"Hybrid RAG Response:\n{response2}")
-
-    query3 = "Does Estrogen lead to forkhead FoxA1 activation?"
-    response3 = generate_response_fusion_rag(query3)
-    print(f"\nQuery: {query3}")
-    print(f"Hybrid RAG Response:\n{response3}")
+    response, tokens_count = query_llm_with_context(formatted_query, context)
+    return response, {
+        "tokens_count": tokens_count,
+        "retrieved_context": context
+    }
