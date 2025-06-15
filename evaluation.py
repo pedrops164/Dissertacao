@@ -457,10 +457,16 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
     
     def _parse_judge_scores(self, judge_response: str) -> Dict[str, float]:
         """Parse scores from judge response"""
-        # Extract JSON from response
-        json_str = judge_response.split("```json")[1].split("```")[0].strip()
-        scores = json.loads(json_str)
-        return scores
+        try:
+            # Try direct JSON parsing
+            return json.loads(judge_response)
+        except json.JSONDecodeError:
+            # Fallback if response is wrapped in markdown code block
+            try:
+                json_str = judge_response.split("```json")[1].split("```")[0].strip()
+                return json.loads(json_str)
+            except Exception as e:
+                raise ValueError(f"Failed to parse judge response: {e}")
     
     def get_name(self) -> str:
         """Get the name of the evaluator class"""
@@ -547,18 +553,25 @@ if __name__ == "__main__":
 
     print("Evaluating systems...")
 
+    #start = time.time()
     #rag_benchmark.eval_yes_no_questions(
     #    systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
     #    #systems=[no_rag_system, simple_rag_system],
-    #    queries=bioasq_yesno_queries[:8],
+    #    queries=bioasq_yesno_queries[:200],
     #    n_workers=n_workers
     #)
+    #end = time.time()
+    #print(f"Yes/No question evaluation took {end - start:.2f} seconds")
+    #rag_benchmark.save_results("rag_evaluation_results_yesno.json")
 
+    start = time.time()
     rag_benchmark.eval_open_questions(
         systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
-        queries=bioasq_open_queries[:12], 
+        queries=bioasq_open_queries[:8], 
         n_workers=n_workers
     )
+    end = time.time()
 
     # Save results
     rag_benchmark.save_results("rag_evaluation_results.json")
+    print(f"Open question evaluation took {end - start:.2f} seconds")
