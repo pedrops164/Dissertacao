@@ -12,7 +12,6 @@ def generate_response_no_rag(query: str, formatted_query: str) -> Tuple[str, dic
     start_time = time.time()
 
     response, token_count = call_llm_assessment(
-        temperature=0.1,
         prompt=formatted_query,
     )
 

@@ -36,69 +36,17 @@ def get_crag_rewrite_prompt(query: str) -> str:
 
 """ SELF RAG PROMPTS """
 
-self_rag_retrieval_prompt = \
-"""Does the following query likely require searching external documents for a factual and comprehensive answer, or can it be answered reliably from general knowledge?
-Query: "{query}"
-Answer ONLY with YES or NO."""
-
 self_rag_critique_prompt = \
 """Evaluate if the following document passage is relevant and helpful for answering the query. Consider if it directly addresses the query or provides useful background.
 Query: "{query}"
 Passage: "{doc_text}"
 Answer ONLY with RELEVANT or IRRELEVANT."""
 
-def get_self_rag_retrieval_prompt(query: str) -> str:
-    """
-    Get the retrieval prompt
-    """
-    return self_rag_retrieval_prompt.format(query=query)
-
 def get_self_rag_critique_prompt(query: str, doc_text: str) -> str:
     """
     Get the critique prompt
     """
     return self_rag_critique_prompt.format(query=query, doc_text=doc_text[:1000])
-
-def get_self_rag_generation_prompt_message(query: str, filtered_context: str):
-    """
-    Get the generation prompt message
-    """
-    
-    if filtered_context:
-        system_prompt = "You are a helpful AI assistant. Answer the user's question based *only* on the provided relevant context. Be factual and concise."
-        user_prompt = \
-"""Relevant Context:
-{filtered_context}
-
-Question: {query}
-
-Based *only* on the relevant context provided, answer the question."""
-    else:
-        system_prompt = "You are a helpful AI assistant. Answer the user's question directly using your general knowledge."
-        user_prompt = f"Question: {query}"
-
-    generation_prompt_message = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt}
-    ]
-    return generation_prompt_message
-
-self_rag_critique_answer_prompt = \
-"""Evaluate the following generated answer based SOLELY on the provided query and context (if any).
-Is the answer factually consistent with the context?
-Is the answer relevant to the original query?
-
-Query: "{query}"
-Context Provided: "{filtered_context}"
-Generated Answer: "{generated_answer}"
-
-Answer ONLY with one word: SUPPORTED, CONTRADICTORY, or NOT_SUPPORTED (if answer is irrelevant or not verifiable from context). If no context was provided, answer NOT_APPLICABLE."""
-
-def get_self_rag_critique_answer_prompt(query: str, filtered_context: str, generated_answer: str) -> str:
-    """
-    Get the critique answer prompt
-    """
-    return self_rag_critique_answer_prompt.format(query=query, filtered_context=filtered_context[:1000], generated_answer=generated_answer)
 
 """ HYDE RAG PROMPTS """
 

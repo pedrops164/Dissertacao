@@ -69,13 +69,16 @@ def query_llm_with_context(query: str, context: str = "", temperature: float = 0
 
     # The system prompt is crucial for guiding behavior.
     # It should instruct the LLM to answer directly and not comment on context.
-    messages: list[ChatCompletionMessageParam] = [
-        ChatCompletionSystemMessageParam(role="system", content=base_system_prompt)
-    ]
+    #messages: list[ChatCompletionMessageParam] = [
+    #    ChatCompletionSystemMessageParam(role="system", content=base_system_prompt)
+    #]
+    messages: list[ChatCompletionMessageParam] = []
 
     # Combine context and query into a single user message
     if context:
-        user_content = f"Context:\n{context}\n\n---\n\nQuestion: {query}"
+        user_content = f"Possibly relevant documents:\n{context}\n\n###\
+\nYou are a medical expert. Use the context provided above only if it is clearly relevant to the question. If the context is irrelevant or incomplete, answer based on your own medical knowledge. Always aim to provide an accurate and concise answer.\
+\n\nQuestion: {query}"
     else:
         user_content = query
     

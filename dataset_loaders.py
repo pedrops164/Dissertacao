@@ -7,7 +7,7 @@ import gzip
 import time
 import traceback
 from chunking import chunk_with_metadata # Import the chunking function
-from typing import Optional
+from typing import Optional, List, Tuple
 
 GOOGLE_NQ_TRAIN_FILEPATH = "v1.0-simplified_simplified-nq-train.jsonl.gz"
 GOOGLE_NQ_DEV_FILEPATH = "v1.0-simplified_simplified-nq-train.jsonl.gz"
@@ -342,3 +342,31 @@ def load_pubmed_data(docs_to_load: Optional[int] = None, batch_size=500, skip_n_
         print(f"\nAn error occurred while loading/processing the PubMed dataset: {e}")
         traceback.print_exc()
         yield []
+
+
+def load_pubmedqa_questions(n_questions: int) -> List[Tuple[str, str]]:
+    """
+    Load the PubMedQA pqa_labeled subset and return up to n_questions
+    where the final_decision is 'yes' or 'no'. The returned list contains
+    (question, answer) tuples with the answer normalized to lowercase.
+    
+    Parameters:
+        n_questions (int): Maximum number of questions to retrieve.
+        
+    Returns:
+        List[Tuple[str, str]]: List of (question, answer) pairs.
+    """
+        
+    #dataset = load_dataset("qiaojin/PubMedQA", "pqa_labeled", split="train", streaming=True)
+    dataset = load_dataset("qiaojin/PubMedQA", "pqa_labeled", split="train")
+    
+    result = []
+    for example in dataset:
+        answer = example.get("final_decision", "").strip().lower()
+        if answer in {"yes", "no"}:
+            question = example.get("question", "").strip()
+            result.append((question, answer))
+            if len(result) >= n_questions:
+                break
+
+    return result
