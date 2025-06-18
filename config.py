@@ -1,6 +1,7 @@
 import os
 from typing import Any
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -23,6 +24,7 @@ class Config:
         # llm config
         self.LLM_MODEL = os.environ.get("LLM_MODEL") # Default LLM model
         self.JUDGE_LLM_MODEL = os.environ.get("JUDGE_LLM_MODEL", self.LLM_MODEL) # Model for judge open question evaluation
+        self.LLM_LIST = json.loads(os.environ.get("LLM_LIST"))
 
         # embedding model config
         self.NEBIUS_EMBEDDING_MODEL = os.environ.get("NEBIUS_EMBEDDING_MODEL") # Default embedding model
@@ -46,6 +48,7 @@ class Config:
 
         # benchmarking config
         self.EVAL_N_QUESTIONS = int(os.environ.get("EVAL_N_QUESTIONS", 100))
+        self.OUTPUT_DIR = os.environ.get("OUTPUT_DIR")
 
     def get(self, key: str, default: Any = None) -> Any:
         """Get a configuration value by key name."""

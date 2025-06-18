@@ -2,7 +2,7 @@ import time
 import concurrent.futures
 from .base_db import VectorDB
 from qdrant_client import QdrantClient, models
-from qdrant_client.models import Distance, VectorParams, Batch, ScalarQuantization, ScalarType, ScalarQuantizationConfig, SearchParams, QuantizationSearchParams, HnswConfigDiff
+from qdrant_client.models import Distance, VectorParams, Batch, ScalarQuantization, ScalarType, ScalarQuantizationConfig, BinaryQuantization, BinaryQuantizationConfig, SearchParams, QuantizationSearchParams, HnswConfigDiff
 from tenacity import retry, stop_after_attempt, wait_exponential
 from embedding_model import EmbeddingModel, GoogleEmbeddingModel
 from dataset_loaders import load_pubmed_data
@@ -27,10 +27,15 @@ class QdrantDB(VectorDB):
         # set quantization parameters if enabled
         self.use_quantization = use_quantization
         if use_quantization:
-            quantization_config=ScalarQuantization(
-                scalar=ScalarQuantizationConfig(
-                    type=ScalarType.INT8,
-                    quantile=1.0,
+            #quantization_config=ScalarQuantization(
+            #    scalar=ScalarQuantizationConfig(
+            #        type=ScalarType.INT8,
+            #        quantile=1.0,
+            #        always_ram=True,
+            #    ),
+            #)
+            quantization_config=BinaryQuantization(
+                binary=BinaryQuantizationConfig(
                     always_ram=True,
                 ),
             )
@@ -42,7 +47,8 @@ class QdrantDB(VectorDB):
             url="http://localhost:6333",
             timeout=60 # Set timeout to 60 seconds (default is typically 5 or 10))
         )
-        self.collection_name = "qdrant_vectordb"
+        #self.collection_name = "qdrant_vectordb"
+        self.collection_name = "qdrant_vectordb_binary_quant"
         if not self.client.collection_exists(self.collection_name):
             self.client.create_collection(
                 collection_name=self.collection_name,
@@ -57,7 +63,7 @@ class QdrantDB(VectorDB):
                     on_disk=True, # Use on-disk storage for low memory usage
                 ),
             )
-        self.populate_data(4000000, load_pubmed_data)
+        self.populate_data(10000000, load_pubmed_data)
         self.client.update_collection(
             collection_name=self.collection_name,
             hnsw_config=HnswConfigDiff(
@@ -218,7 +224,10 @@ if __name__ == "__main__":
     embedding_model = GoogleEmbeddingModel()
     qdrant_db = QdrantDB(n_workers=4, embedding_model=embedding_model, use_quantization=True)
     
-    query = "Can PRL3-zumab inhibit PRL3+ cancer cells in vitro and in vivo?"
+    query = \
+"""
+Is motion perception deficit in schizophrenia a consequence of eye-tracking abnormality?
+"""
     results = qdrant_db.retrieve_context(query)
     print("\n--- Retrieval Results ---")
     for text in results:

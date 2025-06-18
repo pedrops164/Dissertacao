@@ -1,73 +1,12 @@
 from abc import ABC, abstractmethod
-from no_rag import generate_response_no_rag
-from simple_rag import generate_response_simple_rag
-from self_rag import generate_response_self_rag
-from fusion_rag import generate_response_fusion_rag
-from crag_rag import generate_response_corrective_rag
-from reranker_rag import generate_response_reranker_rag
-from hyde_rag import generate_response_hyde_rag
+from llm_client import NebiusLLMClient
 from typing import Tuple
 
 class LLMSystem(ABC):
-    def __init__(self, system_name: str):
+    def __init__(self, system_name: str, llm_client: NebiusLLMClient):
         self.system_name = system_name
+        self.llm_client = llm_client
 
     @abstractmethod
     def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
         pass
-
-class NoRAGSystem(LLMSystem):
-    def __init__(self, system_name: str):
-        super().__init__(system_name)
-
-    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
-        # Simulate response generation without RAG
-        return generate_response_no_rag(prompt, formatted_prompt)
-    
-class SimpleRAGSystem(LLMSystem):
-    def __init__(self, system_name: str):
-        super().__init__(system_name)
-
-    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
-        # Simulate response generation with simple RAG
-        return generate_response_simple_rag(prompt, formatted_prompt)
-    
-class SelfRAGSystem(LLMSystem):
-    def __init__(self, system_name: str):
-        super().__init__(system_name)
-
-    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
-        # Simulate response generation with Self-RAG
-        return generate_response_self_rag(prompt, formatted_prompt)
-    
-class FusionRAGSystem(LLMSystem):
-    def __init__(self, system_name: str):
-        super().__init__(system_name)
-
-    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
-        # Simulate response generation with Fusion-RAG
-        return generate_response_fusion_rag(prompt, formatted_prompt)
-    
-class CRAGRAGSystem(LLMSystem):
-    def __init__(self, system_name: str):
-        super().__init__(system_name)
-
-    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
-        # Simulate response generation with CRAG-RAG
-        return generate_response_corrective_rag(prompt, formatted_prompt)
-    
-class RerankerRAGSystem(LLMSystem):
-    def __init__(self, system_name: str):
-        super().__init__(system_name)
-
-    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
-        # Simulate response generation with Reranker-RAG
-        return generate_response_reranker_rag(prompt, formatted_prompt)
-    
-class HyDERAGSystem(LLMSystem):
-    def __init__(self, system_name: str):
-        super().__init__(system_name)
-
-    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
-        # Simulate response generation with HyDE-RAG
-        return generate_response_hyde_rag(prompt, formatted_prompt) 

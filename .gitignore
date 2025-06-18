@@ -4,3 +4,4 @@ chroma_db_gigaverbo/*
 *.log
 .env
 *.json
+results

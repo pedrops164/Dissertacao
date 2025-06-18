@@ -1,7 +1,10 @@
 
 #from vectordb.chroma_db import vector_db # <--- Import the retrieval function
 from config import config
-from llm_client import query_llm_with_context
+from typing import Tuple
+from llm_system import LLMSystem
+from llm_client import NebiusLLMClient
+
 # Fusion Configuration
 FUSION_RRF_K = 60 # RRF k parameter (smoothing factor, typically 60)~
 # How many documents to retrieve from each retriever before fusion
@@ -81,29 +84,33 @@ def retrieve_context_fusion(query, final_k=RAG_FINAL_CONTEXT_K, retrieval_k=FUSI
         
     return context
 
-def generate_response_fusion_rag(query: str, formatted_query: str):
-    """
-    Generate a response based on the query using RAG.
-    Retrieves context from the vector database before calling the LLM.
+class FusionRAGSystem(LLMSystem):
+    def __init__(self, system_name: str, llm_client: NebiusLLMClient):
+        super().__init__(system_name, llm_client)
 
-    Args:
-        query (str): User query
+    def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
+        """
+        Generate a response based on the query using RAG.
+        Retrieves context from the vector database before calling the LLM.
 
-    Returns:
-        str: Generated response
-    """
-    # Retrieve relevant context from the vector database
-    print(f"Retrieving context for query: {query}")
-    context = retrieve_context_fusion(query) # Retrieve top 3 chunks
-    if not context:
-        print("Warning: No relevant context found.")
-        # Optional: Handle case where no context is found (e.g., fall back to no-RAG or inform the LLM)
-        context = "No specific context was found for this query." # Provide default text
+        Args:
+            query (str): User query
 
-    print(f"Retrieved Context:\n---\n{context}...\n---")
+        Returns:
+            str: Generated response
+        """
+        # Retrieve relevant context from the vector database
+        print(f"Retrieving context for query: {prompt}")
+        context = retrieve_context_fusion(prompt) # Retrieve top 3 chunks
+        if not context:
+            print("Warning: No relevant context found.")
+            # Optional: Handle case where no context is found (e.g., fall back to no-RAG or inform the LLM)
+            context = "No specific context was found for this query." # Provide default text
 
-    response, tokens_count = query_llm_with_context(formatted_query, context)
-    return response, {
-        "tokens_count": tokens_count,
-        "retrieved_context": context
-    }
+        print(f"Retrieved Context:\n---\n{context}...\n---")
+
+        response, tokens_count = self.llm_client.query_llm_with_context(formatted_prompt, context)
+        return response, {
+            "tokens_count": tokens_count,
+            "retrieved_context": context
+        }

@@ -4,14 +4,9 @@ from typing import Tuple
 from prompts import base_system_prompt
 from openai.types.chat import ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam, ChatCompletionMessageParam
 
-nebius_api_key = config.get("nebius_api_key")
 base_llm_model = config.get("LLM_MODEL")
 judge_llm_model = config.get("JUDGE_LLM_MODEL", base_llm_model)
 
-openai_client = OpenAI(
-    base_url="https://api.studio.nebius.com/v1/",
-    api_key=nebius_api_key
-)
 
 def extract_answer_from_model_response(llm_output: str) -> str:
     """
@@ -38,61 +33,66 @@ def extract_answer_from_model_response(llm_output: str) -> str:
         # Does not start with <think>, so the whole string is the answer
         return llm_output_stripped
 
-# --- Helper for LLM Assessment Call ---
-def call_llm_assessment(prompt=None, temperature=0.0, generation_prompt=None, use_judge_model=False) -> Tuple[str, int]:
-    """Makes a focused LLM call for assessment tasks."""
-    assert prompt is not None or generation_prompt is not None, "Either prompt or generation_prompt must be provided."
-    try:
-        model = judge_llm_model if use_judge_model else base_llm_model
-        if generation_prompt:
-            messages = generation_prompt
-        elif prompt:
+class NebiusLLMClient():
+    def __init__(self, base_llm: str):
+        nebius_api_key = config.get("nebius_api_key")
+        self.openai_client = OpenAI(
+            base_url="https://api.studio.nebius.com/v1/",
+            api_key=nebius_api_key
+        )
+        self.base_llm = base_llm
+
+    # --- Helper for LLM Assessment Call ---
+    def call_llm_assessment(self, prompt, temperature=0.0, use_judge_model=False) -> Tuple[str, int]:
+        """Makes a focused LLM call for assessment tasks."""
+        try:
+            model = judge_llm_model if use_judge_model else base_llm_model
             messages = [ChatCompletionUserMessageParam(role="user", content=prompt)]
-        response = openai_client.chat.completions.create(
-            model=model,
+            response = self.openai_client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                n=1,
+                stop=None,
+            )
+        except Exception as e:
+            print(f"Error during LLM call: {e}")
+            return "", 0
+        
+        raw_llm_output = response.choices[0].message.content
+        extracted_answer = extract_answer_from_model_response(raw_llm_output)
+        tokens_used = response.usage.total_tokens
+        return extracted_answer, tokens_used
+        
+    def query_llm_with_context(self, query: str, context: str = "", temperature: float = 0.0) -> Tuple[str, int]:
+        """Queries the LLM with a given query and optional context."""
+
+        # The system prompt is crucial for guiding behavior.
+        # It should instruct the LLM to answer directly and not comment on context.
+        #messages: list[ChatCompletionMessageParam] = [
+        #    ChatCompletionSystemMessageParam(role="system", content=base_system_prompt)
+        #]
+        messages: list[ChatCompletionMessageParam] = []
+
+        # Combine context and query into a single user message
+        if context:
+            user_content = f"Possibly relevant documents:\n{context}\n\n###\
+    \nYou are a medical expert. Use the context provided above only if it is clearly relevant to the question. If the context is irrelevant or incomplete, answer based on your own medical knowledge. Always aim to provide an accurate and concise answer.\
+    \n\nQuestion: {query}"
+        else:
+            user_content = query
+        
+        messages.append(ChatCompletionUserMessageParam(role="user", content=user_content))
+        
+        response = self.openai_client.chat.completions.create(
+            model=base_llm_model,
             messages=messages,
             temperature=temperature,
             n=1,
             stop=None,
         )
-    except Exception as e:
-        print(f"Error during LLM call: {e}")
-        return "", 0
-    
-    raw_llm_output = response.choices[0].message.content
-    extracted_answer = extract_answer_from_model_response(raw_llm_output)
-    tokens_used = response.usage.total_tokens
-    return extracted_answer, tokens_used
-    
-def query_llm_with_context(query: str, context: str = "", temperature: float = 0.0) -> Tuple[str, int]:
-    """Queries the LLM with a given query and optional context."""
-
-    # The system prompt is crucial for guiding behavior.
-    # It should instruct the LLM to answer directly and not comment on context.
-    #messages: list[ChatCompletionMessageParam] = [
-    #    ChatCompletionSystemMessageParam(role="system", content=base_system_prompt)
-    #]
-    messages: list[ChatCompletionMessageParam] = []
-
-    # Combine context and query into a single user message
-    if context:
-        user_content = f"Possibly relevant documents:\n{context}\n\n###\
-\nYou are a medical expert. Use the context provided above only if it is clearly relevant to the question. If the context is irrelevant or incomplete, answer based on your own medical knowledge. Always aim to provide an accurate and concise answer.\
-\n\nQuestion: {query}"
-    else:
-        user_content = query
-    
-    messages.append(ChatCompletionUserMessageParam(role="user", content=user_content))
-    
-    response = openai_client.chat.completions.create(
-        model=base_llm_model,
-        messages=messages,
-        temperature=temperature,
-        n=1,
-        stop=None,
-    )
-    
-    raw_llm_output = response.choices[0].message.content
-    extracted_answer = extract_answer_from_model_response(raw_llm_output)
-    tokens_used = response.usage.total_tokens
-    return extracted_answer, tokens_used
+        
+        raw_llm_output = response.choices[0].message.content
+        extracted_answer = extract_answer_from_model_response(raw_llm_output)
+        tokens_used = response.usage.total_tokens
+        return extracted_answer, tokens_used

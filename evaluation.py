@@ -14,7 +14,6 @@ import time
 from typing import List, Dict, Any, Tuple, Optional
 from dataclasses import dataclass, field
 from llm_system import LLMSystem
-from llm_client import call_llm_assessment
 from abc import ABC, abstractmethod # Import ABC and abstractmethod
 from bioasq import load_bioasq_yesno_questions, load_bioasq_open_questions
 import concurrent.futures # Import for ThreadPoolExecutor
@@ -529,49 +528,65 @@ class RAGBenchmark:
             json.dump(all_results, f, indent=2)
             
 if __name__ == "__main__":
-    # Initialize evaluator
+    import os
     from config import config
+    from llm_client import NebiusLLMClient
     n_workers = config.n_workers
+    llm_list = config.LLM_LIST
 
     # Import queries
-    from llm_system import NoRAGSystem, SimpleRAGSystem, SelfRAGSystem, CRAGRAGSystem, RerankerRAGSystem, HyDERAGSystem
+    from no_rag import NoRAGSystem
+    from simple_rag import SimpleRAGSystem
+    from self_rag import SelfRAGSystem
+    from crag_rag import CRAGRAGSystem
+    from reranker_rag import RerankerRAGSystem
+    from hyde_rag import HyDERAGSystem
 
     question_limit = config.EVAL_N_QUESTIONS
 
     bioasq_yesno_queries = load_bioasq_yesno_questions()[:question_limit]
-    bioasq_open_queries = load_bioasq_open_questions()[:question_limit]
+    #bioasq_open_queries = load_bioasq_open_questions()[:question_limit]
 
-    no_rag_system = NoRAGSystem("No-RAG System")
-    simple_rag_system = SimpleRAGSystem("Simple RAG System")  # Placeholder for a simple RAG system
-    self_rag_system = SelfRAGSystem("Self-RAG System")
-    reranker_rag_system = RerankerRAGSystem("Reranker-RAG System")
-    #fusion_rag_system = FusionRAGSystem("Fusion-RAG System")
-    crag_rag_system = CRAGRAGSystem("CRAG-RAG System")
-    hyde_rag_system = HyDERAGSystem("HyDE-RAG System")
-
-    rag_benchmark = RAGBenchmark()
+    #from dataset_loaders import load_pubmedqa_questions
+    #pubmedqa_queries = load_pubmedqa_questions(100)
 
     print("Evaluating systems...")
+    for llm in llm_list:
+        print(f"Using LLM: {llm}")
+        model_name = llm.split("/")[-1]  # Extract model name from the full identifier
+        output_dir = config.get("OUTPUT_DIR")
+        output_filename = f"rag_evaluation_results_{model_name}.json"
+        output_path = os.path.join(output_dir, output_filename)
 
-    #start = time.time()
-    #rag_benchmark.eval_yes_no_questions(
-    #    systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
-    #    #systems=[no_rag_system, simple_rag_system],
-    #    queries=bioasq_yesno_queries[:200],
-    #    n_workers=n_workers
-    #)
-    #end = time.time()
-    #print(f"Yes/No question evaluation took {end - start:.2f} seconds")
-    #rag_benchmark.save_results("rag_evaluation_results_yesno.json")
+        llm_client = NebiusLLMClient(base_llm=llm)
+        no_rag_system = NoRAGSystem("No-RAG System", llm_client)
+        simple_rag_system = SimpleRAGSystem("Simple RAG System", llm_client)  # Placeholder for a simple RAG system
+        self_rag_system = SelfRAGSystem("Self-RAG System", llm_client)
+        reranker_rag_system = RerankerRAGSystem("Reranker-RAG System", llm_client)
+        #fusion_rag_system = FusionRAGSystem("Fusion-RAG System", llm_client)
+        crag_rag_system = CRAGRAGSystem("CRAG-RAG System", llm_client)
+        hyde_rag_system = HyDERAGSystem("HyDE-RAG System", llm_client)
 
-    start = time.time()
-    rag_benchmark.eval_open_questions(
-        systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
-        queries=bioasq_open_queries[:8], 
-        n_workers=n_workers
-    )
-    end = time.time()
+        rag_benchmark = RAGBenchmark()
 
-    # Save results
-    rag_benchmark.save_results("rag_evaluation_results.json")
-    print(f"Open question evaluation took {end - start:.2f} seconds")
+        start = time.time()
+        rag_benchmark.eval_yes_no_questions(
+            systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
+            queries=bioasq_yesno_queries[:8],
+            #queries=pubmedqa_queries,
+            n_workers=n_workers
+        )
+        end = time.time()
+        print(f"Yes/No question evaluation took {end - start:.2f} seconds")
+
+        #start = time.time()
+        #rag_benchmark.eval_open_questions(
+        #    systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
+        #    queries=bioasq_open_queries[:100], 
+        #    n_workers=n_workers
+        #)
+        #end = time.time()
+        #print(f"Open question evaluation took {end - start:.2f} seconds")
+
+        # Save results
+        rag_benchmark.save_results(output_path)
