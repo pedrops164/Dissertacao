@@ -10,6 +10,7 @@ from config import config
 
 # RAG Configuration
 DEFAULT_N_RESULTS = config.get("RAG_FINAL_CONTEXT_K") # Default number of results to return from retrieval
+BATCH_SIZE = config.get("BATCH_SIZE") # Batch size for vector database operations
 
 class QdrantDB(VectorDB):
     def __init__(self, embedding_model: EmbeddingModel, n_workers: int = 4, use_quantization: bool = True):
@@ -21,9 +22,6 @@ class QdrantDB(VectorDB):
         """
         super().__init__(embedding_model, n_workers)
         
-        # --- API BATCH LIMIT ---
-        self.API_BATCH_SIZE = 1000
-
         # set quantization parameters if enabled
         self.use_quantization = use_quantization
         if use_quantization:
@@ -47,29 +45,24 @@ class QdrantDB(VectorDB):
             url="http://localhost:6333",
             timeout=60 # Set timeout to 60 seconds (default is typically 5 or 10))
         )
-        #self.collection_name = "qdrant_vectordb"
         self.collection_name = "qdrant_vectordb_binary_quant"
         if not self.client.collection_exists(self.collection_name):
+            print(f"Collection '{self.collection_name}' not found. Creating a new one.")
             self.client.create_collection(
                 collection_name=self.collection_name,
                 vectors_config=VectorParams(
                     size=self.embedding_model.embedding_dim,
                     distance=Distance.COSINE,
-                    on_disk=True, # Use on-disk storage for low memory usage
+                    on_disk=True,
                 ),
                 quantization_config=quantization_config,
                 hnsw_config=HnswConfigDiff(
-                    m=0, # Defer HNSW graph construction for Low memory usage during upload
-                    on_disk=True, # Use on-disk storage for low memory usage
+                    m=0,  # Defer HNSW graph construction for faster initial upload
+                    on_disk=True,
                 ),
             )
-        self.populate_data(10000000, load_pubmed_data)
-        self.client.update_collection(
-            collection_name=self.collection_name,
-            hnsw_config=HnswConfigDiff(
-                m=16, # Once ingestion is complete, re-enable HNSW by setting m to production value
-            ),
-        )
+        else:
+            print(f"Using existing collection: '{self.collection_name}'")
 
     @retry(
         wait=wait_exponential(multiplier=1, min=4, max=60), # Wait 2^x * 1 seconds between each retry, starting with 4s, maxing out at 60s
@@ -100,29 +93,30 @@ class QdrantDB(VectorDB):
         Populates Qdrant using a streaming producer-consumer pattern.
         """
         assert target_docs_to_process > 0, "target_docs_to_process must be greater than 0"
-        num_points = self.client.count(
-            collection_name=self.collection_name,
-            exact=True, # Use exact count for accuracy
-        ).count
+
+        print("\n--- Preparing for Population ---")
+        self.client.update_collection(collection_name=self.collection_name, hnsw_config=HnswConfigDiff(m=0))
+        print("HNSW indexing deferred for faster ingestion.")
+
+        num_points = self.client.count(collection_name=self.collection_name, exact=True).count # Use exact count for accuracy
         print(f"Collection '{self.collection_name}' contains {num_points} points.")
-        if num_points == target_docs_to_process:
-            # No need to populate, the collection already has the target number of documents
-            print(f"Collection already has {num_points} points, which matches the target of {target_docs_to_process}. No population needed.")
+
+        if num_points >= target_docs_to_process:
+            print(f"Collection already meets or exceeds the target of {target_docs_to_process} documents. No population needed.")
+            self.client.update_collection(collection_name=self.collection_name, hnsw_config=HnswConfigDiff(m=16, on_disk=True))
+            print("HNSW indexing has been re-enabled.")
             return
+        
         remaining_docs = target_docs_to_process - num_points
         print(f"Need to add {remaining_docs} more documents to reach the target of {target_docs_to_process}.")
         
-        MAX_PENDING_FUTURES_FACTOR = 2
-        max_concurrent_futures = self.n_workers * MAX_PENDING_FUTURES_FACTOR
+        max_concurrent_futures = self.n_workers * 2
 
         print(f"\n--- Populating Qdrant vectordb with embeddings (streaming & parallel) ---")
         population_start_time = time.time()
         
-        # The unit of work for a worker will be the API's batch size
-        WORKER_BATCH_SIZE = self.API_BATCH_SIZE
-        
         # skip the first num_points documents, as they are already in the collection
-        batch_iterator = data_loader_func(remaining_docs, WORKER_BATCH_SIZE, num_points)
+        batch_iterator = data_loader_func(remaining_docs, BATCH_SIZE, num_points)
         
         total_docs_added = 0
         total_docs_submitted = 0
@@ -179,19 +173,17 @@ class QdrantDB(VectorDB):
                 while len(active_futures) < max_concurrent_futures:
                     if not submit_next_task(batch_iterator): break
 
-        # Finalize the population
-        if active_futures:
-            done_futures, _ = concurrent.futures.wait(active_futures)
-            for future in done_futures:
-                try:
-                    added_count = future.result()
-                    total_docs_added += added_count
-                except Exception as exc:
-                    print(f'A final task generated an exception: {exc}')
-        population_end_time = time.time()
-        print("\n--- Population Complete ---")
-        print(f"Finished Qdrant population. Added ~{total_docs_added:,} documents "
-              f"in {population_end_time - population_start_time:.2f} seconds.")
+        print("\n--- Population Ingestion Complete ---")
+        print(f"Added ~{total_docs_added:,} documents in {time.time() - population_start_time:.2f} seconds.")
+
+        print("\n--- Finalizing Collection: Re-enabling HNSW indexing (m=16). This may take some time... ---")
+        finalizing_start_time = time.time()
+        self.client.update_collection(
+            collection_name=self.collection_name,
+            hnsw_config=HnswConfigDiff(m=16, on_disk=True),
+        )
+        print(f"HNSW indexing re-enabled in {time.time() - finalizing_start_time:.2f} seconds.")
+
 
     def retrieve_context(self, query: str, n_results: int = DEFAULT_N_RESULTS) -> list[str]:
         """Retrieves context from the Qdrant database based on the query."""

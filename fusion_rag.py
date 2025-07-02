@@ -1,5 +1,4 @@
 
-#from vectordb.chroma_db import vector_db # <--- Import the retrieval function
 from config import config
 from typing import Tuple
 from llm_system import LLMSystem

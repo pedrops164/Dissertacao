@@ -551,12 +551,15 @@ if __name__ == "__main__":
     #pubmedqa_queries = load_pubmedqa_questions(100)
 
     print("Evaluating systems...")
-    for llm in llm_list:
+    for llm in llm_list[:1]:
         print(f"Using LLM: {llm}")
         model_name = llm.split("/")[-1]  # Extract model name from the full identifier
         output_dir = config.get("OUTPUT_DIR")
         output_filename = f"rag_evaluation_results_{model_name}.json"
         output_path = os.path.join(output_dir, output_filename)
+        # Create the directory if it doesn't exist
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir) # Use makedirs to create all intermediate directories
 
         llm_client = NebiusLLMClient(base_llm=llm)
         no_rag_system = NoRAGSystem("No-RAG System", llm_client)

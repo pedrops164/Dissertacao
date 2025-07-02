@@ -4,9 +4,7 @@ from typing import Tuple
 from prompts import base_system_prompt
 from openai.types.chat import ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam, ChatCompletionMessageParam
 
-base_llm_model = config.get("LLM_MODEL")
-judge_llm_model = config.get("JUDGE_LLM_MODEL", base_llm_model)
-
+judge_llm_model = config.get("JUDGE_LLM_MODEL")
 
 def extract_answer_from_model_response(llm_output: str) -> str:
     """
@@ -46,7 +44,7 @@ class NebiusLLMClient():
     def call_llm_assessment(self, prompt, temperature=0.0, use_judge_model=False) -> Tuple[str, int]:
         """Makes a focused LLM call for assessment tasks."""
         try:
-            model = judge_llm_model if use_judge_model else base_llm_model
+            model = judge_llm_model if use_judge_model else self.base_llm
             messages = [ChatCompletionUserMessageParam(role="user", content=prompt)]
             response = self.openai_client.chat.completions.create(
                 model=model,
@@ -85,7 +83,7 @@ class NebiusLLMClient():
         messages.append(ChatCompletionUserMessageParam(role="user", content=user_content))
         
         response = self.openai_client.chat.completions.create(
-            model=base_llm_model,
+            model=self.base_llm,
             messages=messages,
             temperature=temperature,
             n=1,
