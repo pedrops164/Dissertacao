@@ -29,14 +29,7 @@ class Config:
         self.BATCH_SIZE = int(os.environ.get("BATCH_SIZE", "100")) # Batch size for vector database operations
         
         # rag config
-        self.RAG_FINAL_CONTEXT_K = int(os.environ.get("RAG_FINAL_CONTEXT_K", 5)) # How many relevant context documents to finally use for generation
-        # self rag config
-        self.SELF_RAG_INITIAL_K = int(os.environ.get("SELF_RAG_INITIAL_K", 10)) # Number of docs to retrieve for self-rag
-        # fusion rag config
-        self.FUSION_RAG_INITIAL_K = int(os.environ.get("FUSION_RAG_INITIAL_K", 10)) # Number of docs to retrieve for fusion rag
-
-        # worker threads
-        self.n_workers = int(os.environ.get("N_WORKERS", 8))
+        self.RAG_K_LIST = json.loads(os.environ.get("RAG_K_LIST"))
 
         # benchmarking config
         self.EVAL_N_QUESTIONS = int(os.environ.get("EVAL_N_QUESTIONS", 100))

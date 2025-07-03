@@ -1,14 +1,12 @@
 from config import config
-from vectordb import vector_db
+from vectordb import VectorDB
 from typing import Tuple
-from llm_system import LLMSystem
+from llm_system import LLMRAGSystem
 from llm_client import NebiusLLMClient
-
-RAG_FINAL_CONTEXT_K = config.get("RAG_FINAL_CONTEXT_K")
     
-class SimpleRAGSystem(LLMSystem):
-    def __init__(self, system_name: str, llm_client: NebiusLLMClient):
-        super().__init__(system_name, llm_client)
+class SimpleRAGSystem(LLMRAGSystem):
+    def __init__(self, system_name: str, llm_client: NebiusLLMClient, vector_db: VectorDB, rag_k: int):
+        super().__init__(system_name, llm_client, vector_db, rag_k)
 
     def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
         """
@@ -22,7 +20,7 @@ class SimpleRAGSystem(LLMSystem):
             str: Generated response
         """
         # retrieve relevant documents from the vector database
-        retrieved_docs = vector_db.retrieve_context(prompt, n_results=RAG_FINAL_CONTEXT_K)
+        retrieved_docs = self.vector_db.retrieve_context(prompt, n_results=self.rag_k)
         # build context from retrieved documents
         context = "\n\n---\n\n".join(retrieved_docs) if retrieved_docs else ""
         

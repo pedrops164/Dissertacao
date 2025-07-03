@@ -9,7 +9,6 @@ from dataset_loaders import load_pubmed_data
 from config import config
 
 # RAG Configuration
-DEFAULT_N_RESULTS = config.get("RAG_FINAL_CONTEXT_K") # Default number of results to return from retrieval
 BATCH_SIZE = config.get("BATCH_SIZE") # Batch size for vector database operations
 
 class QdrantDB(VectorDB):
@@ -75,7 +74,9 @@ class QdrantDB(VectorDB):
         It takes a chunk of texts, embeds them, and upserts them into Qdrant.
         """
         # 1. Embed the chunk of texts
+        print(f"Embedding {len(chunk_texts)} documents.. {chunk_ids[0]}-{chunk_ids[-1]}")
         embeddings = self.embedding_model.embed_documents(chunk_texts)
+        print(f"Embedded {chunk_ids[0]}-{chunk_ids[-1]}")
         
         # 2. Upsert the embedded chunk into Qdrant
         self.client.upsert(
@@ -185,7 +186,7 @@ class QdrantDB(VectorDB):
         print(f"HNSW indexing re-enabled in {time.time() - finalizing_start_time:.2f} seconds.")
 
 
-    def retrieve_context(self, query: str, n_results: int = DEFAULT_N_RESULTS) -> list[str]:
+    def retrieve_context(self, query: str, n_results: int) -> list[str]:
         """Retrieves context from the Qdrant database based on the query."""
         start = time.time()
         query_vector = self.embedding_model.embed_query(query)
@@ -210,19 +211,3 @@ class QdrantDB(VectorDB):
         #for point in results.points:
         #    print(f"ID: {point.id}, Score: {point.score:.4f}")
         return [point.payload['text'] for point in results.points]
-
-if __name__ == "__main__":
-    # Using workers for parallel processing
-    embedding_model = GoogleEmbeddingModel()
-    qdrant_db = QdrantDB(n_workers=4, embedding_model=embedding_model, use_quantization=True)
-    
-    query = \
-"""
-Is motion perception deficit in schizophrenia a consequence of eye-tracking abnormality?
-"""
-    results = qdrant_db.retrieve_context(query)
-    print("\n--- Retrieval Results ---")
-    for text in results:
-        #print(f"ID: {point.id}, Score: {point.score:.4f}, Text: {point.payload['text']}")
-        print(text)
-        print()

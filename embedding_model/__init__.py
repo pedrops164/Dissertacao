@@ -1,2 +1,4 @@
 from .base_embedding import EmbeddingModel
 from .google_embedding import GoogleEmbeddingModel
+from .nebius_embedding import NebiusEmbeddingModel
+from .deepinfra_embedding import DeepInfraEmbeddingModel

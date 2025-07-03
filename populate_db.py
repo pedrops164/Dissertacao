@@ -1,7 +1,8 @@
 import argparse
 from vectordb.qdrant_db import QdrantDB
 from dataset_loaders import load_pubmed_data
-from embedding_model import GoogleEmbeddingModel
+from embedding_model import GoogleEmbeddingModel, NebiusEmbeddingModel, DeepInfraEmbeddingModel
+import time
 
 def main():
     """
@@ -36,7 +37,7 @@ def main():
         "--embedding-model",
         type=str,
         default="text-embedding-004",
-        choices=["text-embedding-004"],
+        choices=["text-embedding-004", "Qwen/Qwen3-Embedding-8B", "Qwen/Qwen3-Embedding-0.6B"],
         help="The embedding model to use for population."
     )
     parser.add_argument(
@@ -72,10 +73,19 @@ def main():
     # --- Initialize the embedding model ---
     if args.embedding_model == "text-embedding-004":
         embedding_model = GoogleEmbeddingModel()
+    elif args.embedding_model == "Qwen/Qwen3-Embedding-8B":
+        embedding_model = NebiusEmbeddingModel() 
+    elif args.embedding_model == "Qwen/Qwen3-Embedding-0.6B":
+        embedding_model = DeepInfraEmbeddingModel()
     else:
         raise ValueError(f"Unsupported embedding model: {args.embedding_model}")
+    
+    print(f"Using embedding model: {embedding_model.embedding_dim} dimensions")
+    #import sys
+    #sys.exit(0)  # Exit early for testing purposes
 
     # --- Initialize and populate the database based on arguments ---
+    start = time.time()
     if args.db_type == "qdrant":
         db_instance = QdrantDB(
             embedding_model=embedding_model,
@@ -89,8 +99,9 @@ def main():
     else:
         # This block can be expanded if you add more database types
         raise ValueError(f"Unsupported database type: {args.db_type}")
+    end = time.time()
 
-    print("\nDatabase population script finished successfully.")
+    print(f"Database populated successfully in {end - start:.2f} seconds.")
 
 if __name__ == "__main__":
     main()

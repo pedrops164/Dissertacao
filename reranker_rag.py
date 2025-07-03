@@ -1,19 +1,13 @@
 import time
-from vectordb import vector_db
+from vectordb import VectorDB
 from config import config
-from llm_system import LLMSystem
+from llm_system import LLMRAGSystem
 from llm_client import NebiusLLMClient
 from typing import Tuple
 
-# --- Configuration ---
-# How many initial documents to retrieve for reranking
-INITIAL_RETRIEVAL_K = config.get("RERANK_INITIAL_RETRIEVAL_K", 10)
-# How many documents to keep after reranking for the final context
-FINAL_CONTEXT_N = config.get("RERANK_FINAL_CONTEXT_N", 3)
-
-class RerankerRAGSystem(LLMSystem):
-    def __init__(self, system_name: str, llm_client: NebiusLLMClient):
-        super().__init__(system_name, llm_client)
+class RerankerRAGSystem(LLMRAGSystem):
+    def __init__(self, system_name: str, llm_client: NebiusLLMClient, vector_db: VectorDB, rag_k: int):
+        super().__init__(system_name, llm_client, vector_db, rag_k)
 
     def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
         """
@@ -30,11 +24,12 @@ class RerankerRAGSystem(LLMSystem):
         start_time = time.time()
         tokens_count = 0 # Assuming your llm_client returns token counts
 
+        initial_k = self.rag_k * 2
         # --- Step 1: Retrieve Initial Documents ---
-        print(f"\n[Step 1/4] Retrieving Top-{INITIAL_RETRIEVAL_K} documents for reranking...")
+        print(f"\n[Step 1/4] Retrieving Top-{initial_k} documents for reranking...")
         # This function should return a list of document texts
         # It might internally use your hybrid search + RRF
-        initial_docs = vector_db.retrieve_context(prompt, n_results=INITIAL_RETRIEVAL_K)
+        initial_docs = self.vector_db.retrieve_context(prompt, n_results=initial_k)
         if not initial_docs:
             print("  > No documents retrieved. Proceeding without context.")
             initial_docs = []
@@ -49,7 +44,7 @@ class RerankerRAGSystem(LLMSystem):
             # The rerank_documents function should ideally interact with a reranking model
             reranked_docs_full_list = self.rerank_documents(prompt, initial_docs)
             # Select the top N documents after reranking
-            reranked_docs = reranked_docs_full_list[:FINAL_CONTEXT_N]
+            reranked_docs = reranked_docs_full_list[:self.rag_k]
             print(f"  > Selected Top-{len(reranked_docs)} documents after reranking.")
 
             if not reranked_docs:

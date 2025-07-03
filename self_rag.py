@@ -1,20 +1,14 @@
 import time
-from vectordb import vector_db
+from vectordb import VectorDB
 from prompts import get_self_rag_critique_prompt
 from config import config
-from llm_system import LLMSystem
+from llm_system import LLMRAGSystem
 from llm_client import NebiusLLMClient
 from typing import Tuple
 
-# --- Configuration ---
-# How many initial documents to retrieve before critique/filtering
-SELF_RAG_INITIAL_K = config.get("SELF_RAG_INITIAL_K")
-# How many relevant documents to finally use for generation context
-SELF_RAG_FINAL_CONTEXT_K = config.get("RAG_FINAL_CONTEXT_K")
-
-class SelfRAGSystem(LLMSystem):
-    def __init__(self, system_name: str, llm_client: NebiusLLMClient):
-        super().__init__(system_name, llm_client)
+class SelfRAGSystem(LLMRAGSystem):
+    def __init__(self, system_name: str, llm_client: NebiusLLMClient, vector_db: VectorDB, rag_k: int):
+        super().__init__(system_name, llm_client, vector_db, rag_k)
 
     def query(self, prompt: str, formatted_prompt: str) -> Tuple[str, dict]:
         """
@@ -37,8 +31,9 @@ class SelfRAGSystem(LLMSystem):
         filtered_context = ""
 
         # --- Step 1: Retrieve Documents (if needed) ---
-        print(f"\n[Step 1/3] Retrieving Top-{SELF_RAG_INITIAL_K} documents...")
-        retrieved_docs = vector_db.retrieve_context(prompt, n_results=SELF_RAG_INITIAL_K) # Fetch more
+        initial_k = self.rag_k * 2
+        print(f"\n[Step 1/3] Retrieving Top-{initial_k} documents...")
+        retrieved_docs = self.vector_db.retrieve_context(prompt, n_results=initial_k) # Fetch more
 
         if retrieved_docs:
             # --- Step 2: Critique Retrieved Documents (if needed & available) ---
@@ -54,14 +49,14 @@ class SelfRAGSystem(LLMSystem):
                     relevant_docs.append(doc_text)
                     #print(f"    >> Doc {i+1} kept.")
                 # Early exit if we have enough relevant docs
-                if len(relevant_docs) >= SELF_RAG_FINAL_CONTEXT_K:
+                if len(relevant_docs) >= self.rag_k:
                     #print(f"  > Found sufficient ({len(relevant_docs)}) relevant documents. Stopping critique early.")
                     break
 
             if relevant_docs:
                 #print(f"  > Selected {len(relevant_docs)} relevant documents for context.")
                 # Prepare final context string from relevant docs
-                filtered_context = "\n\n---\n\n".join(relevant_docs[:SELF_RAG_FINAL_CONTEXT_K])
+                filtered_context = "\n\n---\n\n".join(relevant_docs[:self.rag_k])
 
         # --- Step 4: Generate Answer ---
         print("\n[Step 3/3] Generating answer...")

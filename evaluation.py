@@ -18,6 +18,17 @@ from abc import ABC, abstractmethod # Import ABC and abstractmethod
 from bioasq import load_bioasq_yesno_questions, load_bioasq_open_questions
 import concurrent.futures # Import for ThreadPoolExecutor
 from prompts import get_llm_judge_prompt
+from vectordb.qdrant_db import QdrantDB
+from embedding_model import GoogleEmbeddingModel, NebiusEmbeddingModel, DeepInfraEmbeddingModel
+from no_rag import NoRAGSystem
+from simple_rag import SimpleRAGSystem
+from self_rag import SelfRAGSystem
+from crag_rag import CRAGRAGSystem
+from reranker_rag import RerankerRAGSystem
+from hyde_rag import HyDERAGSystem
+import os
+from config import config
+from llm_client import NebiusLLMClient
 
 # Define evaluation result data structure
 @dataclass
@@ -526,70 +537,127 @@ class RAGBenchmark:
         
         with open(output_file, 'w') as f:
             json.dump(all_results, f, indent=2)
+
+def _setup_args():
+    import argparse
+    parser = argparse.ArgumentParser(
+        description="Populate a vector database with a specified number of documents.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument("--db-type", type=str, default="qdrant", choices=["qdrant"], help="The type of vector database to use.")
+    parser.add_argument("--embedding-model", type=str, default="text-embedding-004", choices=["text-embedding-004", "Qwen/Qwen3-Embedding-8B", "Qwen/Qwen3-Embedding-0.6B"], help="The embedding model to use for population.")
+    parser.add_argument("--use-quantization", action='store_true', help="Enable quantization in the vector database (if supported).")
+    parser.add_argument('--n-workers', type=int, default=8, help='Number of worker threads for parallel processing.')
+
+    args = parser.parse_args()
+    return args
+
+def _run_norag_evaluation(llm_client, yesno_queries, output_path):
+    """
+    Main function to run the RAG evaluation.
+    """
+    no_rag_system = NoRAGSystem("No-RAG System", llm_client)
+    no_rag_benchmark = RAGBenchmark()
+    start = time.time()
+    no_rag_benchmark.eval_yes_no_questions(
+        systems=[no_rag_system],
+        queries=yesno_queries,
+        n_workers=args.n_workers
+    )
+    end = time.time()
+    print(f"No-RAG evaluation took {end - start:.2f} seconds")
+    no_rag_benchmark.save_results(output_path)
             
+
+def _run_rag_evaluation(rag_k, llm_client, db_instance, yesno_queries, output_path):
+    """
+    Main function to run the RAG evaluation.
+    """
+    simple_rag_system = SimpleRAGSystem("Simple RAG System", llm_client, db_instance, rag_k)  # Placeholder for a simple RAG system
+    self_rag_system = SelfRAGSystem("Self-RAG System", llm_client, db_instance, rag_k)
+    reranker_rag_system = RerankerRAGSystem("Reranker-RAG System", llm_client, db_instance, rag_k)
+    crag_rag_system = CRAGRAGSystem("CRAG-RAG System", llm_client, db_instance, rag_k)
+    hyde_rag_system = HyDERAGSystem("HyDE-RAG System", llm_client, db_instance, rag_k)
+
+    rag_benchmark = RAGBenchmark()
+
+    start = time.time()
+    rag_benchmark.eval_yes_no_questions(
+        systems=[simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
+        queries=yesno_queries,
+        #queries=pubmedqa_queries,
+        n_workers=args.n_workers
+    )
+    end = time.time()
+    print(f"Yes/No question evaluation took {end - start:.2f} seconds")
+
+    #start = time.time()
+    #rag_benchmark.eval_open_questions(
+    #    systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
+    #    queries=bioasq_open_queries[:100], 
+    #    n_workers=n_workers
+    #)
+    #end = time.time()
+    #print(f"Open question evaluation took {end - start:.2f} seconds")
+
+    # Save results
+    rag_benchmark.save_results(output_path)
+    
 if __name__ == "__main__":
-    import os
-    from config import config
-    from llm_client import NebiusLLMClient
-    n_workers = config.n_workers
+    args = _setup_args()
+
     llm_list = config.LLM_LIST
-
-    # Import queries
-    from no_rag import NoRAGSystem
-    from simple_rag import SimpleRAGSystem
-    from self_rag import SelfRAGSystem
-    from crag_rag import CRAGRAGSystem
-    from reranker_rag import RerankerRAGSystem
-    from hyde_rag import HyDERAGSystem
-
+    rag_k_list = config.RAG_K_LIST
     question_limit = config.EVAL_N_QUESTIONS
 
-    bioasq_yesno_queries = load_bioasq_yesno_questions()[:question_limit]
+    output_dir = config.get("OUTPUT_DIR")
+    # Create the directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir) # Use makedirs to create all intermediate directories
+
+    #bioasq_yesno_queries = load_bioasq_yesno_questions()[:question_limit]
+    bioasq_yesno_queries = load_bioasq_yesno_questions()[:10]
     #bioasq_open_queries = load_bioasq_open_questions()[:question_limit]
 
     #from dataset_loaders import load_pubmedqa_questions
     #pubmedqa_queries = load_pubmedqa_questions(100)
 
-    print("Evaluating systems...")
-    for llm in llm_list[:1]:
-        print(f"Using LLM: {llm}")
-        model_name = llm.split("/")[-1]  # Extract model name from the full identifier
-        output_dir = config.get("OUTPUT_DIR")
-        output_filename = f"rag_evaluation_results_{model_name}.json"
-        output_path = os.path.join(output_dir, output_filename)
-        # Create the directory if it doesn't exist
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir) # Use makedirs to create all intermediate directories
+    # --- Initialize the embedding model ---
+    if args.embedding_model == "text-embedding-004":
+        embedding_model = GoogleEmbeddingModel()
+    elif args.embedding_model == "Qwen/Qwen3-Embedding-8B":
+        embedding_model = NebiusEmbeddingModel() 
+    elif args.embedding_model == "Qwen/Qwen3-Embedding-0.6B":
+        embedding_model = DeepInfraEmbeddingModel()
+    else:
+        raise ValueError(f"Unsupported embedding model: {args.embedding_model}")
+    
+    print(f"Using embedding model: {embedding_model.embedding_dim} dimensions")
 
-        llm_client = NebiusLLMClient(base_llm=llm)
-        no_rag_system = NoRAGSystem("No-RAG System", llm_client)
-        simple_rag_system = SimpleRAGSystem("Simple RAG System", llm_client)  # Placeholder for a simple RAG system
-        self_rag_system = SelfRAGSystem("Self-RAG System", llm_client)
-        reranker_rag_system = RerankerRAGSystem("Reranker-RAG System", llm_client)
-        #fusion_rag_system = FusionRAGSystem("Fusion-RAG System", llm_client)
-        crag_rag_system = CRAGRAGSystem("CRAG-RAG System", llm_client)
-        hyde_rag_system = HyDERAGSystem("HyDE-RAG System", llm_client)
-
-        rag_benchmark = RAGBenchmark()
-
-        start = time.time()
-        rag_benchmark.eval_yes_no_questions(
-            systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
-            queries=bioasq_yesno_queries[:8],
-            #queries=pubmedqa_queries,
-            n_workers=n_workers
+    if args.db_type == "qdrant":
+        db_instance = QdrantDB(
+            embedding_model=embedding_model,
+            n_workers=args.n_workers,
+            use_quantization=args.use_quantization
         )
-        end = time.time()
-        print(f"Yes/No question evaluation took {end - start:.2f} seconds")
+    else:
+        # This block can be expanded if you add more database types
+        raise ValueError(f"Unsupported database type: {args.db_type}")
 
-        #start = time.time()
-        #rag_benchmark.eval_open_questions(
-        #    systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
-        #    queries=bioasq_open_queries[:100], 
-        #    n_workers=n_workers
-        #)
-        #end = time.time()
-        #print(f"Open question evaluation took {end - start:.2f} seconds")
+    print("Evaluating systems...")
+    for llm in llm_list:
+        llm_client = NebiusLLMClient(base_llm=llm)
 
-        # Save results
-        rag_benchmark.save_results(output_path)
+        # Create output path for no-RAG evaluation
+        llm_name = llm_client.base_llm
+        model_name = llm_name.split("/")[-1]  # Extract model name from the full identifier
+        output_filename = f"eval_norag_{model_name}.json"
+        norag_output_path = os.path.join(output_dir, output_filename)
+
+        _run_norag_evaluation(llm_client, bioasq_yesno_queries, norag_output_path)  # run no-RAG evaluation separately
+        for rag_k in rag_k_list:
+            # Create output path for RAG evaluation
+            output_filename = f"eval_rag_{model_name}_{rag_k}k.json"
+            rag_output_path = os.path.join(output_dir, output_filename)
+            # Run the RAG evaluation for each k
+            _run_rag_evaluation(rag_k, llm_client, db_instance, bioasq_yesno_queries, rag_output_path)
