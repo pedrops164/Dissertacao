@@ -2,9 +2,11 @@
 evaluation.py - Framework for evaluating LLM and RAG systems
 This file provides functions and classes to evaluate and compare different RAG implementations:
 - Basic LLM
-- Self-RAG
-- Fusion RAG
+- Simple RAG
+- Reranker RAG
+- Filter-RAG
 - CRAG
+- HyDE RAG
 
 It includes automated metrics and LLM-as-judge evaluation approaches.
 """
@@ -22,7 +24,7 @@ from vectordb.qdrant_db import QdrantDB
 from embedding_model import GoogleEmbeddingModel, NebiusEmbeddingModel, DeepInfraEmbeddingModel
 from no_rag import NoRAGSystem
 from simple_rag import SimpleRAGSystem
-from self_rag import SelfRAGSystem
+from filter_rag import FilterRAGSystem
 from crag_rag import CRAGRAGSystem
 from reranker_rag import RerankerRAGSystem
 from hyde_rag import HyDERAGSystem
@@ -112,6 +114,12 @@ class OpenDomainEvaluationResult(BaseEvaluationResult):
         
         self.summary_metrics = calculated_summary_metrics
 
+        # Round all float values in the final dictionary to 3 decimal places.
+        self.summary_metrics = {
+            key: round(value, 3) if isinstance(value, float) else value
+            for key, value in self.summary_metrics.items()
+        }
+
 # --- Concrete Subclass for Binary Classification (Yes/No) Questions ---
 @dataclass
 class BinaryClassificationEvaluationResult(BaseEvaluationResult):
@@ -170,6 +178,12 @@ class BinaryClassificationEvaluationResult(BaseEvaluationResult):
             "total_questions": float(total_predictions),
             "correct_predictions": float(correct_predictions),
         })
+
+        # Round all float values in the final dictionary to 3 decimal places.
+        self.summary_metrics = {
+            key: round(value, 3) if isinstance(value, float) else value
+            for key, value in self.summary_metrics.items()
+        }
     
 # Make RAGEvaluator an Abstract Base Class
 class RAGEvaluator(ABC):
@@ -346,7 +360,7 @@ class RAGEvaluatorYesNoQuestion(RAGEvaluator):
 class RAGEvaluatorOpenQuestion(RAGEvaluator):
     """Framework for evaluating and comparing RAG systems"""
     
-    def __init__(self, n_workers, use_llm_judge=False):
+    def __init__(self, n_workers, llm_client: NebiusLLMClient, use_llm_judge=True):
         """
         Initialize the evaluator
         
@@ -355,6 +369,7 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
         """
         super().__init__(n_workers=n_workers)
         self.use_llm_judge = use_llm_judge
+        self.llm_client = llm_client
 
     def _process_single_open_query(self, system: LLMSystem, query_tuple: Tuple[str, str]) -> EvaluationEntry:
         """
@@ -374,8 +389,7 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
         metrics["latency"] = latency
             
         # Calculate content quality metrics using LLM-as-judge if applicable
-        if self.use_llm_judge and ground_truth is not None: # LLM Judge typically needs ground truth
-            # _llm_judge_evaluation is inherited from RAGEvaluator (or defined there)
+        if self.use_llm_judge and ground_truth is not None: # LLM Judge needs ground truth
             content_scores = self._llm_judge_evaluation(query, ground_truth, response_text)
             metrics.update(content_scores)
         elif self.use_llm_judge and ground_truth is None:
@@ -449,7 +463,7 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
         
         # Get evaluation from judge model
         # This implementation depends on your specific judge model
-        judge_response, _ = call_llm_assessment(prompt=prompt, use_judge_model=True)
+        judge_response, _ = self.llm_client.call_llm_assessment(prompt=prompt, use_judge_model=True)
         
         # Parse scores from judge response
         try:
@@ -460,7 +474,6 @@ class RAGEvaluatorOpenQuestion(RAGEvaluator):
             return {
                 "factual_correctness": 0.0,
                 "answer_relevance": 0.0,
-                "hallucination_score": 0.0,
                 "completeness": 0.0,
                 "coherence": 0.0
             }
@@ -506,7 +519,7 @@ class RAGBenchmark:
             evaluator.evaluate_system(system, queries)
         self.evaluators.append(evaluator)  # Store evaluator for potential future use
     
-    def eval_open_questions(self, systems: List[LLMSystem], queries: List[Tuple[str, str]], n_workers: int = 1):
+    def eval_open_questions(self, systems: List[LLMSystem], queries: List[Tuple[str, str]], llm_client: NebiusLLMClient, n_workers: int = 1):
         """
         Evaluate multiple systems on open-domain questions.
         
@@ -519,7 +532,7 @@ class RAGBenchmark:
         Returns:
             Dictionary mapping system names to their evaluation results.
         """
-        evaluator = RAGEvaluatorOpenQuestion(n_workers=n_workers, use_llm_judge=True)
+        evaluator = RAGEvaluatorOpenQuestion(n_workers=n_workers, llm_client=llm_client, use_llm_judge=True)
         for system in systems:
             evaluator.evaluate_system(system, queries)
         self.evaluators.append(evaluator)  # Store evaluator for potential future use
@@ -548,57 +561,77 @@ def _setup_args():
     parser.add_argument("--embedding-model", type=str, default="text-embedding-004", choices=["text-embedding-004", "Qwen/Qwen3-Embedding-8B", "Qwen/Qwen3-Embedding-0.6B"], help="The embedding model to use for population.")
     parser.add_argument("--use-quantization", action='store_true', help="Enable quantization in the vector database (if supported).")
     parser.add_argument('--n-workers', type=int, default=8, help='Number of worker threads for parallel processing.')
+    parser.add_argument('--num_docs', type=int, default=None, help='Number of documents to process. If None, all available documents will be used.')
 
     args = parser.parse_args()
     return args
 
-def _run_norag_evaluation(llm_client, yesno_queries, output_path):
+def _run_norag_evaluation(llm_client, output_path, yesno_queries=None, open_queries=None):
     """
     Main function to run the RAG evaluation.
     """
+    if yesno_queries is None and open_queries is None:
+        raise ValueError("At least one type of query (yes/no or open) must be provided for evaluation.")
     no_rag_system = NoRAGSystem("No-RAG System", llm_client)
     no_rag_benchmark = RAGBenchmark()
-    start = time.time()
-    no_rag_benchmark.eval_yes_no_questions(
-        systems=[no_rag_system],
-        queries=yesno_queries,
-        n_workers=args.n_workers
-    )
-    end = time.time()
-    print(f"No-RAG evaluation took {end - start:.2f} seconds")
+    if yesno_queries is not None:
+        start = time.time()
+        no_rag_benchmark.eval_yes_no_questions(
+            systems=[no_rag_system],
+            queries=yesno_queries,
+            n_workers=args.n_workers
+        )
+        end = time.time()
+        print(f"No-RAG evaluation for yesno questions took {end - start:.2f} seconds")
+    if open_queries is not None:
+        start = time.time()
+        no_rag_benchmark.eval_open_questions(
+            systems=[no_rag_system],
+            queries=open_queries,
+            llm_client=llm_client,
+            n_workers=args.n_workers
+        )
+        end = time.time()
+        print(f"No-RAG evaluation for open questions took {end - start:.2f} seconds")
     no_rag_benchmark.save_results(output_path)
             
 
-def _run_rag_evaluation(rag_k, llm_client, db_instance, yesno_queries, output_path):
+def _run_rag_evaluation(rag_k, llm_client, db_instance, output_path, yesno_queries=None, open_queries=None):
     """
     Main function to run the RAG evaluation.
     """
+    if yesno_queries is None and open_queries is None:
+        raise ValueError("At least one type of query (yes/no or open) must be provided for evaluation.")
+    
     simple_rag_system = SimpleRAGSystem("Simple RAG System", llm_client, db_instance, rag_k)  # Placeholder for a simple RAG system
-    self_rag_system = SelfRAGSystem("Self-RAG System", llm_client, db_instance, rag_k)
+    filter_rag_system = FilterRAGSystem("Filter-RAG System", llm_client, db_instance, rag_k)
     reranker_rag_system = RerankerRAGSystem("Reranker-RAG System", llm_client, db_instance, rag_k)
     crag_rag_system = CRAGRAGSystem("CRAG-RAG System", llm_client, db_instance, rag_k)
     hyde_rag_system = HyDERAGSystem("HyDE-RAG System", llm_client, db_instance, rag_k)
 
     rag_benchmark = RAGBenchmark()
 
-    start = time.time()
-    rag_benchmark.eval_yes_no_questions(
-        systems=[simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
-        queries=yesno_queries,
-        #queries=pubmedqa_queries,
-        n_workers=args.n_workers
-    )
-    end = time.time()
-    print(f"Yes/No question evaluation took {end - start:.2f} seconds")
+    if yesno_queries is not None:
+        start = time.time()
+        rag_benchmark.eval_yes_no_questions(
+            systems=[simple_rag_system, filter_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
+            queries=yesno_queries,
+            #queries=pubmedqa_queries,
+            n_workers=args.n_workers
+        )
+        end = time.time()
+        print(f"Yes/No question evaluation took {end - start:.2f} seconds")
 
-    #start = time.time()
-    #rag_benchmark.eval_open_questions(
-    #    systems=[no_rag_system, simple_rag_system, self_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
-    #    queries=bioasq_open_queries[:100], 
-    #    n_workers=n_workers
-    #)
-    #end = time.time()
-    #print(f"Open question evaluation took {end - start:.2f} seconds")
+    if open_queries is not None:
+        start = time.time()
+        rag_benchmark.eval_open_questions(
+            systems=[simple_rag_system, filter_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system], 
+            queries=open_queries, 
+            llm_client=llm_client,
+            n_workers=args.n_workers
+        )
+        end = time.time()
+        print(f"Open question evaluation took {end - start:.2f} seconds")
 
     # Save results
     rag_benchmark.save_results(output_path)
@@ -616,11 +649,11 @@ if __name__ == "__main__":
         os.makedirs(output_dir) # Use makedirs to create all intermediate directories
 
     #bioasq_yesno_queries = load_bioasq_yesno_questions()[:question_limit]
-    bioasq_yesno_queries = load_bioasq_yesno_questions()[:10]
-    #bioasq_open_queries = load_bioasq_open_questions()[:question_limit]
+    #bioasq_yesno_queries = load_bioasq_yesno_questions()[:10]
+    #bioasq_open_queries = load_bioasq_open_questions()[:10]
 
-    #from dataset_loaders import load_pubmedqa_questions
-    #pubmedqa_queries = load_pubmedqa_questions(100)
+    from dataset_loaders import load_pubmedqa_questions
+    pubmedqa_queries = load_pubmedqa_questions(500)
 
     # --- Initialize the embedding model ---
     if args.embedding_model == "text-embedding-004":
@@ -638,26 +671,27 @@ if __name__ == "__main__":
         db_instance = QdrantDB(
             embedding_model=embedding_model,
             n_workers=args.n_workers,
-            use_quantization=args.use_quantization
+            use_quantization=args.use_quantization,
+            num_docs=args.num_docs
         )
     else:
         # This block can be expanded if you add more database types
         raise ValueError(f"Unsupported database type: {args.db_type}")
 
     print("Evaluating systems...")
-    for llm in llm_list:
+    for llm in llm_list[:1]:
         llm_client = NebiusLLMClient(base_llm=llm)
 
         # Create output path for no-RAG evaluation
         llm_name = llm_client.base_llm
         model_name = llm_name.split("/")[-1]  # Extract model name from the full identifier
-        output_filename = f"eval_norag_{model_name}.json"
+        output_filename = f"eval_norag_{model_name}_{args.num_docs}docs.json"
         norag_output_path = os.path.join(output_dir, output_filename)
 
-        _run_norag_evaluation(llm_client, bioasq_yesno_queries, norag_output_path)  # run no-RAG evaluation separately
-        for rag_k in rag_k_list:
+        _run_norag_evaluation(llm_client, norag_output_path, pubmedqa_queries, None)  # run no-RAG evaluation separately
+        for rag_k in rag_k_list[:1]:
             # Create output path for RAG evaluation
-            output_filename = f"eval_rag_{model_name}_{rag_k}k.json"
+            output_filename = f"eval_rag_{model_name}_{args.num_docs}docs_{rag_k}k.json"
             rag_output_path = os.path.join(output_dir, output_filename)
             # Run the RAG evaluation for each k
-            _run_rag_evaluation(rag_k, llm_client, db_instance, bioasq_yesno_queries, rag_output_path)
+            _run_rag_evaluation(rag_k, llm_client, db_instance, rag_output_path, pubmedqa_queries, None)

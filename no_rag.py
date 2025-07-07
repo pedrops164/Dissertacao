@@ -13,7 +13,7 @@ class NoRAGSystem(LLMSystem):
         This function takes a query as input and returns a response from the base LLM as well as useful metrics about the run.
         It uses the OpenAI API to get the response.
         """
-        print(f"\n--- Starting No-RAG Process for Query: '{prompt}' ---")
+        #print(f"\n--- Starting No-RAG Process for Query: '{prompt}' ---")
         start_time = time.time()
 
         response, token_count = self.llm_client.call_llm_assessment(
@@ -25,5 +25,5 @@ class NoRAGSystem(LLMSystem):
             "token_count": token_count,
             "latency": end_time - start_time,
         }
-        print(f"\n--- No-RAG Process Completed in {end_time - start_time:.2f} seconds ---")
+        #print(f"\n--- No-RAG Process Completed in {end_time - start_time:.2f} seconds ---")
         return response, metrics

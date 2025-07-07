@@ -51,6 +51,7 @@ class NebiusLLMClient():
                 messages=messages,
                 temperature=temperature,
                 n=1,
+                max_tokens=4096, # Increase default max tokens to allow for longer responses
                 stop=None,
             )
         except Exception as e:
@@ -86,6 +87,7 @@ class NebiusLLMClient():
             model=self.base_llm,
             messages=messages,
             temperature=temperature,
+            max_tokens=4096, # Increase default max tokens to allow for longer responses
             n=1,
             stop=None,
         )

@@ -20,32 +20,32 @@ class RerankerRAGSystem(LLMRAGSystem):
         4. Generate an answer based on the selected context.
         5. Return the answer.
         """
-        print(f"\n--- Starting RAG with Reranker Process for Query: '{prompt}' ---")
+        #print(f"\n--- Starting RAG with Reranker Process for Query: '{prompt}' ---")
         start_time = time.time()
         tokens_count = 0 # Assuming your llm_client returns token counts
 
         initial_k = self.rag_k * 2
         # --- Step 1: Retrieve Initial Documents ---
-        print(f"\n[Step 1/4] Retrieving Top-{initial_k} documents for reranking...")
+        #print(f"\n[Step 1/4] Retrieving Top-{initial_k} documents for reranking...")
         # This function should return a list of document texts
         # It might internally use your hybrid search + RRF
         initial_docs = self.vector_db.retrieve_context(prompt, n_results=initial_k)
         if not initial_docs:
-            print("  > No documents retrieved. Proceeding without context.")
+            #print("  > No documents retrieved. Proceeding without context.")
             initial_docs = []
-        print(f"  > Retrieved {len(initial_docs)} candidate documents.")
+        #print(f"  > Retrieved {len(initial_docs)} candidate documents.")
 
         reranked_docs = []
         final_context = ""
 
         # --- Step 2: Rerank Retrieved Documents ---
         if initial_docs:
-            print(f"\n[Step 2/4] Reranking {len(initial_docs)} documents...")
+            #print(f"\n[Step 2/4] Reranking {len(initial_docs)} documents...")
             # The rerank_documents function should ideally interact with a reranking model
             reranked_docs_full_list = self.rerank_documents(prompt, initial_docs)
             # Select the top N documents after reranking
             reranked_docs = reranked_docs_full_list[:self.rag_k]
-            print(f"  > Selected Top-{len(reranked_docs)} documents after reranking.")
+            #print(f"  > Selected Top-{len(reranked_docs)} documents after reranking.")
 
             if not reranked_docs:
                 raise ValueError("No documents remained after reranking. Cannot proceed with answer generation.")
@@ -53,18 +53,19 @@ class RerankerRAGSystem(LLMRAGSystem):
                 # Prepare final context string from reranked top N docs
                 final_context = "\n\n---\n\n".join(reranked_docs)
         else:
-            print("\n[Step 2/4] Skipping reranking as no documents were initially retrieved.")
+            #print("\n[Step 2/4] Skipping reranking as no documents were initially retrieved.")
+            pass
 
 
         # --- Step 3: Generate Answer ---
-        print("\n[Step 3/4] Generating answer...")
+        #print("\n[Step 3/4] Generating answer...")
         # Use your existing prompt engineering, passing the refined context
         generated_answer, n_tokens = self.llm_client.query_llm_with_context(formatted_prompt, final_context)
         tokens_count += n_tokens
 
         # --- Step 4: Return Results ---
         end_time = time.time()
-        print(f"\n--- RAG with Reranker Process Completed in {end_time - start_time:.2f} seconds ---")
+        #print(f"\n--- RAG with Reranker Process Completed in {end_time - start_time:.2f} seconds ---")
 
         return generated_answer, {
             "docs_initially_retrieved_count": len(initial_docs),

@@ -108,7 +108,7 @@ class CRAGRAGSystem(LLMRAGSystem):
         tokens_count = 0
 
         # Step 1: Retrieve initial context from the vector database
-        print("\n[Step 1/5] Retrieving initial context from Vector DB...")
+        #print("\n[Step 1/5] Retrieving initial context from Vector DB...")
         retrieved_docs = self.vector_db.retrieve_context(prompt, self.rag_k) # Retrieve top N chunks based on similarity
         local_context = "\n\n---\n\n".join(retrieved_docs) # Join the retrieved chunks into a single string
 
@@ -116,13 +116,13 @@ class CRAGRAGSystem(LLMRAGSystem):
         execution_data["retrieved_docs"] = retrieved_docs
 
         # Step 2: Assess if web search is needed based on the query and initial context
-        print("\n[Step 2/5] Assessing context relevance and web search need...")
+        #print("\n[Step 2/5] Assessing context relevance and web search need...")
         context_relevance_decision, n_tokens = self.assess_context_relevance(prompt, local_context)
         tokens_count += n_tokens
         execution_data["assessment_decision"] = context_relevance_decision
 
         # Step 3: Perform web search if the assessment indicated it's necessary (Decisions 1 or 2)
-        print("\n[Step 3/5] Performing web search if required...")
+        #print("\n[Step 3/5] Performing web search if required...")
         websearch_context = "" # Initialize websearch_context to empty string
         execution_data["websearch_performed"] = (context_relevance_decision == 1 or context_relevance_decision == 2)
 
@@ -138,7 +138,7 @@ class CRAGRAGSystem(LLMRAGSystem):
             execution_data["websearch_context_length"] = len(websearch_context) if websearch_context else 0
 
         # Step 4: Prepare the final context based on the assessment decision and search results
-        print("\n[Step 4/5] Compiling final context for response generation...")
+        #print("\n[Step 4/5] Compiling final context for response generation...")
         final_context = ""
 
         if context_relevance_decision == 1:
@@ -187,7 +187,7 @@ class CRAGRAGSystem(LLMRAGSystem):
                 execution_data["final_context_length"] = len(final_context)
 
         # Step 5: Generate the final response using the compiled context
-        print("\n[Step 5/5] Generating final response...")
+        #print("\n[Step 5/5] Generating final response...")
         # Call the simple RAG function with the compiled final context and the original query
         response, n_tokens = self.llm_client.query_llm_with_context(formatted_prompt, final_context)
         tokens_count += n_tokens

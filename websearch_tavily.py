@@ -49,7 +49,7 @@ def search_tavily(query, search_depth=TAVILY_SEARCH_DEPTH, max_results=WEB_SEARC
             return ""
 
         final_context = "\n\n---\n\n".join(contexts)
-        print(f"  > Retrieved {len(contexts)} snippets from Tavily. Total length: {len(final_context)} chars.")
+        #print(f"  > Retrieved {len(contexts)} snippets from Tavily. Total length: {len(final_context)} chars.")
         return final_context
 
     except Exception as e:

@@ -1,12 +1,12 @@
 import time
 from vectordb import VectorDB
-from prompts import get_self_rag_critique_prompt
+from prompts import get_filter_rag_critique_prompt
 from config import config
 from llm_system import LLMRAGSystem
 from llm_client import NebiusLLMClient
 from typing import Tuple
 
-class SelfRAGSystem(LLMRAGSystem):
+class FilterRAGSystem(LLMRAGSystem):
     def __init__(self, system_name: str, llm_client: NebiusLLMClient, vector_db: VectorDB, rag_k: int):
         super().__init__(system_name, llm_client, vector_db, rag_k)
 
@@ -22,7 +22,6 @@ class SelfRAGSystem(LLMRAGSystem):
         5. Critique the generated answer for factuality/relevance.
         6. Return the answer and critique status.
         """
-        print(f"\n--- Starting Self-RAG Process for Query: '{prompt}' ---")
         start_time = time.time()
         tokens_count = 0
 
@@ -32,19 +31,19 @@ class SelfRAGSystem(LLMRAGSystem):
 
         # --- Step 1: Retrieve Documents (if needed) ---
         initial_k = self.rag_k * 2
-        print(f"\n[Step 1/3] Retrieving Top-{initial_k} documents...")
+        #print(f"\n[Step 1/3] Retrieving Top-{initial_k} documents...")
         retrieved_docs = self.vector_db.retrieve_context(prompt, n_results=initial_k) # Fetch more
 
         if retrieved_docs:
             # --- Step 2: Critique Retrieved Documents (if needed & available) ---
-            print(f"\n[Step 2/3] Critiquing {len(retrieved_docs)} retrieved documents...")
+            #print(f"\n[Step 2/3] Critiquing {len(retrieved_docs)} retrieved documents...")
             relevant_docs = []
             for i, doc_text in enumerate(retrieved_docs):
                 if not doc_text: continue
-                critique_prompt = get_self_rag_critique_prompt(prompt, doc_text)
+                critique_prompt = get_filter_rag_critique_prompt(prompt, doc_text)
                 critique, n_tokens = self.llm_client.call_llm_assessment(critique_prompt)
                 tokens_count += n_tokens
-                print(f"  > Critiquing Doc {i+1}: Result = {critique}")
+                #print(f"  > Critiquing Doc {i+1}: Result = {critique}")
                 if critique and "IRRELEVANT" not in critique.upper():
                     relevant_docs.append(doc_text)
                     #print(f"    >> Doc {i+1} kept.")
@@ -59,12 +58,12 @@ class SelfRAGSystem(LLMRAGSystem):
                 filtered_context = "\n\n---\n\n".join(relevant_docs[:self.rag_k])
 
         # --- Step 4: Generate Answer ---
-        print("\n[Step 3/3] Generating answer...")
+        #print("\n[Step 3/3] Generating answer...")
         generated_answer, n_tokens = self.llm_client.query_llm_with_context(formatted_prompt, filtered_context)
         tokens_count += n_tokens
 
         end_time = time.time()
-        print(f"\n--- Self-RAG Process Completed in {end_time - start_time:.2f} seconds ---")
+        #print(f"\n--- Self-RAG Process Completed in {end_time - start_time:.2f} seconds ---")
 
         return generated_answer, {
             "retrieved_docs_count": len(retrieved_docs),

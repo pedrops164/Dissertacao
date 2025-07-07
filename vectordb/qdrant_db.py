@@ -12,15 +12,17 @@ from config import config
 BATCH_SIZE = config.get("BATCH_SIZE") # Batch size for vector database operations
 
 class QdrantDB(VectorDB):
-    def __init__(self, embedding_model: EmbeddingModel, n_workers: int = 4, use_quantization: bool = True):
+    def __init__(self, embedding_model: EmbeddingModel, n_workers: int = 4, use_quantization: bool = True, num_docs=None):
         """
         Initializes the QdrantDB with the specified embedding model and number of worker threads.
         :param embedding_model: The embedding model to use for generating embeddings.
         :param n_workers: The number of worker threads to use for parallel processing.
         :param use_quantization: Whether to use quantization for the embeddings.
+        :param num_docs: The number of documents to process. If None, it will use all available documents.
         """
         super().__init__(embedding_model, n_workers)
         
+        self.num_docs = num_docs
         # set quantization parameters if enabled
         self.use_quantization = use_quantization
         if use_quantization:
@@ -199,14 +201,31 @@ class QdrantDB(VectorDB):
                     oversampling=3.0,
                 )
             )
+        query_filter = None
+        if self.num_docs is not None:
+            # If num_docs is specified, we can limit the search to a specific range
+            hundred_thousand_count = self.num_docs // 100000
+            query_filter = models.Filter(
+                must=[
+                    models.FieldCondition(
+                        key="hundred_thousand_count",
+                        # match by range
+                        range=models.Range(
+                            gte=0,  # Match all doc_ids >= 0
+                            lte=hundred_thousand_count
+                        )
+                    )
+                ]
+            )
         results = self.client.query_points(
             collection_name=self.collection_name,
             query=query_vector,
             limit=n_results,
-            search_params=search_params
+            search_params=search_params,
+            query_filter=query_filter,
         )
         end = time.time()
-        print(f"Retrieved {len(results.points)} results in {end - start:.2f} seconds.")
+        #print(f"Retrieved {len(results.points)} results in {end - start:.2f} seconds.")
         # return payloads only
         #for point in results.points:
         #    print(f"ID: {point.id}, Score: {point.score:.4f}")

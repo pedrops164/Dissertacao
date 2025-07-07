@@ -34,19 +34,19 @@ def get_crag_rewrite_prompt(query: str) -> str:
     """
     return crag_rewrite_prompt_en.format(query=query)
 
-""" SELF RAG PROMPTS """
+""" Filter RAG PROMPTS """
 
-self_rag_critique_prompt = \
+filter_rag_critique_prompt = \
 """Evaluate if the following document passage is relevant and helpful for answering the query. Consider if it directly addresses the query or provides useful background.
 Query: "{query}"
 Passage: "{doc_text}"
 Answer ONLY with RELEVANT or IRRELEVANT."""
 
-def get_self_rag_critique_prompt(query: str, doc_text: str) -> str:
+def get_filter_rag_critique_prompt(query: str, doc_text: str) -> str:
     """
     Get the critique prompt
     """
-    return self_rag_critique_prompt.format(query=query, doc_text=doc_text[:1000])
+    return filter_rag_critique_prompt.format(query=query, doc_text=doc_text[:1000])
 
 """ HYDE RAG PROMPTS """
 
@@ -111,7 +111,6 @@ Response to Evaluate:
 Please evaluate the response on the following criteria:
 1. Factual Correctness (1-10): Is the information in the response factually accurate according to the retrieved context?
 2. Answer Relevance (1-10): How relevant is the response to the query?
-3. Hallucination (1-10): Does the response contain information not supported by the retrieved context? (10 = no hallucination, 1 = completely hallucinated)
 4. Completeness (1-10): Does the response address all aspects of the query?
 5. Coherence (1-10): Is the response well-structured, logical, and easy to understand?
 
@@ -120,7 +119,6 @@ Provide your ratings in the following JSON format:
 {{
   "factual_correctness": 0,
   "answer_relevance": 0,
-  "hallucination_score": 0,
   "completeness": 0,
   "coherence": 0
 }}

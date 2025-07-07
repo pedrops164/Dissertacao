@@ -36,7 +36,7 @@ def main():
     parser.add_argument(
         "--embedding-model",
         type=str,
-        default="text-embedding-004",
+        default="Qwen/Qwen3-Embedding-0.6B",
         choices=["text-embedding-004", "Qwen/Qwen3-Embedding-8B", "Qwen/Qwen3-Embedding-0.6B"],
         help="The embedding model to use for population."
     )
