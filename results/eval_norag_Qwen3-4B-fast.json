@@ -1,0 +1,4508 @@
+{
+  "Yes/No Question Evaluator": [
+    {
+      "system_name": "No-RAG System",
+      "evaluation_type": "BinaryClassificationEvaluationResult",
+      "entries": [
+        {
+          "question": "Do emergency ultrasound fellowship programs impact emergency medicine residents' ultrasound education?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 267,
+            "latency": 2.23686146736145
+          }
+        },
+        {
+          "question": "Is there a model to teach and practice retroperitoneoscopic nephrectomy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 299,
+            "latency": 2.392056941986084
+          }
+        },
+        {
+          "question": "Implementation of epidural analgesia for labor: is the standard of effective analgesia reachable in all women?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 305,
+            "latency": 2.3969955444335938
+          }
+        },
+        {
+          "question": "Visceral adipose tissue area measurement at a single level: can it represent visceral adipose tissue volume?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 305,
+            "latency": 2.427546262741089
+          }
+        },
+        {
+          "question": "Secondhand smoke risk in infants discharged from an NICU: potential for significant health disparities?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 313,
+            "latency": 2.446988821029663
+          }
+        },
+        {
+          "question": "Cardiovascular risk in a rural adult West African population: is resting heart rate also relevant?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 315,
+            "latency": 2.48129940032959
+          }
+        },
+        {
+          "question": "Is halofantrine ototoxic?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 322,
+            "latency": 2.5791678428649902
+          }
+        },
+        {
+          "question": "Is there still a need for living-related liver transplantation in children?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 343,
+            "latency": 2.6708712577819824
+          }
+        },
+        {
+          "question": "Necrotizing fasciitis: an indication for hyperbaric oxygenation therapy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 352,
+            "latency": 2.7138664722442627
+          }
+        },
+        {
+          "question": "Prompting Primary Care Providers about Increased Patient Risk As a Result of Family History: Does It Work?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 350,
+            "latency": 2.731370210647583
+          }
+        },
+        {
+          "question": "Israeli hospital preparedness for terrorism-related multiple casualty incidents: can the surge capacity and injury severity distribution be better predicted?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 348,
+            "latency": 2.900597333908081
+          }
+        },
+        {
+          "question": "Amblyopia: is visual loss permanent?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 372,
+            "latency": 2.927769422531128
+          }
+        },
+        {
+          "question": "Differentiation of nonalcoholic from alcoholic steatohepatitis: are routine laboratory markers useful?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 402,
+            "latency": 2.992610454559326
+          }
+        },
+        {
+          "question": "Do mutations causing low HDL-C promote increased carotid intima-media thickness?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 407,
+            "latency": 3.032315969467163
+          }
+        },
+        {
+          "question": "Is a mandatory general surgery rotation necessary in the surgical clerkship?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 424,
+            "latency": 3.1924030780792236
+          }
+        },
+        {
+          "question": "Syncope during bathing in infants, a pediatric form of water-induced urticaria?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 433,
+            "latency": 3.280609130859375
+          }
+        },
+        {
+          "question": "Did Chile's traffic law reform push police enforcement?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 383,
+            "latency": 3.383082866668701
+          }
+        },
+        {
+          "question": "Is Acupuncture Efficacious for Treating Phonotraumatic Vocal Pathologies?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 453,
+            "latency": 3.3938372135162354
+          }
+        },
+        {
+          "question": "Acute respiratory distress syndrome in children with malignancy--can we predict outcome?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 515,
+            "latency": 3.807638645172119
+          }
+        },
+        {
+          "question": "Is adjustment for reporting heterogeneity necessary in sleep disorders?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 489,
+            "latency": 3.817074775695801
+          }
+        },
+        {
+          "question": "Do nomograms designed to predict biochemical recurrence (BCR) do a better job of predicting more clinically relevant prostate cancer outcomes than BCR?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 526,
+            "latency": 3.817455768585205
+          }
+        },
+        {
+          "question": "Do patterns of knowledge and attitudes exist among unvaccinated seniors?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 461,
+            "latency": 3.9066967964172363
+          }
+        },
+        {
+          "question": "Do mitochondria play a role in remodelling lace plant leaves during programmed cell death?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 555,
+            "latency": 4.021008491516113
+          }
+        },
+        {
+          "question": "Are the long-term results of the transanal pull-through equal to those of the transabdominal pull-through?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 565,
+            "latency": 4.058313846588135
+          }
+        },
+        {
+          "question": "It's Fournier's gangrene still dangerous?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 196,
+            "latency": 1.1805293560028076
+          }
+        },
+        {
+          "question": "Can tailored interventions increase mammography use among HMO women?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 566,
+            "latency": 4.108250617980957
+          }
+        },
+        {
+          "question": "Patient-Controlled Therapy of Breathlessness in Palliative Care: A New Therapeutic Concept for Opioid Administration?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 596,
+            "latency": 4.296692132949829
+          }
+        },
+        {
+          "question": "Transgastric endoscopic splenectomy: is it possible?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 267,
+            "latency": 1.6473028659820557
+          }
+        },
+        {
+          "question": "Double balloon enteroscopy: is it efficacious and safe in a community setting?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 611,
+            "latency": 4.38212251663208
+          }
+        },
+        {
+          "question": "Do follow-up recommendations for abnormal Papanicolaou smears influence patient adherence?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 331,
+            "latency": 2.0002341270446777
+          }
+        },
+        {
+          "question": "Therapeutic anticoagulation in the trauma patient: is it safe?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 647,
+            "latency": 4.630143880844116
+          }
+        },
+        {
+          "question": "Biomolecular identification of allergenic pollen: a new perspective for aerobiological monitoring?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 369,
+            "latency": 2.2231178283691406
+          }
+        },
+        {
+          "question": "Are reports of mechanical dysfunction in chronic oro-facial pain related to somatisation?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 646,
+            "latency": 4.675053119659424
+          }
+        },
+        {
+          "question": "A short stay or 23-hour ward in a general and academic children's hospital: are they effective?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 726,
+            "latency": 5.158493280410767
+          }
+        },
+        {
+          "question": "Do general practice characteristics influence uptake of an information technology (IT) innovation in primary care?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 467,
+            "latency": 2.9415204524993896
+          }
+        },
+        {
+          "question": "Does immediate breast reconstruction compromise the delivery of adjuvant chemotherapy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 342,
+            "latency": 2.1590700149536133
+          }
+        },
+        {
+          "question": "Colorectal cancer with synchronous liver metastases: does global management at the same centre improve results?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 469,
+            "latency": 2.9423558712005615
+          }
+        },
+        {
+          "question": "Autoerotic asphyxiation: secret pleasure--lethal outcome?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 303,
+            "latency": 1.8441917896270752
+          }
+        },
+        {
+          "question": "Processing fluency effects: can the content and presentation of participant information sheets influence recruitment and participation for an antenatal intervention?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 404,
+            "latency": 2.486898422241211
+          }
+        },
+        {
+          "question": "Is there a correlation between androgens and sexual desire in women?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 389,
+            "latency": 2.394456386566162
+          }
+        },
+        {
+          "question": "Cold preparation use in young children after FDA warnings: do concerns still exist?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 293,
+            "latency": 1.7783372402191162
+          }
+        },
+        {
+          "question": "Prognosis of well differentiated small hepatocellular carcinoma--is well differentiated hepatocellular carcinoma clinically early cancer?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 572,
+            "latency": 3.599424123764038
+          }
+        },
+        {
+          "question": "Major depression and alcohol use disorder in adolescence: Does comorbidity lead to poorer outcomes of depression?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 341,
+            "latency": 2.1013944149017334
+          }
+        },
+        {
+          "question": "Body perception: do parents, their children, and their children's physicians perceive body image differently?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 266,
+            "latency": 1.6154794692993164
+          }
+        },
+        {
+          "question": "Landolt C and snellen e acuity: differences in strabismus amblyopia?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 877,
+            "latency": 6.101553916931152
+          }
+        },
+        {
+          "question": "Assessment of carotid artery stenosis before coronary artery bypass surgery. Is it always necessary?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 508,
+            "latency": 3.224713087081909
+          }
+        },
+        {
+          "question": "Is aneurysm repair justified for the patients aged 80 or older after aneurysmal subarachnoid hemorrhage?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 914,
+            "latency": 6.34467625617981
+          }
+        },
+        {
+          "question": "Can predilatation in transcatheter aortic valve implantation be omitted?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 444,
+            "latency": 2.7982311248779297
+          }
+        },
+        {
+          "question": "Does a 4 diagram manual enable laypersons to operate the Laryngeal Mask Supreme\u00ae?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 418,
+            "latency": 2.560866117477417
+          }
+        },
+        {
+          "question": "Can PRISM predict length of PICU stay?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 465,
+            "latency": 2.9512691497802734
+          }
+        },
+        {
+          "question": "Is there any relationship between streptococcal infection and multiple sclerosis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 366,
+            "latency": 2.2785122394561768
+          }
+        },
+        {
+          "question": "Should circumcision be performed in childhood?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 447,
+            "latency": 2.8395659923553467
+          }
+        },
+        {
+          "question": "Injury and poisoning mortality among young men--are there any common factors amenable to prevention?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 312,
+            "latency": 1.9050214290618896
+          }
+        },
+        {
+          "question": "Does pretreatment with statins improve clinical outcome after stroke?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 636,
+            "latency": 4.0911948680877686
+          }
+        },
+        {
+          "question": "Does the clinical presentation of a prior preterm birth predict risk in a subsequent pregnancy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 280,
+            "latency": 1.7179107666015625
+          }
+        },
+        {
+          "question": "Can we measure mesopic pupil size with the cobalt blue light slit-lamp biomicroscopy method?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 528,
+            "latency": 3.322160005569458
+          }
+        },
+        {
+          "question": "Do instrumental activities of daily living predict dementia at 1- and 2-year follow-up?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 489,
+            "latency": 3.0485925674438477
+          }
+        },
+        {
+          "question": "Is motion perception deficit in schizophrenia a consequence of eye-tracking abnormality?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 763,
+            "latency": 4.8291261196136475
+          }
+        },
+        {
+          "question": "Do provider service networks result in lower expenditures compared with HMOs or primary care case management in Florida's Medicaid program?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 712,
+            "latency": 4.655966520309448
+          }
+        },
+        {
+          "question": "Does induction chemotherapy have a role in the management of nasopharyngeal carcinoma?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 307,
+            "latency": 1.8796844482421875
+          }
+        },
+        {
+          "question": "Assessing joint line positions by means of the contralateral knee: a new approach for planning knee revision surgery?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 489,
+            "latency": 3.01602840423584
+          }
+        },
+        {
+          "question": "Is Chaalia/Pan Masala harmful for health?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 306,
+            "latency": 1.916987657546997
+          }
+        },
+        {
+          "question": "Does diabetes mellitus influence the efficacy of FDG-PET in the diagnosis of cervical cancer?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 805,
+            "latency": 5.533097743988037
+          }
+        },
+        {
+          "question": "Can you deliver accurate tidal volume by manual resuscitator?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 291,
+            "latency": 1.9161584377288818
+          }
+        },
+        {
+          "question": "Can increases in the cigarette tax rate be linked to cigarette retail prices?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 236,
+            "latency": 1.6583082675933838
+          }
+        },
+        {
+          "question": "Are even impaired fasting blood glucose levels preoperatively associated with increased mortality after CABG surgery?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 356,
+            "latency": 2.185114622116089
+          }
+        },
+        {
+          "question": "Does multi-modal cervical physical therapy improve tinnitus in patients with cervicogenic somatic tinnitus?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 395,
+            "latency": 2.435863971710205
+          }
+        },
+        {
+          "question": "Is HIV/STD control in Jamaica making a difference?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 388,
+            "latency": 2.459606409072876
+          }
+        },
+        {
+          "question": "Assessment of appropriate antimicrobial prescribing: do experts agree?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 223,
+            "latency": 1.3567280769348145
+          }
+        },
+        {
+          "question": "Is it appropriate to implant kidneys from elderly donors in young recipients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 902,
+            "latency": 5.824736595153809
+          }
+        },
+        {
+          "question": "Does a colonoscopy after acute diverticulitis affect its management?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 722,
+            "latency": 4.588231801986694
+          }
+        },
+        {
+          "question": "Does either obesity or OSA severity influence the response of autotitrating CPAP machines in very obese subjects?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 538,
+            "latency": 3.362436056137085
+          }
+        },
+        {
+          "question": "Does screening or surveillance for primary hepatocellular carcinoma with ultrasonography improve the prognosis of patients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 293,
+            "latency": 1.7617135047912598
+          }
+        },
+        {
+          "question": "Is the combination with 2-methoxyestradiol able to reduce the dosages of chemotherapeutices in the treatment of human ovarian cancer?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 730,
+            "latency": 4.565626382827759
+          }
+        },
+        {
+          "question": "Does radiotherapy of the primary rectal cancer affect prognosis after pelvic exenteration for recurrent rectal cancer?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 1050,
+            "latency": 6.738617658615112
+          }
+        },
+        {
+          "question": "Does the type of tibial component affect mechanical alignment in unicompartmental knee replacement?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 658,
+            "latency": 4.170697212219238
+          }
+        },
+        {
+          "question": "Does hypoglycaemia increase the risk of cardiovascular events?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 445,
+            "latency": 2.8169667720794678
+          }
+        },
+        {
+          "question": "Are physicians aware of the side effects of angiotensin-converting enzyme inhibitors?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 293,
+            "latency": 1.7889087200164795
+          }
+        },
+        {
+          "question": "Does positron emission tomography change management in primary rectal cancer?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 556,
+            "latency": 3.520348072052002
+          }
+        },
+        {
+          "question": "Mammographic screening in Sami speaking municipalities and a control group. Are early outcome measures influenced by ethnicity?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 439,
+            "latency": 2.7032876014709473
+          }
+        },
+        {
+          "question": "Vertical lines in distal esophageal mucosa (VLEM): a true endoscopic manifestation of esophagitis in children?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 523,
+            "latency": 3.230803966522217
+          }
+        },
+        {
+          "question": "Is there a favorable subset of patients with prostate cancer who develop oligometastases?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 422,
+            "latency": 2.6136746406555176
+          }
+        },
+        {
+          "question": "Aripiprazole: a new risk factor for pathological gambling?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 709,
+            "latency": 4.541792392730713
+          }
+        },
+        {
+          "question": "Does lung ischemia and reperfusion have an impact on coronary flow?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 262,
+            "latency": 1.612196922302246
+          }
+        },
+        {
+          "question": "Is dexamethasone an effective alternative to oral prednisone in the treatment of pediatric asthma exacerbations?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 560,
+            "latency": 3.4750266075134277
+          }
+        },
+        {
+          "question": "Biomechanical and wound healing characteristics of corneas after excimer laser keratorefractive surgery: is there a difference between advanced surface ablation and sub-Bowman's keratomileusis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 1275,
+            "latency": 8.07811450958252
+          }
+        },
+        {
+          "question": "Very high serum CA 19-9 levels: a contraindication to pancreaticoduodenectomy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 473,
+            "latency": 2.946122884750366
+          }
+        },
+        {
+          "question": "Does the lipid-lowering peroxisome proliferator-activated receptors ligand bezafibrate prevent colon cancer in patients with coronary artery disease?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 488,
+            "latency": 2.9991180896759033
+          }
+        },
+        {
+          "question": "Does the Simultaneous Use of a Neuroendoscope Influence the Incidence of Ventriculoperitoneal Shunt Infection?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 753,
+            "latency": 6.449913501739502
+          }
+        },
+        {
+          "question": "Department of Transportation vs self-reported data on motor vehicle collisions and driving convictions for stroke survivors: do they agree?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 366,
+            "latency": 3.379605531692505
+          }
+        },
+        {
+          "question": "Do communication disorders extend to musical messages?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 425,
+            "latency": 2.6716902256011963
+          }
+        },
+        {
+          "question": "Is the Distance Worth It?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 878,
+            "latency": 5.695983409881592
+          }
+        },
+        {
+          "question": "Perioperative care in an animal model for training in abdominal surgery: is it necessary a preoperative fasting?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 562,
+            "latency": 3.4767425060272217
+          }
+        },
+        {
+          "question": "Remote ischemic postconditioning: does it protect against ischemic damage in percutaneous coronary revascularization?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 356,
+            "latency": 2.18039870262146
+          }
+        },
+        {
+          "question": "Immune suppression by lysosomotropic amines and cyclosporine on T-cell responses to minor and major histocompatibility antigens: does synergy exist?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 913,
+            "latency": 5.7436137199401855
+          }
+        },
+        {
+          "question": "Neoadjuvant Imatinib in Locally Advanced Gastrointestinal stromal Tumours, Will Kit Mutation Analysis Be a Pathfinder?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 681,
+            "latency": 4.1969099044799805
+          }
+        },
+        {
+          "question": "The Main Gate Syndrome: a new format in mass-casualty victim \"surge\" management?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 304,
+            "latency": 3.628037452697754
+          }
+        },
+        {
+          "question": "Are physician estimates of asthma severity less accurate in black than in white patients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 578,
+            "latency": 3.682912588119507
+          }
+        },
+        {
+          "question": "Preoperative tracheobronchoscopy in newborns with esophageal atresia: does it matter?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 345,
+            "latency": 2.094515800476074
+          }
+        },
+        {
+          "question": "Does the leukocyte count correlate with the severity of injury?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 384,
+            "latency": 2.3899738788604736
+          }
+        },
+        {
+          "question": "Identification of racial disparities in breast cancer mortality: does scale matter?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 418,
+            "latency": 2.5950658321380615
+          }
+        },
+        {
+          "question": "Does laparoscopic surgery decrease the risk of atrial fibrillation after foregut surgery?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 604,
+            "latency": 4.011593580245972
+          }
+        },
+        {
+          "question": "Transient tachypnea of the newborn (TTN): a role for polymorphisms in the beta-adrenergic receptor (ADRB) encoding genes?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 567,
+            "latency": 3.4336636066436768
+          }
+        },
+        {
+          "question": "Does combining antiretroviral agents in a single dosage form enhance quality of life of HIV/AIDS patients?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 412,
+            "latency": 3.071746826171875
+          }
+        },
+        {
+          "question": "Do healthier lifestyles lead to less utilization of healthcare resources?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 292,
+            "latency": 1.8145296573638916
+          }
+        },
+        {
+          "question": "Can infundibular height predict the clearance of lower pole calyceal stone after extracorporeal shockwave lithotripsy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 625,
+            "latency": 3.835998773574829
+          }
+        },
+        {
+          "question": "Do Electrochemiluminescence Assays Improve Prediction of Time to Type 1 Diabetes in Autoantibody-Positive TrialNet Subjects?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 830,
+            "latency": 5.239234924316406
+          }
+        },
+        {
+          "question": "Aromatase inhibitor-related musculoskeletal symptoms: is preventing osteoporosis the key to eliminating these symptoms?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 491,
+            "latency": 3.037109851837158
+          }
+        },
+        {
+          "question": "Does the radiographic transition zone correlate with the level of aganglionosis on the specimen in Hirschsprung's disease?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 956,
+            "latency": 6.053921937942505
+          }
+        },
+        {
+          "question": "Are adult body circumferences associated with height?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 281,
+            "latency": 1.747727394104004
+          }
+        },
+        {
+          "question": "Can transcranial direct current stimulation be useful in differentiating unresponsive wakefulness syndrome from minimally conscious state patients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 547,
+            "latency": 3.3872933387756348
+          }
+        },
+        {
+          "question": "Are women with major depression in pregnancy identifiable in population health data?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 219,
+            "latency": 4.057174205780029
+          }
+        },
+        {
+          "question": "May student examiners be reasonable substitute examiners for faculty in an undergraduate OSCE on medical emergencies?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 505,
+            "latency": 3.1645026206970215
+          }
+        },
+        {
+          "question": "Is duration of psychological treatment for depression related to return into treatment?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 605,
+            "latency": 4.684325218200684
+          }
+        },
+        {
+          "question": "Are endothelial cell patterns of astrocytomas indicative of grade?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 455,
+            "latency": 3.2700557708740234
+          }
+        },
+        {
+          "question": "Do patients with rheumatoid arthritis established on methotrexate and folic acid 5 mg daily need to continue folic acid supplements long term?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 861,
+            "latency": 5.368953466415405
+          }
+        },
+        {
+          "question": "Locoregional opening of the rodent blood-brain barrier for paclitaxel using Nd:YAG laser-induced thermo therapy: a new concept of adjuvant glioma therapy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 689,
+            "latency": 4.233927249908447
+          }
+        },
+        {
+          "question": "Traumatic aortic injury: does the anatomy of the aortic arch influence aortic trauma severity?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 421,
+            "latency": 2.5669143199920654
+          }
+        },
+        {
+          "question": "Treadmill testing of children who have spina bifida and are ambulatory: does peak oxygen uptake reflect maximum oxygen uptake?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 341,
+            "latency": 2.0463929176330566
+          }
+        },
+        {
+          "question": "Does rural or urban residence make a difference to neonatal outcome in premature birth?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 321,
+            "latency": 1.976689338684082
+          }
+        },
+        {
+          "question": "Would corrected QT dispersion predict left ventricular hypertrophy in hypertensive patients?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 475,
+            "latency": 2.981261968612671
+          }
+        },
+        {
+          "question": "Are serum leptin levels a prognostic factor in advanced lung cancer?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 550,
+            "latency": 3.4811761379241943
+          }
+        },
+        {
+          "question": "Regional anesthesia as compared with general anesthesia for surgery in geriatric patients with hip fracture: does it decrease morbidity, mortality, and health care costs?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 426,
+            "latency": 2.576555013656616
+          }
+        },
+        {
+          "question": "Stretch-sensitive KCNQ1 mutation A link between genetic and environmental factors in the pathogenesis of atrial fibrillation?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 543,
+            "latency": 3.3666388988494873
+          }
+        },
+        {
+          "question": "Is fetal gender associated with emergency department visits for asthma during pregnancy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 361,
+            "latency": 3.644253730773926
+          }
+        },
+        {
+          "question": "Serovar specific immunity to Neisseria gonorrhoeae: does it exist?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 484,
+            "latency": 4.394957780838013
+          }
+        },
+        {
+          "question": "Do all ethnic groups in New Zealand exhibit socio-economic mortality gradients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 648,
+            "latency": 4.12203311920166
+          }
+        },
+        {
+          "question": "The inverse equity hypothesis: does it apply to coverage of cancer screening in middle-income countries?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 869,
+            "latency": 5.515537977218628
+          }
+        },
+        {
+          "question": "Quality of life in lung cancer patients: does socioeconomic status matter?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 292,
+            "latency": 1.7962379455566406
+          }
+        },
+        {
+          "question": "Is the use of cyanoacrylate in intestinal anastomosis a good and reliable alternative?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 437,
+            "latency": 2.664461374282837
+          }
+        },
+        {
+          "question": "Is trabecular bone related to primary stability of miniscrews?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 470,
+            "latency": 2.950606346130371
+          }
+        },
+        {
+          "question": "Convulsions and retinal haemorrhage: should we look further?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 411,
+            "latency": 2.5384552478790283
+          }
+        },
+        {
+          "question": "Can normal knee kinematics be restored with unicompartmental knee replacement?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 589,
+            "latency": 4.7795469760894775
+          }
+        },
+        {
+          "question": "Are performance measurement systems useful?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 246,
+            "latency": 1.5448048114776611
+          }
+        },
+        {
+          "question": "Are patients willing participants in the new wave of community-based medical education in regional and rural Australia?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 413,
+            "latency": 2.741189956665039
+          }
+        },
+        {
+          "question": "Does blood pressure change in treated hypertensive patients depending on whether it is measured by a physician or a nurse?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 603,
+            "latency": 3.7912933826446533
+          }
+        },
+        {
+          "question": "Are there risk factors that increase the rate of staple line leakage in patients undergoing primary sleeve gastrectomy for morbid obesity?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 265,
+            "latency": 1.5363996028900146
+          }
+        },
+        {
+          "question": "Is there a relationship between complex fractionated atrial electrograms recorded during atrial fibrillation and sinus rhythm fractionation?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 590,
+            "latency": 3.6308798789978027
+          }
+        },
+        {
+          "question": "Is the clinically positive axilla in breast cancer really a contraindication to sentinel lymph node biopsy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 542,
+            "latency": 3.3841538429260254
+          }
+        },
+        {
+          "question": "Should early extubation be the goal for children after congenital cardiac surgery?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 433,
+            "latency": 2.6984643936157227
+          }
+        },
+        {
+          "question": "Is horizontal semicircular canal ocular reflex influenced by otolith organs input?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 899,
+            "latency": 5.72850227355957
+          }
+        },
+        {
+          "question": "Inpatient versus outpatient management of neutropenic fever in gynecologic oncology patients: is risk stratification useful?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 692,
+            "latency": 4.33833646774292
+          }
+        },
+        {
+          "question": "Does music influence stress in mechanically ventilated patients?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 241,
+            "latency": 1.6271398067474365
+          }
+        },
+        {
+          "question": "Metered-dose inhalers. Do health care providers know what to teach?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 258,
+            "latency": 1.5606186389923096
+          }
+        },
+        {
+          "question": "Chronic functional somatic symptoms: a single syndrome?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 328,
+            "latency": 2.06026554107666
+          }
+        },
+        {
+          "question": "Does insulin resistance drive the association between hyperglycemia and cardiovascular risk?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 378,
+            "latency": 2.3456883430480957
+          }
+        },
+        {
+          "question": "Is it necessary to insert a nasobiliary drainage tube routinely after endoscopic clearance of the common bile duct in patients with choledocholithiasis-induced cholangitis?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 690,
+            "latency": 4.222081422805786
+          }
+        },
+        {
+          "question": "Can the growth rate of a gallbladder polyp predict a neoplastic polyp?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 468,
+            "latency": 2.910529613494873
+          }
+        },
+        {
+          "question": "Does reducing spasticity translate into functional benefit?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 329,
+            "latency": 2.059384346008301
+          }
+        },
+        {
+          "question": "Does successful completion of the Perinatal Education Programme result in improved obstetric practice?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 424,
+            "latency": 2.6709470748901367
+          }
+        },
+        {
+          "question": "Does para-cervical block offer additional advantages in abortion induction with gemeprost in the 2nd trimester?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 498,
+            "latency": 3.0746939182281494
+          }
+        },
+        {
+          "question": "Menopausal hormone therapy and irregular endometrial bleeding: a potential role for uterine natural killer cells?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 592,
+            "latency": 3.673933506011963
+          }
+        },
+        {
+          "question": "Attenuation of ischemia/reperfusion-induced ovarian damage in rats: does edaravone offer protection?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 329,
+            "latency": 1.9791347980499268
+          }
+        },
+        {
+          "question": "Should general practitioners call patients by their first names?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 358,
+            "latency": 2.27555251121521
+          }
+        },
+        {
+          "question": "Does the bracket-ligature combination affect the amount of orthodontic space closure over three months?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 433,
+            "latency": 2.694899320602417
+          }
+        },
+        {
+          "question": "Does delivery mode affect women's postpartum quality of life in rural China?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 651,
+            "latency": 4.09063982963562
+          }
+        },
+        {
+          "question": "Percutaneous ethanol injection for benign cystic thyroid nodules: is aspiration of ethanol-mixed fluid advantageous?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 614,
+            "latency": 3.8527283668518066
+          }
+        },
+        {
+          "question": "Is the holmium:YAG laser the best intracorporeal lithotripter for the ureter?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 484,
+            "latency": 3.001312732696533
+          }
+        },
+        {
+          "question": "Do patients with localized prostate cancer treatment really want more aggressive treatment?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 494,
+            "latency": 3.1128993034362793
+          }
+        },
+        {
+          "question": "Is the probability of prenatal diagnosis or termination of pregnancy different for fetuses with congenital anomalies conceived following assisted reproductive techniques?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 896,
+            "latency": 5.682692050933838
+          }
+        },
+        {
+          "question": "Can a Novel Surgical Approach to the Temporomandibular Joint Improve Access and Reduce Complications?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 368,
+            "latency": 2.2407963275909424
+          }
+        },
+        {
+          "question": "Is vitamin D deficiency a feature of pediatric celiac disease?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 357,
+            "latency": 2.230205774307251
+          }
+        },
+        {
+          "question": "Can medical students contribute to quality assurance programmes in day surgery?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 316,
+            "latency": 2.2658023834228516
+          }
+        },
+        {
+          "question": "Can bone thickness and inter-radicular space affect miniscrew placement in posterior mandibular sites?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 325,
+            "latency": 1.9715137481689453
+          }
+        },
+        {
+          "question": "Can Flexible Instruments Create Adequate Femoral Tunnel Lengths at 90\u00b0 of Knee Flexion in Anterior Cruciate Ligament Reconstruction?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 598,
+            "latency": 5.323671817779541
+          }
+        },
+        {
+          "question": "Cholestasis associated with small bowel atresia: do we always need to investigate?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 460,
+            "latency": 2.863563060760498
+          }
+        },
+        {
+          "question": "Is pain a clinically relevant problem in general adult psychiatry?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 254,
+            "latency": 1.5600471496582031
+          }
+        },
+        {
+          "question": "Are financial incentives cost-effective to support smoking cessation during pregnancy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 493,
+            "latency": 3.175755500793457
+          }
+        },
+        {
+          "question": "Is there any evidence of a \"July effect\" in patients undergoing major cancer surgery?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 1001,
+            "latency": 6.691448926925659
+          }
+        },
+        {
+          "question": "Knee extensor strength, dynamic stability, and functional ambulation: are they related in Parkinson's disease?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 282,
+            "latency": 1.6801300048828125
+          }
+        },
+        {
+          "question": "Does the National Institutes of Health Stroke Scale favor left hemisphere strokes?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 567,
+            "latency": 3.741696357727051
+          }
+        },
+        {
+          "question": "Measurement of head and neck paragangliomas: is volumetric analysis worth the effort?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 529,
+            "latency": 3.390127182006836
+          }
+        },
+        {
+          "question": "Quaternary cytoreductive surgery in ovarian cancer: does surgical effort still matter?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 422,
+            "latency": 2.7809038162231445
+          }
+        },
+        {
+          "question": "Does the use of atypical antipsychotics as adjunctive therapy in depression result in cost savings?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 330,
+            "latency": 2.002387523651123
+          }
+        },
+        {
+          "question": "Diagnostic and therapeutic ureteroscopy: is dilatation of ureteral meatus always necessary?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 338,
+            "latency": 2.046825408935547
+          }
+        },
+        {
+          "question": "Chemotherapy and survival in advanced non-small cell lung carcinoma: is pneumologists' skepticism justified?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 419,
+            "latency": 2.588773250579834
+          }
+        },
+        {
+          "question": "Prevalence of chronic conditions among Medicare Part A beneficiaries in 2008 and 2010: are Medicare beneficiaries getting sicker?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 861,
+            "latency": 5.402166366577148
+          }
+        },
+        {
+          "question": "Three-dimensional ultrasound-validated large-core needle biopsy: is it a reliable method for the histological assessment of breast lesions?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 314,
+            "latency": 3.7102715969085693
+          }
+        },
+        {
+          "question": "Transesophageal echocardiographic assessment of left ventricular function in brain-dead patients: are marginally acceptable hearts suitable for transplantation?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 741,
+            "latency": 4.622665643692017
+          }
+        },
+        {
+          "question": "Fragility of the esophageal mucosa: a pathognomonic endoscopic sign of primary eosinophilic esophagitis?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 382,
+            "latency": 2.2761037349700928
+          }
+        },
+        {
+          "question": "Is distance to provider a barrier to care for medicaid patients with breast, colorectal, or lung cancer?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 400,
+            "latency": 2.4521429538726807
+          }
+        },
+        {
+          "question": "Is unsafe sexual behaviour increasing among HIV-infected individuals?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 681,
+            "latency": 4.339235544204712
+          }
+        },
+        {
+          "question": "Autoxidation products of both carbohydrates and lipids are increased in uremic plasma: is there oxidative stress in uremia?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 541,
+            "latency": 3.4027366638183594
+          }
+        },
+        {
+          "question": "Diagnostic characteristics of child bipolar I disorder: does the \"Treatment of Early Age Mania (team)\" sample generalize?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 401,
+            "latency": 2.4520418643951416
+          }
+        },
+        {
+          "question": "Does age moderate the effect of personality disorder on coping style in psychiatric inpatients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 707,
+            "latency": 4.462166786193848
+          }
+        },
+        {
+          "question": "Do general practice selection scores predict success at MRCGP?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 719,
+            "latency": 4.566010236740112
+          }
+        },
+        {
+          "question": "The Deformity Angular Ratio: Does It Correlate With High-Risk Cases for Potential Spinal Cord Monitoring Alerts in Pediatric 3-Column Thoracic Spinal Deformity Corrective Surgery?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 747,
+            "latency": 4.585959434509277
+          }
+        },
+        {
+          "question": "Does TDP-43 type confer a distinct pattern of atrophy in frontotemporal lobar degeneration?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 403,
+            "latency": 2.923970937728882
+          }
+        },
+        {
+          "question": "Does topical ropivacaine reduce the post-tonsillectomy morbidity in pediatric patients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 670,
+            "latency": 4.226419925689697
+          }
+        },
+        {
+          "question": "Dementia and aphasia in motor neuron disease: an underrecognised association?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 378,
+            "latency": 2.3533339500427246
+          }
+        },
+        {
+          "question": "Stage I non-small cell lung carcinoma: really an early stage?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 227,
+            "latency": 1.394174337387085
+          }
+        },
+        {
+          "question": "Pulmonary valve replacement in adults late after repair of tetralogy of fallot: are we operating too late?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 590,
+            "latency": 3.6768720149993896
+          }
+        },
+        {
+          "question": "Can 'high-risk' human papillomaviruses (HPVs) be detected in human breast milk?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 751,
+            "latency": 4.942003011703491
+          }
+        },
+        {
+          "question": "Can folic acid protect against congenital heart defects in Down syndrome?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 421,
+            "latency": 3.955362319946289
+          }
+        },
+        {
+          "question": "Health habits and vaccination status of Lebanese residents: are future doctors applying the rules of prevention?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 464,
+            "latency": 6.77245831489563
+          }
+        },
+        {
+          "question": "Are there associations of health status, disease activity and damage in SLE patients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 348,
+            "latency": 2.1687991619110107
+          }
+        },
+        {
+          "question": "Xanthogranulomatous cholecystitis: a premalignant condition?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 572,
+            "latency": 3.564481496810913
+          }
+        },
+        {
+          "question": "Can shape analysis differentiate free-floating internal carotid artery thrombus from atherosclerotic plaque in patients evaluated with CTA for stroke or transient ischemic attack?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 464,
+            "latency": 2.7630608081817627
+          }
+        },
+        {
+          "question": "Should pulp chamber pulpotomy be seen as a permanent treatment?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 338,
+            "latency": 2.074164628982544
+          }
+        },
+        {
+          "question": "PSA repeatedly fluctuating levels are reassuring enough to avoid biopsy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 368,
+            "latency": 2.2724950313568115
+          }
+        },
+        {
+          "question": "Is zero central line-associated bloodstream infection rate sustainable?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 377,
+            "latency": 2.339446783065796
+          }
+        },
+        {
+          "question": "Estimation of basal metabolic rate in Chinese: are the current prediction equations applicable?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 548,
+            "latency": 3.4497976303100586
+          }
+        },
+        {
+          "question": "Does cup-cage reconstruction with oversized cups provide initial stability in THA for osteoporotic acetabular fractures?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 683,
+            "latency": 4.2590672969818115
+          }
+        },
+        {
+          "question": "Multidisciplinary breast cancer clinics. Do they work?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 316,
+            "latency": 2.9024477005004883
+          }
+        },
+        {
+          "question": "Does nuchal translucency thickness in the first trimester predict GDM onset during pregnancy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 379,
+            "latency": 2.290820837020874
+          }
+        },
+        {
+          "question": "Does the Child Health Computing System adequately identify children with cerebral palsy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 429,
+            "latency": 2.692490816116333
+          }
+        },
+        {
+          "question": "Cold knife conization vs. LEEP. Are they the same procedure?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 237,
+            "latency": 1.4121291637420654
+          }
+        },
+        {
+          "question": "Diffusion-weighted echo-planar MR imaging of primary parotid gland tumors: is a prediction of different histologic subtypes possible?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 588,
+            "latency": 3.6278162002563477
+          }
+        },
+        {
+          "question": "Does type 1 diabetes mellitus affect Achilles tendon response to a 10\u00a0km run?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 445,
+            "latency": 5.198344945907593
+          }
+        },
+        {
+          "question": "Spinal subdural hematoma: a sequela of a ruptured intracranial aneurysm?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 541,
+            "latency": 4.19468355178833
+          }
+        },
+        {
+          "question": "Does concomitant anterior/apical repair during midurethral sling improve the overactive bladder component of mixed incontinence?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 875,
+            "latency": 5.505307197570801
+          }
+        },
+        {
+          "question": "Optimism and survival: does an optimistic outlook predict better survival at advanced ages?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 353,
+            "latency": 2.1597609519958496
+          }
+        },
+        {
+          "question": "Is breast cancer prognosis inherited?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 483,
+            "latency": 3.0836944580078125
+          }
+        },
+        {
+          "question": "Can communication with terminally ill patients be taught?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 264,
+            "latency": 1.6039941310882568
+          }
+        },
+        {
+          "question": "Is gastric electrical stimulation superior to standard pharmacologic therapy in improving GI symptoms, healthcare resources, and long-term health care benefits?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 564,
+            "latency": 3.6212332248687744
+          }
+        },
+        {
+          "question": "Do risk factors for suicidal behavior differ by affective disorder polarity?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 378,
+            "latency": 4.036208391189575
+          }
+        },
+        {
+          "question": "Does open access publishing increase the impact of scientific articles?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 249,
+            "latency": 1.5245614051818848
+          }
+        },
+        {
+          "question": "Updating emotional content in working memory: a depression-specific deficit?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 330,
+            "latency": 2.022470712661743
+          }
+        },
+        {
+          "question": "Are the arginine vasopressin V1a receptor microsatellites related to hypersexuality in children with a prepubertal and early adolescent bipolar disorder phenotype?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 562,
+            "latency": 3.4110169410705566
+          }
+        },
+        {
+          "question": "Should prostate specific antigen be adjusted for body mass index?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 327,
+            "latency": 2.0211799144744873
+          }
+        },
+        {
+          "question": "Is it better to be big?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 422,
+            "latency": 2.754878520965576
+          }
+        },
+        {
+          "question": "Delays in time to primary treatment after a diagnosis of breast cancer: does it impact survival?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 327,
+            "latency": 1.9570457935333252
+          }
+        },
+        {
+          "question": "In vivo visualization of pyloric mucosal hypertrophy in infants with hypertrophic pyloric stenosis: is there an etiologic role?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 327,
+            "latency": 1.8881144523620605
+          }
+        },
+        {
+          "question": "Does Residency Selection Criteria Predict Performance in Orthopaedic Surgery Residency?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 490,
+            "latency": 3.0988125801086426
+          }
+        },
+        {
+          "question": "Literacy after cerebral hemispherectomy: Can the isolated right hemisphere read?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 520,
+            "latency": 3.205087423324585
+          }
+        },
+        {
+          "question": "Uniformity of evidence-based treatments in practice?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 312,
+            "latency": 1.9456446170806885
+          }
+        },
+        {
+          "question": "Are increased carotid artery pulsatility and resistance indexes early signs of vascular abnormalities in young obese males?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 512,
+            "latency": 3.1686618328094482
+          }
+        },
+        {
+          "question": "The nurse cystoscopist: a feasible option?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 264,
+            "latency": 1.6335859298706055
+          }
+        },
+        {
+          "question": "Characterization of the gender dimorphism after injury and hemorrhagic shock: are hormonal differences responsible?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 528,
+            "latency": 3.275514602661133
+          }
+        },
+        {
+          "question": "Are acceptance rates of a national preventive home visit programme for older people socially imbalanced?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 546,
+            "latency": 3.365495204925537
+          }
+        },
+        {
+          "question": "Do symptoms predict COPD in smokers?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 415,
+            "latency": 2.624232530593872
+          }
+        },
+        {
+          "question": "Is specialty care associated with improved survival of patients with congestive heart failure?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 309,
+            "latency": 2.0254781246185303
+          }
+        },
+        {
+          "question": "Nasal fractures:  is closed reduction satisfying?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 299,
+            "latency": 3.356861114501953
+          }
+        },
+        {
+          "question": "Does high blood pressure reduce the risk of chronic low back pain?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 569,
+            "latency": 3.541964054107666
+          }
+        },
+        {
+          "question": "Does transverse apex coincide with coronal apex levels (regional or global) in adolescent idiopathic scoliosis?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 881,
+            "latency": 5.798526048660278
+          }
+        },
+        {
+          "question": "Does the early adopter of drugs exist?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 577,
+            "latency": 3.711332321166992
+          }
+        },
+        {
+          "question": "Systematic use of patient-rated depression severity monitoring: is it helpful and feasible in clinical psychiatry?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 360,
+            "latency": 2.170175552368164
+          }
+        },
+        {
+          "question": "Is cardiovascular evaluation necessary prior to and during beta-blocker therapy for infantile hemangiomas?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 433,
+            "latency": 2.6579465866088867
+          }
+        },
+        {
+          "question": "Does spontaneous remission occur in polyarteritis nodosa?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 583,
+            "latency": 3.646890640258789
+          }
+        },
+        {
+          "question": "Hepatorenal syndrome: are we missing some prognostic factors?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 493,
+            "latency": 3.061192035675049
+          }
+        },
+        {
+          "question": "Is arch form influenced by sagittal molar relationship or Bolton tooth-size discrepancy?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 826,
+            "latency": 5.186110973358154
+          }
+        },
+        {
+          "question": "Are behavioural risk factors to be blamed for the conversion from optimal blood pressure to hypertensive status in Black South Africans?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 412,
+            "latency": 2.4940247535705566
+          }
+        },
+        {
+          "question": "Search engine as a diagnostic tool in difficult immunological and allergologic cases: is Google useful?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 293,
+            "latency": 3.5905680656433105
+          }
+        },
+        {
+          "question": "Can the prognosis of polymyalgia rheumatica be predicted at disease onset?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 466,
+            "latency": 2.8833460807800293
+          }
+        },
+        {
+          "question": "Does lunar position influence the time of delivery?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 244,
+            "latency": 1.5210609436035156
+          }
+        },
+        {
+          "question": "Should ascitis volume and anthropometric measurements be estimated in hospitalized alcoholic cirrotics?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 469,
+            "latency": 2.9308817386627197
+          }
+        },
+        {
+          "question": "Proof of concept study: does fenofibrate have a role in sleep apnoea syndrome?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 536,
+            "latency": 3.348331928253174
+          }
+        },
+        {
+          "question": "Treadmill training post stroke: are there any secondary benefits?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 385,
+            "latency": 2.5665221214294434
+          }
+        },
+        {
+          "question": "Prescriptions as a proxy for asthma in children: a good choice?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 558,
+            "latency": 3.4849319458007812
+          }
+        },
+        {
+          "question": "Are pectins involved in cold acclimation and de-acclimation of winter oil-seed rape plants?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 873,
+            "latency": 5.707155227661133
+          }
+        },
+        {
+          "question": "Do Wound Cultures Give Information About the Microbiology of Blood Cultures in Severe Burn Patients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 553,
+            "latency": 3.455134630203247
+          }
+        },
+        {
+          "question": "Do familiar teammates request and accept more backup?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 282,
+            "latency": 1.7311694622039795
+          }
+        },
+        {
+          "question": "Could the extent of lymphadenectomy be modified by neoadjuvant chemotherapy in cervical cancer?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 623,
+            "latency": 3.961066722869873
+          }
+        },
+        {
+          "question": "The use of audit to identify maternal mortality in different settings: is it just a difference between the rich and the poor?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 654,
+            "latency": 4.033515453338623
+          }
+        },
+        {
+          "question": "Is controlled ovarian stimulation in intrauterine insemination an acceptable therapy in couples with unexplained non-conception in the perspective of multiple pregnancies?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 454,
+            "latency": 2.722320795059204
+          }
+        },
+        {
+          "question": "Can mental imagery functional magnetic resonance imaging predict recovery in patients with disorders of consciousness?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 712,
+            "latency": 4.515485525131226
+          }
+        },
+        {
+          "question": "Transsphenoidal pituitary surgery in Cushing's disease: can we predict outcome?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 325,
+            "latency": 1.986405611038208
+          }
+        },
+        {
+          "question": "Do improvements in outreach, clinical, and family and community-based services predict improvements in child survival?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 507,
+            "latency": 5.544110298156738
+          }
+        },
+        {
+          "question": "Can bedside assessment reliably exclude aspiration following acute stroke?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 313,
+            "latency": 1.9648184776306152
+          }
+        },
+        {
+          "question": "Are UK radiologists satisfied with the training and support received in suspected child abuse?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 317,
+            "latency": 1.907778263092041
+          }
+        },
+        {
+          "question": "Are hepatitis G virus and TT virus involved in cryptogenic chronic liver disease?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 401,
+            "latency": 2.5809600353240967
+          }
+        },
+        {
+          "question": "Digital Tomosynthesis: A Viable Alternative to Noncontrast Computed Tomography for the Follow-Up of Nephrolithiasis?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 471,
+            "latency": 2.831568717956543
+          }
+        },
+        {
+          "question": "Do approved doctors and medical referees in the UK agree when assessing a seafarer's fitness?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 418,
+            "latency": 5.025098562240601
+          }
+        },
+        {
+          "question": "Are wandering and physically nonaggressive agitation equivalent?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 323,
+            "latency": 1.9827327728271484
+          }
+        },
+        {
+          "question": "Preoperative locoregional staging of gastric cancer: is there a place for magnetic resonance imaging?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 396,
+            "latency": 2.4288487434387207
+          }
+        },
+        {
+          "question": "Does depression diagnosis and antidepressant prescribing vary by location?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 303,
+            "latency": 1.887505292892456
+          }
+        },
+        {
+          "question": "The effect of an intracerebroventricular injection of metformin or AICAR on the plasma concentrations of melatonin in the ewe: potential involvement of AMPK?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 841,
+            "latency": 6.608131647109985
+          }
+        },
+        {
+          "question": "Profiling quality of care: Is there a role for peer review?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 309,
+            "latency": 1.8999667167663574
+          }
+        },
+        {
+          "question": "Telemedicine and type 1 diabetes: is technology per se sufficient to improve glycaemic control?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 405,
+            "latency": 3.4299111366271973
+          }
+        },
+        {
+          "question": "Volume change of uterine myomas during pregnancy: do myomas really grow?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 362,
+            "latency": 2.219200849533081
+          }
+        },
+        {
+          "question": "Does context matter for the relationship between deprivation and all-cause mortality?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 327,
+            "latency": 2.02463698387146
+          }
+        },
+        {
+          "question": "Upstream solutions: does the supplemental security income program reduce disability in the elderly?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 397,
+            "latency": 2.455587148666382
+          }
+        },
+        {
+          "question": "Is oral endotracheal intubation efficacy impaired in the helicopter environment?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 411,
+            "latency": 3.952651262283325
+          }
+        },
+        {
+          "question": "Will CT ordering practices change if we educate residents about the potential effects of radiation exposure?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 395,
+            "latency": 2.3927407264709473
+          }
+        },
+        {
+          "question": "Can the condition of the cell microenvironment of mediastinal lymph nodes help predict the risk of metastases in non-small cell lung cancer?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 533,
+            "latency": 3.3031091690063477
+          }
+        },
+        {
+          "question": "Is laparoscopic adrenalectomy safe and effective for adrenal masses larger than 7 cm?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 513,
+            "latency": 3.134917974472046
+          }
+        },
+        {
+          "question": "High cumulative insulin exposure: a risk factor of atherosclerosis in type 1 diabetes?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 683,
+            "latency": 4.30992317199707
+          }
+        },
+        {
+          "question": "Is half-dose contrast-enhanced three-dimensional MR angiography sufficient for the abdominal aorta and pelvis?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 733,
+            "latency": 4.614437580108643
+          }
+        },
+        {
+          "question": "School food policy at Dutch primary schools: room for improvement?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 410,
+            "latency": 2.54292368888855
+          }
+        },
+        {
+          "question": "Clinician assessment for acute chest syndrome in febrile patients with sickle cell disease: is it accurate enough?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 353,
+            "latency": 2.100472927093506
+          }
+        },
+        {
+          "question": "Can decisional algorithms replace global introspection in the individual causality assessment of spontaneously reported ADRs?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 409,
+            "latency": 2.504141092300415
+          }
+        },
+        {
+          "question": "Do episodic migraineurs selectively attend to headache-related visual stimuli?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 416,
+            "latency": 2.6027064323425293
+          }
+        },
+        {
+          "question": "Is size-reducing ascending aortoplasty with external reinforcement an option in modern aortic surgery?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 725,
+            "latency": 4.500558853149414
+          }
+        },
+        {
+          "question": "Is there an intrauterine influence on obesity?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 225,
+            "latency": 1.382120132446289
+          }
+        },
+        {
+          "question": "Birth characteristics and risk of low intellectual performance in early adulthood: are the associations confounded by socioeconomic factors in adolescence or familial effects?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 484,
+            "latency": 2.9604742527008057
+          }
+        },
+        {
+          "question": "Do preoperative statins reduce atrial fibrillation after coronary artery bypass grafting?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 553,
+            "latency": 3.458061695098877
+          }
+        },
+        {
+          "question": "Mitral replacement or repair for functional mitral regurgitation in dilated and ischemic cardiomyopathy: is it really the same?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 468,
+            "latency": 2.8291234970092773
+          }
+        },
+        {
+          "question": "Is scintigraphy a guideline method in determining amputation levels in diabetic foot?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 509,
+            "latency": 3.1734299659729004
+          }
+        },
+        {
+          "question": "Is the atopy patch test with house dust mites specific for atopic dermatitis?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 389,
+            "latency": 3.9254465103149414
+          }
+        },
+        {
+          "question": "Does a special interest in laparoscopy affect the treatment of acute cholecystitis?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 589,
+            "latency": 3.664607048034668
+          }
+        },
+        {
+          "question": "Does automatic transmission improve driving behavior in older drivers?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 318,
+            "latency": 3.6549618244171143
+          }
+        },
+        {
+          "question": "Does stress increase imitation of drinking behavior?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 467,
+            "latency": 4.572345018386841
+          }
+        },
+        {
+          "question": "Improvements in survival of gynaecological cancer in the Anglia region of England: are these an effect of centralisation of care and use of multidisciplinary management?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 426,
+            "latency": 3.587001085281372
+          }
+        },
+        {
+          "question": "Can we rely on arterial line sampling in performing activated plasma thromboplastin time after cardiac surgery?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 542,
+            "latency": 3.951766014099121
+          }
+        },
+        {
+          "question": "Can multiple SNP testing in BRCA2 and BRCA1 female carriers be used to improve risk prediction models in conjunction with clinical assessment?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 620,
+            "latency": 3.8360350131988525
+          }
+        },
+        {
+          "question": "MR Diagnosis of Bone Metastases at 1.5 T and 3 T: Can STIR Imaging Be Omitted?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 509,
+            "latency": 3.1158032417297363
+          }
+        },
+        {
+          "question": "Can progression of valvar aortic stenosis be predicted accurately?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 636,
+            "latency": 4.019367456436157
+          }
+        },
+        {
+          "question": "Do older patients who refuse to participate in a self-management intervention in the Netherlands differ from older patients who agree to participate?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 1013,
+            "latency": 6.408453941345215
+          }
+        },
+        {
+          "question": "Eyelid-parotid metastasis: do we screen for coexisting masses?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 883,
+            "latency": 5.582120180130005
+          }
+        },
+        {
+          "question": "Juvenile osteochondritis dissecans: is it a growth disturbance of the secondary physis of the epiphysis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 805,
+            "latency": 5.00480318069458
+          }
+        },
+        {
+          "question": "Marital status, living arrangement and mortality: does the association vary by gender?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 453,
+            "latency": 2.9357759952545166
+          }
+        },
+        {
+          "question": "Histologic evaluation of the testicular remnant associated with the vanishing testes syndrome: is surgical management necessary?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 621,
+            "latency": 3.8606626987457275
+          }
+        },
+        {
+          "question": "Assessing Patient Reported Outcomes Measures via Phone Interviews Versus Patient Self-Survey in the Clinic: Are We Measuring the Same Thing?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 482,
+            "latency": 3.3238296508789062
+          }
+        },
+        {
+          "question": "Vitamin D supplementation and regulatory T cells in apparently healthy subjects: vitamin D treatment for autoimmune diseases?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 349,
+            "latency": 2.1165099143981934
+          }
+        },
+        {
+          "question": "Do symptoms matter when considering patients for phase I clinical trials?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 410,
+            "latency": 4.897064924240112
+          }
+        },
+        {
+          "question": "Recovery Outcome Measures: Is There a Place for Culture, Attitudes, and Faith?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 253,
+            "latency": 1.5116348266601562
+          }
+        },
+        {
+          "question": "Kell alloimmunization in pregnancy: associated with fetal thrombocytopenia?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 507,
+            "latency": 3.1420116424560547
+          }
+        },
+        {
+          "question": "Gynecological cancer alarm symptoms: is contact with specialist care associated with lifestyle and socioeconomic status?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 402,
+            "latency": 2.484520673751831
+          }
+        },
+        {
+          "question": "Totally implantable venous access device placement by interventional radiologists: are prophylactic antibiotics necessary?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 347,
+            "latency": 2.177582025527954
+          }
+        },
+        {
+          "question": "Can surgeon familiarization with current evidence lead to a change in practice?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 262,
+            "latency": 1.580824375152588
+          }
+        },
+        {
+          "question": "Do prerecorded lecture VODcasts affect lecture attendance of first-yearpre-clinical Graduate Entry to Medicine students?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 749,
+            "latency": 4.675320148468018
+          }
+        },
+        {
+          "question": "Application of computer-aided diagnosis (CAD) in MR-mammography (MRM): do we really need whole lesion time curve distribution analysis?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 482,
+            "latency": 2.936038017272949
+          }
+        },
+        {
+          "question": "Risk factors for major depression during midlife among a community sample of women with and without prior major depression: are they the same or different?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 413,
+            "latency": 2.4695656299591064
+          }
+        },
+        {
+          "question": "Vaccine protection in the elderly: are Austrian seniors adequately protected by vaccinations?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 523,
+            "latency": 3.262554168701172
+          }
+        },
+        {
+          "question": "Does pain intensity predict a poor opioid response in cancer patients?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 416,
+            "latency": 5.097622394561768
+          }
+        },
+        {
+          "question": "Is cholecystectomy really an indication for concomitant splenectomy in mild hereditary spherocytosis?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 581,
+            "latency": 5.8596978187561035
+          }
+        },
+        {
+          "question": "Is high-sensitivity C-reactive protein associated with carotid atherosclerosis in healthy Koreans?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 358,
+            "latency": 2.2074851989746094
+          }
+        },
+        {
+          "question": "Does Sensation Return to the Nasal Tip After Microfat Grafting?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 256,
+            "latency": 1.5372416973114014
+          }
+        },
+        {
+          "question": "Does elective re-siting of intravenous cannulae decrease peripheral thrombophlebitis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 534,
+            "latency": 3.3028054237365723
+          }
+        },
+        {
+          "question": "Does surgery or radiation therapy impact survival for patients with extrapulmonary small cell cancers?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 925,
+            "latency": 5.906426429748535
+          }
+        },
+        {
+          "question": "Does somatostatin confer insulinostatic effects of neuromedin u in the rat pancreas?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 740,
+            "latency": 4.6915459632873535
+          }
+        },
+        {
+          "question": "Can EMS Providers Provide Appropriate Tidal Volumes in a Simulated Adult-sized Patient with a Pediatric-sized Bag-Valve-Mask?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 480,
+            "latency": 2.942138195037842
+          }
+        },
+        {
+          "question": "Clinical identifiers for early-stage primary/idiopathic adhesive capsulitis: are we seeing the real picture?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 509,
+            "latency": 3.1401803493499756
+          }
+        },
+        {
+          "question": "Is cytokeratin immunoreactivity useful in the diagnosis of short-segment Barrett's oesophagus in Korea?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 849,
+            "latency": 5.387920141220093
+          }
+        },
+        {
+          "question": "Does binge drinking during early pregnancy increase the risk of psychomotor deficits?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 238,
+            "latency": 1.4668078422546387
+          }
+        },
+        {
+          "question": "Is routine dissection of the station 9 lymph nodes really necessary for primary lung cancer?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 863,
+            "latency": 5.545881032943726
+          }
+        },
+        {
+          "question": "Do African American women require fewer calories to maintain weight?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 358,
+            "latency": 2.229088306427002
+          }
+        },
+        {
+          "question": "Fulfilling human resources development goal in West Africa: can the training of ophthalmologist diplomates be improved?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 294,
+            "latency": 1.7422752380371094
+          }
+        },
+        {
+          "question": "Do nontriploid partial hydatidiform moles exist?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 1091,
+            "latency": 7.036235094070435
+          }
+        },
+        {
+          "question": "Can third trimester ultrasound predict the presentation of the first twin at delivery?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 709,
+            "latency": 4.550060749053955
+          }
+        },
+        {
+          "question": "Global Longitudinal Pathway: has medical education curriculum influenced medical students' skills and attitudes toward culturally diverse populations?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 277,
+            "latency": 1.6688652038574219
+          }
+        },
+        {
+          "question": "Failed IUD insertions in community practice: an under-recognized problem?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 310,
+            "latency": 1.9019992351531982
+          }
+        },
+        {
+          "question": "Can students' scores on preclerkship clinical performance examinations predict that they will fail a senior clinical performance examination?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 664,
+            "latency": 4.2068212032318115
+          }
+        },
+        {
+          "question": "Does delaying surgery in immature adolescent idiopathic scoliosis patients with progressive curve, lead to addition of fusion levels?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 703,
+            "latency": 4.471813917160034
+          }
+        },
+        {
+          "question": "Do lipids, blood pressure, diabetes, and smoking confer equal risk of myocardial infarction in women as in men?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 303,
+            "latency": 1.8170948028564453
+          }
+        },
+        {
+          "question": "Does invasive diagnosis of nosocomial pneumonia during off-hours delay treatment?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 364,
+            "latency": 2.3205854892730713
+          }
+        },
+        {
+          "question": "Do older men benefit from curative therapy of localized prostate cancer?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 515,
+            "latency": 4.00616455078125
+          }
+        },
+        {
+          "question": "Body dysmorphic disorder: does it have a psychotic subtype?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 532,
+            "latency": 3.370277166366577
+          }
+        },
+        {
+          "question": "Do risk calculators accurately predict surgical site\u00a0occurrences?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 815,
+            "latency": 5.198328971862793
+          }
+        },
+        {
+          "question": "Pituitary apoplexy: do histological features influence the clinical presentation and outcome?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 629,
+            "latency": 4.0136332511901855
+          }
+        },
+        {
+          "question": "Does receipt of hospice care in nursing homes improve the management of pain at the end of life?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 549,
+            "latency": 3.4413692951202393
+          }
+        },
+        {
+          "question": "Type II supracondylar humerus fractures: can some be treated nonoperatively?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 440,
+            "latency": 2.778498649597168
+          }
+        },
+        {
+          "question": "The promise of specialty pharmaceuticals: are they worth the price?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 433,
+            "latency": 2.7495474815368652
+          }
+        },
+        {
+          "question": "Starting insulin in type 2 diabetes: continue oral hypoglycemic agents?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 860,
+            "latency": 5.541913986206055
+          }
+        },
+        {
+          "question": "Are pediatric concussion patients compliant with discharge instructions?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 311,
+            "latency": 2.270458221435547
+          }
+        },
+        {
+          "question": "Validation of the 2009 TNM version in a large multi-institutional cohort of patients treated for renal cell carcinoma: are further improvements needed?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 799,
+            "latency": 4.9872472286224365
+          }
+        },
+        {
+          "question": "Are endometrial polyps from pre-menopausal women similar to post-menopausal women?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 415,
+            "latency": 2.5816426277160645
+          }
+        },
+        {
+          "question": "Do hospitals provide lower quality care on weekends?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 328,
+            "latency": 2.0950353145599365
+          }
+        },
+        {
+          "question": "Does a dedicated discharge coordinator improve the quality of hospital discharge?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 215,
+            "latency": 1.5431616306304932
+          }
+        },
+        {
+          "question": "Emergency double-balloon enteroscopy combined with real-time viewing of capsule endoscopy: a feasible combined approach in acute overt-obscure gastrointestinal bleeding?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 732,
+            "latency": 4.598275423049927
+          }
+        },
+        {
+          "question": "Are interstitial fluid concentrations of meropenem equivalent to plasma concentrations in critically ill patients receiving continuous renal replacement therapy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 788,
+            "latency": 5.254758834838867
+          }
+        },
+        {
+          "question": "Are octogenarians at high risk for carotid endarterectomy?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 402,
+            "latency": 2.532766819000244
+          }
+        },
+        {
+          "question": "Has the mammography quality standards act affected the mammography quality in North Carolina?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 368,
+            "latency": 2.2855565547943115
+          }
+        },
+        {
+          "question": "Treatment as prevention in resource-limited settings: is it feasible to maintain HIV viral load suppression over time?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 436,
+            "latency": 2.6951303482055664
+          }
+        },
+        {
+          "question": "Advanced epithelial ovarian carcinoma in Thai women: should we continue to offer second-look laparotomy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 950,
+            "latency": 6.03218150138855
+          }
+        },
+        {
+          "question": "Oral mucocele/ranula: Another human immunodeficiency virus-related salivary gland disease?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 356,
+            "latency": 2.188208818435669
+          }
+        },
+        {
+          "question": "Undescended testes: does age at orchiopexy affect survival of the testis?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 603,
+            "latency": 3.8707847595214844
+          }
+        },
+        {
+          "question": "Does tranexamic acid reduce desmopressin-induced hyperfibrinolysis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 695,
+            "latency": 4.682786226272583
+          }
+        },
+        {
+          "question": "Does family practice at residency teaching sites reflect community practice?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 574,
+            "latency": 3.850403070449829
+          }
+        },
+        {
+          "question": "The effective orifice area/patient aortic annulus area ratio: a better way to compare different bioprostheses?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 631,
+            "latency": 4.040997743606567
+          }
+        },
+        {
+          "question": "The Prevalence of Incidentally Detected Idiopathic Misty Mesentery on\u00a0Multidetector Computed Tomography: Can Obesity Be the Triggering Cause?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 580,
+            "latency": 3.549243211746216
+          }
+        },
+        {
+          "question": "Are laboratories reporting serum quantitative hCG results correctly?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 297,
+            "latency": 1.8629093170166016
+          }
+        },
+        {
+          "question": "Does ultrasound-scored synovitis depend on the pharmacokinetics of subcutaneous anti-TNF agents in patients with rheumatoid arthritis?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 807,
+            "latency": 5.087539434432983
+          }
+        },
+        {
+          "question": "Does having a regular primary care clinician improve quality of preventive care for young children?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 316,
+            "latency": 1.9301841259002686
+          }
+        },
+        {
+          "question": "Do preoperative serum C-reactive protein levels predict the definitive pathological stage in patients with clinically localized prostate cancer?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 338,
+            "latency": 2.0424118041992188
+          }
+        },
+        {
+          "question": "Evaluation of pediatric VCUG at an academic children's hospital: is the radiographic scout image necessary?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 696,
+            "latency": 4.4122796058654785
+          }
+        },
+        {
+          "question": "Is the zeolite hemostatic agent beneficial in reducing blood loss during arterial injury?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 641,
+            "latency": 4.050391912460327
+          }
+        },
+        {
+          "question": "Is an advance care planning model feasible in community palliative care?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 368,
+            "latency": 2.3041646480560303
+          }
+        },
+        {
+          "question": "Does performance in selection processes predict performance as a dental student?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 353,
+            "latency": 2.4544894695281982
+          }
+        },
+        {
+          "question": "Is there an increase in the incidence of gbs carrier rates among pregnant women in northern Israel?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 530,
+            "latency": 3.3090407848358154
+          }
+        },
+        {
+          "question": "Steroids in aminoglycoside-containing ear drops: do they reduce cochlear toxicity?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 447,
+            "latency": 2.7582621574401855
+          }
+        },
+        {
+          "question": "Appendectomy timing: Will delayed surgery increase the complications?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 241,
+            "latency": 1.4784204959869385
+          }
+        },
+        {
+          "question": "Does hippocampal atrophy on MRI predict cognitive decline?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 327,
+            "latency": 2.0139291286468506
+          }
+        },
+        {
+          "question": "Chemoradiotherapy in the management of locally advanced squamous cell carcinoma esophagus: is surgical resection required?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 344,
+            "latency": 2.0629208087921143
+          }
+        },
+        {
+          "question": "Does quantitative left ventricular regional wall motion change after fibrous tissue resection in endomyocardial fibrosis?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 365,
+            "latency": 2.195028066635132
+          }
+        },
+        {
+          "question": "Will clinical studies elucidate the connection between the length of storage of transfused red blood cells and clinical outcomes?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 252,
+            "latency": 1.494697093963623
+          }
+        },
+        {
+          "question": "Learning needs of postpartum women: does socioeconomic status matter?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 244,
+            "latency": 1.4913246631622314
+          }
+        },
+        {
+          "question": "Does Viral Co-Infection Influence the Severity of Acute Respiratory Infection in Children?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 300,
+            "latency": 1.8054368495941162
+          }
+        },
+        {
+          "question": "Cigarettes and cinema: does parental restriction of R-rated movie viewing reduce adolescent smoking susceptibility?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 610,
+            "latency": 3.8247368335723877
+          }
+        },
+        {
+          "question": "Does occupational nuclear power plant radiation affect conception and pregnancy?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 430,
+            "latency": 2.705213785171509
+          }
+        },
+        {
+          "question": "Can dobutamine stress echocardiography induce cardiac troponin elevation?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 426,
+            "latency": 4.107408046722412
+          }
+        },
+        {
+          "question": "Is it time to reconsider lobectomy in low-risk paediatric thyroid cancer?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 499,
+            "latency": 3.6932425498962402
+          }
+        },
+        {
+          "question": "Can we predict which head and neck cancer survivors develop fears of recurrence?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 406,
+            "latency": 2.9658517837524414
+          }
+        },
+        {
+          "question": "Screening History Among Women with Invasive Cervical Cancer in an Academic Medical Center: Will We Miss Cancers Following Updated Guidelines?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 772,
+            "latency": 4.854940891265869
+          }
+        },
+        {
+          "question": "After CLASS--Is a voluntary public insurance program a realistic way to meet the long-term support and service needs of adults with disabilities?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 535,
+            "latency": 3.2860989570617676
+          }
+        },
+        {
+          "question": "Cardiogenic shock complicating acute myocardial infarction in elderly patients: does admission to a tertiary center improve survival?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 336,
+            "latency": 2.012281894683838
+          }
+        },
+        {
+          "question": "Comparing femoral version after intramedullary nailing performed by trauma-trained and non-trauma trained surgeons: is there a difference?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 431,
+            "latency": 2.6268692016601562
+          }
+        },
+        {
+          "question": "Bridge experience with long-term implantable left ventricular assist devices. Are they an alternative to transplantation?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 559,
+            "latency": 3.47929310798645
+          }
+        },
+        {
+          "question": "Treatment of vitamin D deficiency in CKD patients with ergocalciferol: are current K/DOQI treatment guidelines adequate?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 495,
+            "latency": 3.0449531078338623
+          }
+        },
+        {
+          "question": "Hypotension in patients with coronary disease: can profound hypotensive events cause myocardial ischaemic events?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 348,
+            "latency": 2.078263759613037
+          }
+        },
+        {
+          "question": "Is intraoperative neuromonitoring associated with better functional outcome in patients undergoing open TME?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 676,
+            "latency": 4.253247499465942
+          }
+        },
+        {
+          "question": "The secular growth acceleration: does it appear during fetal life?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 567,
+            "latency": 4.291501760482788
+          }
+        },
+        {
+          "question": "Sub-classification of low-grade cerebellar astrocytoma: is it clinically meaningful?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 692,
+            "latency": 4.603479385375977
+          }
+        },
+        {
+          "question": "Is acute fibrinous and organizing pneumonia the expression of immune dysregulation?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 416,
+            "latency": 2.776047468185425
+          }
+        },
+        {
+          "question": "Lloyd-Davies position with Trendelenburg--a disaster waiting to happen?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 657,
+            "latency": 4.14749002456665
+          }
+        },
+        {
+          "question": "Can biofeedback training of psychophysiological responses enhance athletes' sport performance?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 311,
+            "latency": 1.926818609237671
+          }
+        },
+        {
+          "question": "Immunohistochemical assessment of steroid hormone receptors in tissues of the anal canal. Implications for anal incontinence?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 491,
+            "latency": 2.991732597351074
+          }
+        },
+        {
+          "question": "Cardiopulmonary bypass temperature does not affect postoperative euthyroid sick syndrome?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 1369,
+            "latency": 8.993382930755615
+          }
+        },
+        {
+          "question": "Colorectal cancer in young patients: is it a distinct clinical entity?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 294,
+            "latency": 1.7775070667266846
+          }
+        },
+        {
+          "question": "Do inhaled corticosteroids affect perception of dyspnea during bronchoconstriction in asthma?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 480,
+            "latency": 2.9380569458007812
+          }
+        },
+        {
+          "question": "Do cytokines have any role in epilepsy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 339,
+            "latency": 2.136352777481079
+          }
+        },
+        {
+          "question": "Does angiotensin-converting enzyme-1 (ACE-1) gene polymorphism lead to chronic kidney disease among hypertensive patients?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 457,
+            "latency": 2.7790753841400146
+          }
+        },
+        {
+          "question": "Is patient outcome compromised during the initial experience with robot-assisted radical cystectomy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 674,
+            "latency": 5.0879693031311035
+          }
+        },
+        {
+          "question": "Can routine offering of influenza vaccination in office-based settings reduce racial and ethnic disparities in adult influenza vaccination?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 422,
+            "latency": 2.580713987350464
+          }
+        },
+        {
+          "question": "Laminoplasty outcomes: is there a difference between patients with degenerative stenosis and those with ossification of the posterior longitudinal ligament?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 657,
+            "latency": 4.0624682903289795
+          }
+        },
+        {
+          "question": "Is lumbar drainage of postoperative cerebrospinal fluid fistula after spine surgery effective?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 366,
+            "latency": 2.2397828102111816
+          }
+        },
+        {
+          "question": "Is the Retromandibular Transparotid Approach a Reliable Option for the Surgical Treatment of Condylar Fractures?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 862,
+            "latency": 5.39763331413269
+          }
+        },
+        {
+          "question": "An HIV1/2 point of care test on sputum for screening TB/HIV co-infection in Central India - Will it work?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 677,
+            "latency": 4.193042755126953
+          }
+        },
+        {
+          "question": "Should tumor depth be included in prognostication of soft tissue sarcoma?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 261,
+            "latency": 1.5864267349243164
+          }
+        },
+        {
+          "question": "Is it safe to perform rectal anastomosis in gynaecological debulking surgery without a diverting stoma?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 636,
+            "latency": 3.953887462615967
+          }
+        },
+        {
+          "question": "Is amoxapine an atypical antipsychotic?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 288,
+            "latency": 1.7688179016113281
+          }
+        },
+        {
+          "question": "Pitfalls in urinary stone identification using CT attenuation values: are we getting the same information on different scanner models?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 537,
+            "latency": 4.852548599243164
+          }
+        },
+        {
+          "question": "The English antibiotic awareness campaigns: did they change the public's knowledge of and attitudes to antibiotic use?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 328,
+            "latency": 1.9778962135314941
+          }
+        },
+        {
+          "question": "Blunt trauma in intoxicated patients: is computed tomography of the abdomen always necessary?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 533,
+            "latency": 3.3311593532562256
+          }
+        },
+        {
+          "question": "Long-term significance of postictal psychotic episodes II. Are they predictive of interictal psychotic episodes?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 344,
+            "latency": 3.3712072372436523
+          }
+        },
+        {
+          "question": "Is CA72-4 a useful biomarker in differential diagnosis between ovarian endometrioma and epithelial ovarian cancer?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 460,
+            "latency": 2.80692982673645
+          }
+        },
+        {
+          "question": "Chronic progressive cervical myelopathy with HTLV-I infection: Variant form of HAM/TSP?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 565,
+            "latency": 3.5052521228790283
+          }
+        },
+        {
+          "question": "Cue-induced behavioural activation: a novel model of alcohol craving?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 572,
+            "latency": 4.114742279052734
+          }
+        },
+        {
+          "question": "Is non-HDL-cholesterol a better predictor of long-term outcome in patients after acute myocardial infarction compared to LDL-cholesterol?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 404,
+            "latency": 2.3936007022857666
+          }
+        },
+        {
+          "question": "Gender difference in survival of resected non-small cell lung cancer: histology-related phenomenon?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 636,
+            "latency": 3.981757640838623
+          }
+        },
+        {
+          "question": "Is obesity a risk factor for wheezing among adolescents?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 308,
+            "latency": 3.476572036743164
+          }
+        },
+        {
+          "question": "Is routine chest radiography after transbronchial biopsy necessary?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 584,
+            "latency": 5.072509288787842
+          }
+        },
+        {
+          "question": "Preservation of the PCL when performing cruciate-retaining TKA: Is the tibial tuberosity a reliable predictor of the PCL footprint location?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 528,
+            "latency": 3.1904618740081787
+          }
+        },
+        {
+          "question": "Are sports medicine journals relevant and applicable to practitioners and athletes?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 214,
+            "latency": 1.2972486019134521
+          }
+        },
+        {
+          "question": "Is the advanced age a contraindication to GERD laparoscopic surgery?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 315,
+            "latency": 1.923119068145752
+          }
+        },
+        {
+          "question": "The association of puberty and young adolescent alcohol use: do parents have a moderating role?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 426,
+            "latency": 2.634512186050415
+          }
+        },
+        {
+          "question": "Must early postoperative oral intake be limited to laparoscopy?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 438,
+            "latency": 2.727360248565674
+          }
+        },
+        {
+          "question": "Is intrapartum vibroacoustic stimulation an effective predictor of fetal acidosis?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 479,
+            "latency": 2.9757144451141357
+          }
+        },
+        {
+          "question": "Does laparoscopic antireflux surgery improve quality of life in patients whose gastro-oesophageal reflux disease is well controlled with medical therapy?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 888,
+            "latency": 5.634390115737915
+          }
+        },
+        {
+          "question": "Does topical N-acetylcysteine application after myringotomy cause severe otorrhea?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 567,
+            "latency": 3.547680616378784
+          }
+        },
+        {
+          "question": "Is the affinity column-mediated immunoassay method suitable as an alternative to the microparticle enzyme immunoassay method as a blood tacrolimus assay?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 630,
+            "latency": 3.844785451889038
+          }
+        },
+        {
+          "question": "Does higher body mass index contribute to worse asthma control in an urban population?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 291,
+            "latency": 1.773808240890503
+          }
+        },
+        {
+          "question": "Is semi-closed endarterectomy of the superficial femoral artery combined with a short venous bypass in case of insufficient venous material an acceptable alternative for limb-threatening ischemia?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 944,
+            "latency": 5.862675189971924
+          }
+        },
+        {
+          "question": "Does loss of consciousness predict neuropsychological decrements after concussion?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 537,
+            "latency": 3.389401912689209
+          }
+        },
+        {
+          "question": "Do primary care physicians underprescribe antibiotics for peptic ulcer disease?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 884,
+            "latency": 5.62227201461792
+          }
+        },
+        {
+          "question": "Does patella position influence ligament balancing in total knee arthroplasty?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 230,
+            "latency": 3.2030906677246094
+          }
+        },
+        {
+          "question": "Does increased nerve length within the treatment volume improve trigeminal neuralgia radiosurgery?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 693,
+            "latency": 4.387268543243408
+          }
+        },
+        {
+          "question": "The HELPP syndrome--evidence of a possible systemic inflammatory response in pre-eclampsia?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 306,
+            "latency": 1.8592758178710938
+          }
+        },
+        {
+          "question": "Sternal plating for primary and secondary sternal closure; can it improve sternal stability?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 467,
+            "latency": 2.8935980796813965
+          }
+        },
+        {
+          "question": "Does ischemic preconditioning require reperfusion before index ischemia?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 521,
+            "latency": 3.270810127258301
+          }
+        },
+        {
+          "question": "Increased neutrophil migratory activity after major trauma: a factor in the etiology of acute respiratory distress syndrome?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 466,
+            "latency": 2.8480515480041504
+          }
+        },
+        {
+          "question": "Is the histidine triad nucleotide-binding protein 1 (HINT1) gene a candidate for schizophrenia?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 486,
+            "latency": 2.9891974925994873
+          }
+        },
+        {
+          "question": "Can continuous physical training counteract aging effect on myoelectric fatigue?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 568,
+            "latency": 3.5732295513153076
+          }
+        },
+        {
+          "question": "Ultra high risk (UHR) for psychosis criteria: are there different levels of risk for transition to psychosis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 702,
+            "latency": 4.431656360626221
+          }
+        },
+        {
+          "question": "Does a physician's specialty influence the recording of medication history in patients' case notes?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 542,
+            "latency": 3.5939693450927734
+          }
+        },
+        {
+          "question": "Are pelvic anatomical structures in danger during arthroscopic acetabular labral repair?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 423,
+            "latency": 2.646096706390381
+          }
+        },
+        {
+          "question": "Is robotically assisted laparoscopic radical prostatectomy less invasive than retropubic radical prostatectomy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 338,
+            "latency": 2.044520616531372
+          }
+        },
+        {
+          "question": "Maternal creatine homeostasis is altered during gestation in the spiny mouse: is this a metabolic adaptation to pregnancy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 480,
+            "latency": 3.1434764862060547
+          }
+        },
+        {
+          "question": "Production of chemokines by perivascular adipose tissue: a role in the pathogenesis of atherosclerosis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 277,
+            "latency": 1.639915943145752
+          }
+        },
+        {
+          "question": "Nasal polyposis: is there an inheritance pattern?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 320,
+            "latency": 1.9734179973602295
+          }
+        },
+        {
+          "question": "Hepatic arterial embolization for unresectable hepatocellular carcinomas: do technical factors affect prognosis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 481,
+            "latency": 2.976619005203247
+          }
+        },
+        {
+          "question": "Does pediatric housestaff experience influence tests ordered for infants in the neonatal intensive care unit?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 391,
+            "latency": 2.4004998207092285
+          }
+        },
+        {
+          "question": "Dose end-tidal carbon dioxide measurement correlate with arterial carbon dioxide in extremely low birth weight infants in the first week of life?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 1077,
+            "latency": 6.805562973022461
+          }
+        },
+        {
+          "question": "Can echocardiography and ECG discriminate hereditary transthyretin V30M amyloidosis from hypertrophic cardiomyopathy?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 462,
+            "latency": 2.7996530532836914
+          }
+        },
+        {
+          "question": "Can dose reduction to one parotid gland prevent xerostomia?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 676,
+            "latency": 4.5278544425964355
+          }
+        },
+        {
+          "question": "Living in an urban environment and non-communicable disease risk in Thailand: Does timing matter?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 619,
+            "latency": 3.888474464416504
+          }
+        },
+        {
+          "question": "Staging laparoscopy in patients with hepatocellular carcinoma: is it useful?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 503,
+            "latency": 3.151693344116211
+          }
+        },
+        {
+          "question": "Is renal warm ischemia over 30 minutes during laparoscopic partial nephrectomy possible?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 644,
+            "latency": 4.041408061981201
+          }
+        },
+        {
+          "question": "Household and food shopping environments: do they play a role in socioeconomic inequalities in fruit and vegetable consumption?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 328,
+            "latency": 1.9877212047576904
+          }
+        },
+        {
+          "question": "Delayed peripheral facial palsy in the stapes surgery: can it be prevented?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 590,
+            "latency": 3.7105190753936768
+          }
+        },
+        {
+          "question": "Is anorectal endosonography valuable in dyschesia?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 425,
+            "latency": 2.663156509399414
+          }
+        },
+        {
+          "question": "Pharmacologic regimens for knee osteoarthritis prevention: can they be cost-effective?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 475,
+            "latency": 2.950753927230835
+          }
+        },
+        {
+          "question": "Does early migraine treatment shorten time to headache peak and reduce its severity?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 243,
+            "latency": 1.4758565425872803
+          }
+        },
+        {
+          "question": "Are environmental factors important in primary systemic vasculitis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 329,
+            "latency": 2.3332016468048096
+          }
+        },
+        {
+          "question": "Are polymorphisms in oestrogen receptors genes associated with lipid levels in response to hormone therapy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 433,
+            "latency": 5.297309160232544
+          }
+        },
+        {
+          "question": "Has the 80-hour workweek improved surgical resident education in New England?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 915,
+            "latency": 5.818873405456543
+          }
+        },
+        {
+          "question": "Continuity of care experience of residents in an academic vascular department: are trainees learning complete surgical care?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 497,
+            "latency": 3.085718870162964
+          }
+        },
+        {
+          "question": "Pap smears with glandular cell abnormalities: Are they detected by rapid prescreening?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 774,
+            "latency": 4.891093492507935
+          }
+        },
+        {
+          "question": "Is low serum chloride level a risk factor for cardiovascular mortality?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 464,
+            "latency": 2.9370334148406982
+          }
+        },
+        {
+          "question": "Is EQ-5D a valid quality of life instrument in patients with acute coronary syndrome?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 453,
+            "latency": 2.819770574569702
+          }
+        },
+        {
+          "question": "Post-tonsillectomy late haemorrhage: is it a preferably night-time event?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 268,
+            "latency": 1.9378156661987305
+          }
+        },
+        {
+          "question": "Location and number of sutures placed for hiatal hernia repair during laparoscopic adjustable gastric banding: does it matter?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 329,
+            "latency": 1.9474492073059082
+          }
+        },
+        {
+          "question": "Does birth center care during a woman's first pregnancy have any impact on her future reproduction?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 529,
+            "latency": 3.31072998046875
+          }
+        },
+        {
+          "question": "Metastatic carcinoma to the cervical nodes from an unknown head and neck primary site: Is there a need for neck dissection?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 442,
+            "latency": 2.6812918186187744
+          }
+        },
+        {
+          "question": "c-Kit-dependent growth of uveal melanoma cells: a potential therapeutic target?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 751,
+            "latency": 4.753775358200073
+          }
+        },
+        {
+          "question": "Are physicians meeting the needs of family caregivers of the frail elderly?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 340,
+            "latency": 2.10404634475708
+          }
+        },
+        {
+          "question": "Cardiac reoperations in octogenarians: Do they really benefit?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 458,
+            "latency": 2.856482982635498
+          }
+        },
+        {
+          "question": "Do elderly patients benefit from surgery in addition to radiotherapy for treatment of metastatic spinal cord compression?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 415,
+            "latency": 2.538245439529419
+          }
+        },
+        {
+          "question": "Is Alveolar Macrophage Phagocytic Dysfunction in Children With Protracted Bacterial Bronchitis a Forerunner to Bronchiectasis?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 498,
+            "latency": 2.9984331130981445
+          }
+        },
+        {
+          "question": "Risk stratification in emergency surgical patients: is the APACHE II score a reliable marker of physiological impairment?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 386,
+            "latency": 2.3775100708007812
+          }
+        },
+        {
+          "question": "Can we ease the financial burden of colonoscopy?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 328,
+            "latency": 2.0292229652404785
+          }
+        },
+        {
+          "question": "Is minilaparoscopic inguinal hernia repair feasible?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 463,
+            "latency": 2.888551950454712
+          }
+        },
+        {
+          "question": "Does the central venous pressure predict fluid responsiveness?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 368,
+            "latency": 2.2910289764404297
+          }
+        },
+        {
+          "question": "Does a febrile reaction to platelets predispose recipients to red blood cell alloimmunization?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 1047,
+            "latency": 6.70894193649292
+          }
+        },
+        {
+          "question": "Does head positioning influence anterior chamber depth in pseudoexfoliation syndrome?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 824,
+            "latency": 7.794426918029785
+          }
+        },
+        {
+          "question": "Epidural analgesia for surgical treatment of peritoneal carcinomatosis: a risky technique?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 548,
+            "latency": 3.404229164123535
+          }
+        },
+        {
+          "question": "Are WHO/UNAIDS/UNICEF-recommended replacement milks for infants of HIV-infected mothers appropriate in the South African context?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 607,
+            "latency": 3.7457571029663086
+          }
+        },
+        {
+          "question": "Is low birth weight a risk indicator for congenital cytomegalovirus infection?",
+          "ground_truth": "no",
+          "response": "no",
+          "metrics": {
+            "token_count": 495,
+            "latency": 3.100219488143921
+          }
+        },
+        {
+          "question": "Does the manic/mixed episode distinction in bipolar disorder patients run true over time?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 728,
+            "latency": 4.544701337814331
+          }
+        },
+        {
+          "question": "Are Reviewers' Scores Influenced by Citations to Their Own Work?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 564,
+            "latency": 3.5485422611236572
+          }
+        },
+        {
+          "question": "Spleen-preserving distal pancreatectomy with resection of the splenic vessels. Should one rely on the short gastric arteries?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 800,
+            "latency": 7.727592706680298
+          }
+        },
+        {
+          "question": "Can nonproliferative breast disease and proliferative breast disease without atypia be distinguished by fine-needle aspiration cytology?",
+          "ground_truth": "no",
+          "response": "yes",
+          "metrics": {
+            "token_count": 721,
+            "latency": 4.365184307098389
+          }
+        },
+        {
+          "question": "Could Adult European Pharmacoresistant Epilepsy Patients Be Treated With Higher Doses of Zonisamide?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 991,
+            "latency": 6.259073257446289
+          }
+        },
+        {
+          "question": "Memory-provoked rCBF-SPECT as a diagnostic tool in Alzheimer's disease?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 679,
+            "latency": 4.257329940795898
+          }
+        },
+        {
+          "question": "Surgical treatment of prosthetic valve endocarditis in patients with double prostheses: is single-valve replacement safe?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 752,
+            "latency": 4.92484712600708
+          }
+        },
+        {
+          "question": "Out of the smokescreen II: will an advertisement targeting the tobacco industry affect young people's perception of smoking in movies and their intention to smoke?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 915,
+            "latency": 5.692235231399536
+          }
+        },
+        {
+          "question": "Is external palliative radiotherapy for gallbladder carcinoma effective?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 789,
+            "latency": 4.916268348693848
+          }
+        },
+        {
+          "question": "Is discordance in TEOAE and AABR outcomes predictable in newborns?",
+          "ground_truth": "yes",
+          "response": "no",
+          "metrics": {
+            "token_count": 784,
+            "latency": 4.799526214599609
+          }
+        },
+        {
+          "question": "Do adjuvant aromatase inhibitors increase the cardiovascular risk in postmenopausal women with early breast cancer?",
+          "ground_truth": "yes",
+          "response": "yes",
+          "metrics": {
+            "token_count": 538,
+            "latency": 7.277198076248169
+          }
+        }
+      ],
+      "summary_metrics": {
+        "avg_token_count": 499.806,
+        "avg_latency": 3.325,
+        "accuracy": 0.601,
+        "total_questions": 499.0,
+        "correct_predictions": 300.0
+      }
+    }
+  ]
+}
