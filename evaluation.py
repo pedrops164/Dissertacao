@@ -616,7 +616,6 @@ def _run_rag_evaluation(rag_k, llm_client, db_instance, output_path, yesno_queri
         rag_benchmark.eval_yes_no_questions(
             systems=[simple_rag_system, filter_rag_system, reranker_rag_system, crag_rag_system, hyde_rag_system],
             queries=yesno_queries,
-            #queries=pubmedqa_queries,
             n_workers=args.n_workers
         )
         end = time.time()
@@ -679,7 +678,7 @@ if __name__ == "__main__":
         raise ValueError(f"Unsupported database type: {args.db_type}")
 
     print("Evaluating systems...")
-    for llm in llm_list[:1]:
+    for llm in llm_list:
         llm_client = NebiusLLMClient(base_llm=llm)
 
         # Create output path for no-RAG evaluation
@@ -689,7 +688,7 @@ if __name__ == "__main__":
         norag_output_path = os.path.join(output_dir, output_filename)
 
         _run_norag_evaluation(llm_client, norag_output_path, pubmedqa_queries, None)  # run no-RAG evaluation separately
-        for rag_k in rag_k_list[:1]:
+        for rag_k in rag_k_list:
             # Create output path for RAG evaluation
             output_filename = f"eval_rag_{model_name}_{args.num_docs}docs_{rag_k}k.json"
             rag_output_path = os.path.join(output_dir, output_filename)
